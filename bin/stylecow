@@ -9,6 +9,7 @@ if (process.argv.length < 3) {
 }
 
 var fs = require('fs');
+var path = require('path');
 var stylecow = require('../lib');
 
 
@@ -50,7 +51,10 @@ if (cli.options.plugins) {
 			str = (name + "                         ").slice(0, 25);
 		}
 
-		description = chuckString(stylecow.plugins[name].description, 40);
+		var info = path.resolve(require.resolve('stylecow-plugin-' + name), '../package.json');
+		info = JSON.parse(fs.readFileSync(info, 'utf8'));
+
+		var description = chuckString(info.description, 40);
 
 		console.log('| ' + str + (stylecow.plugins[name].enabled ? 'TRUE     ' : 'FALSE    ') + description.shift());
 

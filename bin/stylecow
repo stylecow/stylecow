@@ -1,0 +1,192 @@
+#!/usr/bin/env node
+
+var cli = require('cli');
+
+//No options provided
+if (process.argv.length < 3) {
+	cli.status('Type -h for help', 'info');
+	process.exit(0);
+}
+
+var fs = require('fs');
+var stylecow = require('../lib');
+
+
+cli.setApp(__dirname + '/../package.json').enable('version').enable('timeout');
+cli.setUsage('stylecow [options] [INPUT:OUTPUT]');
+
+cli.parse({
+	enable:   [null, 'Enable plugins disabled by default.', 'plugin'],
+	disable:  [null, 'Disable plugins enabled by default.', 'plugin'],
+	file:     ['f',  'Read a file and convert the css code', 'path'],
+	watch:    ['w',  'Read and watch a file for changes', 'path'],
+	stdin:    ['s',  'Read input from standard input instead of an input file', 'path'],
+	code:     ['c',  'Code style name for the output', ['default', 'minify'], 'default'],
+	plugins:  ['p',  'Print all available plugins', 'bool'],
+	explorer: [null, 'Minimal version supported by Microsoft Explorer', 'float'],
+	firefox:  [null, 'Minimal version supported by Mozilla Firefox', 'float'],
+	chrome:   [null, 'Minimal version supported by Google Chrome', 'float'],
+	safari:   [null, 'Minimal version supported by Apple Safari', 'float'],
+	opera:    [null, 'Minimal version supported by Opera', 'float'],
+	android:  [null, 'Minimal version supported by Android Browser', 'float'],
+	ios:      [null, 'Minimal version supported by iOS', 'float']
+});
+
+
+//Print all available plugins
+
+if (cli.options.plugins) {
+	var name, str, description;
+
+	console.log('');
+	console.log('===============================================================================');
+	console.log('| Name                     Enabled  Description');
+	console.log('===============================================================================');
+
+	for (name in stylecow.plugins) {
+		if (name.length >= 25) {
+			str = name + ' ';
+		} else {
+			str = (name + "                         ").slice(0, 25);
+		}
+
+		description = chuckString(stylecow.plugins[name].description, 40);
+
+		console.log('| ' + str + (stylecow.plugins[name].enabled ? 'TRUE     ' : 'FALSE    ') + description.shift());
+
+		while (description.length) {
+			console.log('|                                   ' + description.shift());
+		}
+
+		console.log('|_____________________________________________________________________________');
+	}
+
+	process.exit(0);
+}
+
+
+// Convert css
+
+var input, output, settings = {};
+
+if (cli.options.stdin) {
+	input = true;
+	output = cli.options.stdin;
+} else if (cli.options.file || cli.options.watch) {
+	var pieces = (cli.options.file || cli.options.watch).split(':');
+
+	input = pieces[0];
+	output = pieces[1];
+
+	if (!input) {
+		cli.status('You must provide a css file (stylecow file <input> [output])', 'error');
+		process.exit(0);
+	}
+
+	checkFile(input);
+
+	if (fs.existsSync(input + '.json')) {
+		settings = JSON.parse(fs.readFileSync(input + '.json', 'utf8'));
+	}
+}
+
+if (output) {
+	checkFile(output);
+}
+
+if (input === true) {
+	cli.withStdin('utf8', function (data) {
+		execute(stylecow.create(data), null, null, cli.options, settings);
+	});
+} else {
+	execute(stylecow.readFile(input), input, output, cli.options, settings);
+}
+
+
+function chuckString (string, chunklen) {
+	var strings = string.match(new RegExp('.{0,' + chunklen + '}', 'g'));
+	strings.pop();
+
+	return strings;
+}
+
+
+function checkFile (file) {
+	if (!fs.existsSync(file)) {
+		cli.status('The file "' +  file + '" does not exist', 'error');
+		process.exit(0);
+	}
+
+	if (!fs.lstatSync(file).isFile()) {
+		cli.status('The file "' +  file + '" is not a valid file', 'error');
+		process.exit(0);
+	}
+}
+
+
+function execute (code, input, output, options, jsonSettings) {
+	var settings = {}, name;
+
+	for (name in jsonSettings) {
+		if (jsonSettings.hasOwnProperty(name)) {
+			settings[name] = jsonSettings[name];
+		}
+	}
+
+	['explorer', 'firefox', 'chrome', 'safari', 'opera', 'android', 'ios', 'code', 'enable', 'disable'].forEach(function (name) {
+		if (options[name] !== null) {
+			settings[name] = options[name];
+		}
+	});
+
+	for (name in settings) {
+		stylecow.config.setSetting(code, name, settings[name]);
+	}
+
+	if (input) {
+		code.setData('sourceFile', input);
+	}
+
+	code.transform();
+
+	if (output) {
+		fs.writeFileSync(output, code.toCode());
+		cli.status('CSS saved in "' + output + '"', 'ok');
+	} else {
+		console.log(code.toCode());
+	}
+
+	if (options.watch) {
+		cli.status('Waiting for changes', 'info');
+		
+		var files = {};
+
+		code
+			.search()
+			.filter(function (child) {
+				return (child._data && child._data['sourceFile']);
+			})
+			.map(function (child) {
+				return child._data['sourceFile'];
+			})
+			.forEach(function (file) {
+				files[file] = null;
+			});
+
+		for (var file in files) {
+			//cli.status('watching ' + file, 'debug');
+
+			fs.watchFile(file, {persistent: true, interval: 2000}, function (curr, prev) {
+				if (curr.mtime !== prev.mtime) {
+					cli.status('changed detected in "' + file + '"', 'info');
+
+					for (var f in files) {
+						fs.unwatchFile(f);
+					}
+
+					execute(stylecow.css.Root.create(fs.readFileSync(input, 'utf8')), input, output, options);
+				}
+			});
+		}
+	}
+}

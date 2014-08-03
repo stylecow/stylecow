@@ -12,18 +12,22 @@ var fs = require('fs');
 var path = require('path');
 var stylecow = require('../lib');
 
-
 cli.setApp(__dirname + '/../package.json').enable('version').enable('timeout');
 cli.setUsage('stylecow [options] [INPUT:OUTPUT]');
 
 cli.parse({
-	enable:   [null, 'Enable plugins disabled by default.', 'plugin'],
-	disable:  [null, 'Disable plugins enabled by default.', 'plugin'],
 	file:     ['f',  'Read a file and convert the css code', 'path'],
 	watch:    ['w',  'Read and watch a file for changes', 'path'],
-	stdin:    ['s',  'Read input from standard input instead of an input file', 'path'],
-	code:     ['c',  'Code style name for the output', ['default', 'minify'], 'default'],
-	plugins:  ['p',  'Print all available plugins', 'bool'],
+	stdin:    ['s',  'Read input from standard input instead of an input file'],
+
+	list:     [null, 'List all installed plugins', 'bool'],
+	info:     [null, 'Get info from a plugin', 'string'],
+	install:  [null, 'Install a plugin', 'string'],
+	uninstall:[null, 'Uninstall a plugin', 'string'],
+
+	config:   [null, 'Load the configuration from a json file', 'path'],
+	code:     [null, 'Code style name for the output', ['default', 'minify'], 'default'],
+
 	explorer: [null, 'Minimal version supported by Microsoft Explorer', 'float'],
 	firefox:  [null, 'Minimal version supported by Mozilla Firefox', 'float'],
 	chrome:   [null, 'Minimal version supported by Google Chrome', 'float'],
@@ -36,74 +40,95 @@ cli.parse({
 
 //Print all available plugins
 
-if (cli.options.plugins) {
-	var name, str, description;
-
-	console.log('');
-	console.log('===============================================================================');
-	console.log('| Name                     Enabled  Description');
-	console.log('===============================================================================');
-
-	for (name in stylecow.plugins) {
-		if (name.length >= 25) {
-			str = name + ' ';
-		} else {
-			str = (name + "                         ").slice(0, 25);
-		}
-
-		var info = path.resolve(require.resolve('stylecow-plugin-' + name), '../package.json');
-		info = JSON.parse(fs.readFileSync(info, 'utf8'));
-
-		var description = chuckString(info.description, 40);
-
-		console.log('| ' + str + (stylecow.plugins[name].enabled ? 'TRUE     ' : 'FALSE    ') + description.shift());
-
-		while (description.length) {
-			console.log('|                                   ' + description.shift());
-		}
-
-		console.log('|_____________________________________________________________________________');
-	}
-
-	process.exit(0);
+if (cli.options.list) {
+	stylecow.listInstalledPlugins(function (plugins) {
+		plugins.forEach(function (plugin) {
+			console.log(plugin);
+		});
+	});
 }
 
+//Install a plugin
+
+else if (cli.options.install) {
+	stylecow.installPlugin(
+		cli.options.install,
+		function () {
+			cli.status('The plugin "' + cli.options.install + '" was installed', 'ok');
+		},
+		function () {
+			cli.status('Error installing the plugin "' + cli.options.install + '"', 'error');
+		}
+	);
+
+}
+
+//Uninstall a plugin
+
+else if (cli.options.uninstall) {
+	stylecow.uninstallPlugin(
+		cli.options.uninstall,
+		function () {
+			cli.status('The plugin "' + cli.options.uninstall + '" was uninstalled', 'ok');
+		},
+		function () {
+			cli.status('Error uninstalling the plugin "' + cli.options.uninstall + '"', 'error');
+		}
+	);
+}
+
+//Get info from a plugin
+
+else if (cli.options.info) {
+	stylecow.getPluginInfo(
+		cli.options.info,
+		function (data) {
+			console.log(data);
+		},
+		function () {
+			cli.status('Error getting info for plugin "' + cli.options.info + '"', 'error');
+		}
+	);
+}
 
 // Convert css
 
-var input, output, settings = {};
+else {
 
-if (cli.options.stdin) {
-	input = true;
-	output = cli.options.stdin;
-} else if (cli.options.file || cli.options.watch) {
-	var pieces = (cli.options.file || cli.options.watch).split(':');
+	var inpupt, output, config = {};
 
-	input = pieces[0];
-	output = pieces[1];
-
-	if (!input) {
-		cli.status('You must provide a css file (stylecow file <input> [output])', 'error');
-		process.exit(0);
+	if (cli.options.config) {
+		config = JSON.parse(fs.readFileSync(cli.options.config, 'utf8'));
 	}
 
-	checkFile(input);
+	if (cli.options.stdin) {
+		input = true;
+		output = cli.options.stdin;
+	} else if (cli.options.file || cli.options.watch) {
+		var pieces = (cli.options.file || cli.options.watch).split(':');
 
-	if (fs.existsSync(input + '.json')) {
-		settings = JSON.parse(fs.readFileSync(input + '.json', 'utf8'));
+		input = pieces[0];
+		output = pieces[1];
+
+		if (!input) {
+			cli.status('You must provide a css file (stylecow file <input> [output])', 'error');
+			process.exit(0);
+		}
+
+		checkFile(input);
 	}
-}
 
-if (output) {
-	checkFile(output);
-}
+	if (output) {
+		checkFile(output);
+	}
 
-if (input === true) {
-	cli.withStdin('utf8', function (data) {
-		execute(stylecow.create(data), null, null, cli.options, settings);
-	});
-} else {
-	execute(stylecow.readFile(input), input, output, cli.options, settings);
+	if (input === true) {
+		cli.withStdin('utf8', function (data) {
+			execute(stylecow.create(data), null, null, cli.options, config);
+		});
+	} else {
+		execute(stylecow.readFile(input), input, output, cli.options, config);
+	}
 }
 
 
@@ -128,69 +153,84 @@ function checkFile (file) {
 }
 
 
-function execute (code, input, output, options, jsonSettings) {
-	var settings = {}, name;
+function execute (code, input, output, options, config) {
 
-	for (name in jsonSettings) {
-		if (jsonSettings.hasOwnProperty(name)) {
-			settings[name] = jsonSettings[name];
+	//min support configuration
+
+	var minSupport = stylecow.minSupport;
+
+	['explorer', 'firefox', 'chrome', 'safari', 'opera', 'android', 'ios'].forEach(function (name) {
+		if (config.hasOwnProperty(name)) {
+			minSupport[name] = config[name];
 		}
-	}
 
-	['explorer', 'firefox', 'chrome', 'safari', 'opera', 'android', 'ios', 'code', 'enable', 'disable'].forEach(function (name) {
 		if (options[name] !== null) {
-			settings[name] = options[name];
+			minSupport[name] = options[name];
 		}
 	});
 
-	for (name in settings) {
-		stylecow.config.setSetting(code, name, settings[name]);
+	//code style configuration
+
+	var codeStyle = stylecow.getCodeStyle();
+
+	if (options.code || (typeof config.code === 'string')) {
+		codeStyle = stylecow.getCodeStyle(options.code || config.code);
+	}
+
+	if (typeof config.code === 'object') {
+		for (var name in config.code) {
+			if (config.code.hasOwnProperty(name)) {
+				codeStyle[name] = config.code[name];
+			}
+		}
 	}
 
 	if (input) {
 		code.setData('sourceFile', input);
 	}
 
-	code.transform();
+	stylecow.loadPlugins(function (plugins) {
+		code.executePlugins(plugins, minSupport);
 
-	if (output) {
-		fs.writeFileSync(output, code.toCode());
-		cli.status('CSS saved in "' + output + '"', 'ok');
-	} else {
-		console.log(code.toCode());
-	}
-
-	if (options.watch) {
-		cli.status('Waiting for changes', 'info');
-		
-		var files = {};
-
-		code
-			.search()
-			.filter(function (child) {
-				return (child._data && child._data['sourceFile']);
-			})
-			.map(function (child) {
-				return child._data['sourceFile'];
-			})
-			.forEach(function (file) {
-				files[file] = null;
-			});
-
-		for (var file in files) {
-			//cli.status('watching ' + file, 'debug');
-
-			fs.watchFile(file, {persistent: true, interval: 2000}, function (curr, prev) {
-				if (curr.mtime !== prev.mtime) {
-					cli.status('changed detected in "' + file + '"', 'info');
-
-					for (var f in files) {
-						fs.unwatchFile(f);
-					}
-
-					execute(stylecow.css.Root.create(fs.readFileSync(input, 'utf8')), input, output, options);
-				}
-			});
+		if (output) {
+			fs.writeFileSync(output, code.toCode(codeStyle));
+			cli.status('CSS saved in "' + output + '"', 'ok');
+		} else {
+			console.log(code.toCode(codeStyle));
 		}
-	}
+
+		if (options.watch) {
+			cli.status('Waiting for changes', 'info');
+			
+			var files = {};
+
+			code
+				.search()
+				.filter(function (child) {
+					return (child._data && child._data['sourceFile']);
+				})
+				.map(function (child) {
+					return child._data['sourceFile'];
+				})
+				.forEach(function (file) {
+					files[file] = null;
+				});
+
+			for (var file in files) {
+				//cli.status('watching ' + file, 'debug');
+
+				fs.watchFile(file, {persistent: true, interval: 2000}, function (curr, prev) {
+					if (curr.mtime !== prev.mtime) {
+						cli.status('changed detected in "' + file + '"', 'info');
+
+						for (var f in files) {
+							fs.unwatchFile(f);
+						}
+
+						execute(stylecow.css.Root.create(fs.readFileSync(input, 'utf8')), input, output, options);
+					}
+				});
+			}
+		}
+	});
 }

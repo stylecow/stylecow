@@ -93,7 +93,7 @@ else if (cli.options.info) {
 
 // Convert css
 
-else {
+else if (cli.options.stdin || cli.options.file || cli.options.watch) {
 
 	var inpupt, output, config = {};
 

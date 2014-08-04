@@ -11,8 +11,7 @@
   },
   "dependencies": {
     "cli": "0.6.3",
-    "npm": "*",
-    "npmi": "0.0.10"
+    "npm": "*"
   },
   "main": "./lib/index",
   "bin": {

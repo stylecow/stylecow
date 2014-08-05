@@ -1,236 +1,273 @@
 #!/usr/bin/env node
 
-var cli = require('cli');
-
-//No options provided
-if (process.argv.length < 3) {
-	cli.status('Type -h for help', 'info');
-	process.exit(0);
-}
-
-var fs = require('fs');
-var path = require('path');
+var program = require('commander');
 var stylecow = require('../lib');
-
-cli.setApp(__dirname + '/../package.json').enable('version').enable('timeout');
-cli.setUsage('stylecow [options] [INPUT:OUTPUT]');
-
-cli.parse({
-	file:     ['f',  'Read a file and convert the css code', 'path'],
-	watch:    ['w',  'Read and watch a file for changes', 'path'],
-	stdin:    ['s',  'Read input from standard input instead of an input file'],
-
-	list:     [null, 'List all installed plugins', 'bool'],
-	info:     [null, 'Get info from a plugin', 'string'],
-	install:  [null, 'Install a plugin', 'string'],
-	uninstall:[null, 'Uninstall a plugin', 'string'],
-
-	config:   [null, 'Load the configuration from a json file', 'path'],
-	code:     [null, 'Code style name for the output', ['default', 'minify'], 'default'],
-
-	explorer: [null, 'Minimal version supported by Microsoft Explorer', 'float'],
-	firefox:  [null, 'Minimal version supported by Mozilla Firefox', 'float'],
-	chrome:   [null, 'Minimal version supported by Google Chrome', 'float'],
-	safari:   [null, 'Minimal version supported by Apple Safari', 'float'],
-	opera:    [null, 'Minimal version supported by Opera', 'float'],
-	android:  [null, 'Minimal version supported by Android Browser', 'float'],
-	ios:      [null, 'Minimal version supported by iOS', 'float']
-});
+var fs = require('fs');
 
 
-//Print all available plugins
+program
+	.command('convert <input:output>')
+	.description('Convert the css code of a file')
+	.option('-l, --list', 'List all installed plugins')
+	.option('-i, --install <plugin>', 'Installs a new plugin')
+	.option('-u, --uninstall <plugin>', 'Uninstalls a plugin')
+	.action(convert);
 
-if (cli.options.list) {
-	stylecow.listInstalledPlugins(function (plugins) {
-		plugins.forEach(function (plugin) {
-			console.log(plugin);
-		});
+
+program
+	.command('plugin')
+	.description('Manage the installed plugins')
+	.option('-l, --list', 'List all installed plugins', plugin_list)
+	.option('-i, --install <plugin>', 'Installs a new plugin', plugin_install)
+	.option('-u, --uninstall <plugin>', 'Uninstalls a plugin', plugin_uninstall)
+	.action(function () {});
+
+
+program
+	.command('default:plugins')
+	.description('Configure the plugins executed by default')
+	.option('-l, --list', 'List all default plugins', default_plugins_list)
+	.option('-s, --set <plugin>', 'Set a installed plugin as default', default_plugins_set)
+	.option('-u, --unset <plugin>', 'Unset a plugin from defaults', default_plugins_unset)
+	.action(function () {});
+
+
+program
+	.command('default:support')
+	.description('Configure the minimum version support for each browser')
+	.option('-l, --list', 'List the current browser support', default_support_list)
+	.option('-e, --explorer <version>', 'Changes the minimum version supported in Internet Explorer', function (version) { default_support_set('explorer', version); })
+	.option('-f, --firefox <version>', 'Changes the minimum version supported in Mozilla Firefox', function (version) { default_support_set('firefox', version); })
+	.option('-c, --chrome <version>', 'Changes the minimum version supported in Google Chrome', function (version) { default_support_set('chrome', version); })
+	.option('-s, --safari <version>', 'Changes the minimum version supported in Safari', function (version) { default_support_set('safari', version); })
+	.option('-o, --opera <version>', 'Changes the minimum version supported in Opera', function (version) { default_support_set('opera', version); })
+	.option('-a, --android <version>', 'Changes the minimum version supported in Android', function (version) { default_support_set('android', version); })
+	.option('-i, --ios <version>', 'Changes the minimum version supported in Safari iOS', function (version) { default_support_set('ios', version); })
+	.action(function () {});
+
+
+program
+	.command('default:code')
+	.description('Configure the code style used to generate the css')
+	.option('-l, --list', 'List the current code style variables', default_code_list)
+	.option('-s --set <style>', 'Changes the code style used to generate the css (default|minify)', default_code_set)
+	.action(function () {});
+
+
+program.parse(process.argv);
+
+
+//CONVERT
+function convert (input_output, command) {
+	input_output = input_output.split(':');
+
+	var code = stylecow.readFile(input_output[0]);
+	var codeStyle = getConfig('code');
+	var minSupport = getConfig('support');
+	var plugins = getConfig('plugins');
+
+	stylecow.loadPlugins(plugins, function (loadedPlugins) {
+		execute(code, loadedPlugins, minSupport, codeStyle, input_output[1]);
 	});
 }
 
-//Install a plugin
-
-else if (cli.options.install) {
-	stylecow.installPlugin(
-		cli.options.install,
-		function () {
-			cli.status('The plugin "' + cli.options.install + '" was installed', 'ok');
-		},
-		function () {
-			cli.status('Error installing the plugin "' + cli.options.install + '"', 'error');
-		}
-	);
-
-}
-
-//Uninstall a plugin
-
-else if (cli.options.uninstall) {
-	stylecow.uninstallPlugin(
-		cli.options.uninstall,
-		function () {
-			cli.status('The plugin "' + cli.options.uninstall + '" was uninstalled', 'ok');
-		},
-		function () {
-			cli.status('Error uninstalling the plugin "' + cli.options.uninstall + '"', 'error');
-		}
-	);
-}
-
-//Get info from a plugin
-
-else if (cli.options.info) {
-	stylecow.getPluginInfo(
-		cli.options.info,
-		function (data) {
-			console.log(data);
-		},
-		function () {
-			cli.status('Error getting info for plugin "' + cli.options.info + '"', 'error');
-		}
-	);
-}
-
-// Convert css
-
-else if (cli.options.stdin || cli.options.file || cli.options.watch) {
-
-	var inpupt, output, config = {};
-
-	if (cli.options.config) {
-		config = JSON.parse(fs.readFileSync(cli.options.config, 'utf8'));
-	}
-
-	if (cli.options.stdin) {
-		input = true;
-		output = cli.options.stdin;
-	} else if (cli.options.file || cli.options.watch) {
-		var pieces = (cli.options.file || cli.options.watch).split(':');
-
-		input = pieces[0];
-		output = pieces[1];
-
-		if (!input) {
-			cli.status('You must provide a css file (stylecow file <input> [output])', 'error');
-			process.exit(0);
-		}
-
-		checkFile(input);
-	}
+function execute (code, plugins, minSupport, codeStyle, output) {
+	code.executePlugins(plugins, minSupport);
 
 	if (output) {
-		checkFile(output);
-	}
-
-	if (input === true) {
-		cli.withStdin('utf8', function (data) {
-			execute(stylecow.create(data), null, null, cli.options, config);
-		});
+		fs.writeFileSync(output, code.toCode(codeStyle));
+		console.log('CSS saved in "' + output + '"');
 	} else {
-		execute(stylecow.readFile(input), input, output, cli.options, config);
+		console.log(code.toCode(codeStyle));
 	}
 }
 
 
-function chuckString (string, chunklen) {
-	var strings = string.match(new RegExp('.{0,' + chunklen + '}', 'g'));
-	strings.pop();
 
-	return strings;
-}
-
-
-function checkFile (file) {
-	if (!fs.existsSync(file)) {
-		cli.status('The file "' +  file + '" does not exist', 'error');
-		process.exit(0);
-	}
-
-	if (!fs.lstatSync(file).isFile()) {
-		cli.status('The file "' +  file + '" is not a valid file', 'error');
-		process.exit(0);
-	}
-}
-
-
-function execute (code, input, output, options, config) {
-
-	//min support configuration
-
-	var minSupport = stylecow.minSupport;
-
-	['explorer', 'firefox', 'chrome', 'safari', 'opera', 'android', 'ios'].forEach(function (name) {
-		if (config.hasOwnProperty(name)) {
-			minSupport[name] = config[name];
-		}
-
-		if (options[name] !== null) {
-			minSupport[name] = options[name];
-		}
+//PLUGIN
+function plugin_list () {
+	getInstalledPlugins(function (plugins) {
+		plugins.forEach(function (plugin) {
+			console.log('- ' + plugin);
+		});
 	});
+}
 
-	//code style configuration
+function plugin_install (plugin) {
+	loadNpm(function (npm) {
+		var packageName = stylecow.getPluginPackage(plugin);
 
-	var codeStyle = stylecow.getCodeStyle();
-
-	if (options.code || (typeof config.code === 'string')) {
-		codeStyle = stylecow.getCodeStyle(options.code || config.code);
-	}
-
-	if (typeof config.code === 'object') {
-		for (var name in config.code) {
-			if (config.code.hasOwnProperty(name)) {
-				codeStyle[name] = config.code[name];
+		npm.commands.install([packageName], function (err, data) {
+			if (err) {
+				console.error('Error installing the plugin "' + plugin + '"');
+			} else {
+				console.log('The plugin "' + plugin + '" was installed');
 			}
+		});
+	});
+}
+
+function plugin_uninstall (plugin) {
+	loadNpm(function (npm) {
+		var packageName = stylecow.getPluginPackage(plugin);
+
+		npm.commands.uninstall([packageName], function (err, data) {
+			if (err) {
+				console.error('Error uninstalling the plugin "' + plugin + '"');
+			} else {
+				console.log('The plugin "' + plugin + '" was uninstalled');
+			}
+		});
+	});
+}
+
+
+// DEFAULT:PLUGINS
+function default_plugins_list () {
+	var plugins = getConfig('plugins', []);
+
+	if (!plugins.length) {
+		console.log('No default plugins');
+	} else {
+		plugins.forEach(function (plugin) {
+			console.log('- ' + plugin);
+		});
+	}
+}
+
+function default_plugins_set (plugins) {
+	getInstalledPlugins(function (installed) {
+		var defaults = getConfig('plugins', []);
+		var error = false;
+
+		plugins.split(',').forEach(function (plugin) {
+			if (installed.indexOf(plugin) === -1) {
+				console.log("The plugin '" + plugin + "' is not installed. Use `stylecow plugin install " + plugin + "` to install");
+				error = true;
+			} else if (defaults.indexOf(plugin) === -1) {
+				defaults.push(plugin);
+			}
+		});
+
+		if (error) {
+			return false;
 		}
-	}
 
-	if (input) {
-		code.setData('sourceFile', input);
-	}
+		saveConfig('plugins', defaults);
 
-	stylecow.loadPlugins(function (plugins) {
-		code.executePlugins(plugins, minSupport);
+		console.log("Default plugins updated:");
 
-		if (output) {
-			fs.writeFileSync(output, code.toCode(codeStyle));
-			cli.status('CSS saved in "' + output + '"', 'ok');
+		default_plugins_list();
+	});
+}
+
+function default_plugins_unset (plugins) {
+	var defaults = getConfig('plugins', []);
+
+	plugins.split(',').forEach(function (plugin) {
+		var index = defaults.indexOf(plugin);
+
+		if (index === -1) {
+			console.error("The plugin '" + plugin + "' is not default");
 		} else {
-			console.log(code.toCode(codeStyle));
-		}
-
-		if (options.watch) {
-			cli.status('Waiting for changes', 'info');
-			
-			var files = {};
-
-			code
-				.search()
-				.filter(function (child) {
-					return (child._data && child._data['sourceFile']);
-				})
-				.map(function (child) {
-					return child._data['sourceFile'];
-				})
-				.forEach(function (file) {
-					files[file] = null;
-				});
-
-			for (var file in files) {
-				//cli.status('watching ' + file, 'debug');
-
-				fs.watchFile(file, {persistent: true, interval: 2000}, function (curr, prev) {
-					if (curr.mtime !== prev.mtime) {
-						cli.status('changed detected in "' + file + '"', 'info');
-
-						for (var f in files) {
-							fs.unwatchFile(f);
-						}
-
-						execute(stylecow.css.Root.create(fs.readFileSync(input, 'utf8')), input, output, options);
-					}
-				});
-			}
+			defaults.splice(index, 1);
 		}
 	});
+
+	saveConfig('plugins', defaults);
+
+	console.log("Default plugins updated:");
+
+	default_plugins_list();
+}
+
+
+// DEFAULT:SUPPORT
+function default_support_list () {
+	var support = getConfig('support');
+
+	for (var browser in support) {
+		console.log(browser + ':', support[browser]);
+	}
+}
+
+function default_support_set (name, version) {
+	var support = getConfig('support');
+
+	support[name] = version;
+
+	saveConfig('support', support);
+
+	console.log('The minimal version supported in ' + name + ' is ' + version);
+}
+
+
+
+// DEFAULT:CODE
+function default_code_list () {
+	var code = getConfig('code');
+
+	for (var k in code) {
+		console.log(k + ':', '"' + code[k].replace('\n', '\\n').replace('\t', '\\t') + '"');
+	}
+}
+
+function default_code_set (name) {
+	var code = stylecow.getCodeStyle(name);
+
+	if (!code) {
+		console.error('The code style ' + name + ' is not valid');
+	} else {
+		saveConfig('code', code);
+		console.log('The new code style is "' + name + '"');
+		console.log('');
+		default_code_list();
+	}
+
+}
+
+
+
+
+//Functions
+
+function loadNpm (callback) {
+	var npm = require('npm');
+
+	npm.load(function (err) {
+		if (err) {
+			console.error(err);
+			return;
+		}
+
+		callback(npm);
+	});
+}
+
+function getInstalledPlugins (callback) {
+	loadNpm(function (npm) {
+		var plugins = fs.readdirSync(npm.root).filter(function (value) {
+			return value.slice(0, 16) === 'stylecow-plugin-';
+		}).map(function (value) {
+			return value.slice(16);
+		});
+
+		callback(plugins);
+	});
+}
+
+function getConfig (file, def) {
+	file = __dirname + '/../config/' + file + '.json';
+
+	if (!fs.existsSync(file)) {
+		return def;
+	}
+
+	return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
+
+function saveConfig (file, value) {
+	file = __dirname + '/../config/' + file + '.json';
+
+	fs.writeFileSync(file, JSON.stringify(value));
 }

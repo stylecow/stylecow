@@ -15,13 +15,14 @@ var success = clc.green.bold;
 program
 	.command('convert <input> [<output>]')
 	.description('Convert the css code of a file')
-	.option('-e, --explorer <version>', 'Min version supported in Internet Explorer instead the default', optionBrowser)
-	.option('-f, --firefox <version>', 'Min version supported in Mozilla Firefox instead the default', optionBrowser)
-	.option('-c, --chrome <version>', 'Min version supported in Google Chrome instead the default', optionBrowser)
-	.option('-s, --safari <version>', 'Min version supported in Safari instead the default', optionBrowser)
-	.option('-o, --opera <version>', 'Min version supported in Opera instead the default', optionBrowser)
-	.option('-a, --android <version>', 'Min version supported in Android instead the default', optionBrowser)
-	.option('-i, --ios <version>', 'Min version supported in Safari iOS instead the default', optionBrowser)
+	.option('-w, --watch', 'Watches the changes in the css files', optionBrowser)
+	.option('--explorer <version>', 'Min version supported in Internet Explorer instead the default', optionBrowser)
+	.option('--firefox <version>', 'Min version supported in Mozilla Firefox instead the default', optionBrowser)
+	.option('--chrome <version>', 'Min version supported in Google Chrome instead the default', optionBrowser)
+	.option('--safari <version>', 'Min version supported in Safari instead the default', optionBrowser)
+	.option('--opera <version>', 'Min version supported in Opera instead the default', optionBrowser)
+	.option('--android <version>', 'Min version supported in Android instead the default', optionBrowser)
+	.option('--ios <version>', 'Min version supported in Safari iOS instead the default', optionBrowser)
 	.option('--code <style>', 'The code style used to generate the css (default|minify) instead the default')
 	.option('--plugins <plugins>', 'Comma-separated list of plugins instead use the defaults', optionPlugins)
 	.option('--plugins:add <plugins>', 'Comma-separated list of plugins used besides to the defaults', optionPlugins)
@@ -64,6 +65,10 @@ program
 
 program.parse(process.argv);
 
+if (program.args.length === 0) {
+	program.help();
+}
+
 
 //CONVERT
 function convert (input, output, command) {
@@ -71,7 +76,7 @@ function convert (input, output, command) {
 
 	modifyConfig(config, command, function (config) {
 		stylecow.loadPlugins(config.plugins, function (loadedPlugins) {
-			execute(input, output, loadedPlugins, config.support, config.code);
+			execute(input, output, loadedPlugins, config.support, config.code, command.watch);
 		});
 	});
 }
@@ -124,6 +129,10 @@ function execute (input, output, plugins, minSupport, codeStyle, watch) {
 //CONFIG
 
 function defaults (command) {
+	if (program.args.length === 1) {
+		command.help();
+	}
+
 	var config = getConfig();
 
 	if (command.list) {
@@ -281,6 +290,10 @@ function create_manifest (file, command) {
 //PLUGIN
 
 function plugin (command) {
+	if (program.args.length === 1) {
+		command.help();
+	}
+
 	if (command.list) {
 		getInstalledPlugins(function (plugins) {
 			plugins.forEach(function (plugin) {

@@ -1,6 +1,6 @@
 {
 	"support": {
-		"explorer": "9",
+		"explorer": 8,
 		"firefox": 15,
 		"chrome": 25,
 		"safari": "5",

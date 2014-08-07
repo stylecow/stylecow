@@ -6,53 +6,49 @@ var fs = require('fs');
 
 
 program
-	.command('convert <input:output>')
+	.command('convert <input> [<output>]')
 	.description('Convert the css code of a file')
-	.option('-l, --list', 'List all installed plugins')
-	.option('-i, --install <plugin>', 'Installs a new plugin')
-	.option('-u, --uninstall <plugin>', 'Uninstalls a plugin')
+	.option('-e, --explorer <version>', 'Min version supported in Internet Explorer instead the default', optionBrowser)
+	.option('-f, --firefox <version>', 'Min version supported in Mozilla Firefox instead the default', optionBrowser)
+	.option('-c, --chrome <version>', 'Min version supported in Google Chrome instead the default', optionBrowser)
+	.option('-s, --safari <version>', 'Min version supported in Safari instead the default', optionBrowser)
+	.option('-o, --opera <version>', 'Min version supported in Opera instead the default', optionBrowser)
+	.option('-a, --android <version>', 'Min version supported in Android instead the default', optionBrowser)
+	.option('-i, --ios <version>', 'Min version supported in Safari iOS instead the default', optionBrowser)
+	.option('--code <style>', 'The code style used to generate the css (default|minify) instead the default')
+	.option('--plugins <plugins>', 'Comma-separated list of plugins instead use the defaults', optionPlugins)
+	.option('--plugins:add <plugins>', 'Comma-separated list of plugins used besides to the defaults', optionPlugins)
+	.option('--plugins:remove <plugins>', 'Comma-separated list of default plugins that wont be used', optionPlugins)
 	.action(convert);
 
 
 program
 	.command('plugin')
 	.description('Manage the installed plugins')
-	.option('-l, --list', 'List all installed plugins', plugin_list)
-	.option('-i, --install <plugin>', 'Installs a new plugin', plugin_install)
-	.option('-u, --uninstall <plugin>', 'Uninstalls a plugin', plugin_uninstall)
-	.action(function () {});
+	.option('-l, --list', 'List all installed plugins')
+	.option('-i, --install <plugin>', 'Installs a new plugin', optionPlugins)
+	.option('-u, --uninstall <plugin>', 'Uninstalls a plugin', optionPlugins)
+	.action(plugin);
 
 
 program
-	.command('default:plugins')
-	.description('Configure the plugins executed by default')
-	.option('-l, --list', 'List all default plugins', default_plugins_list)
-	.option('-s, --set <plugin>', 'Set a installed plugin as default', default_plugins_set)
-	.option('-u, --unset <plugin>', 'Unset a plugin from defaults', default_plugins_unset)
-	.action(function () {});
-
-
-program
-	.command('default:support')
-	.description('Configure the minimum version support for each browser')
-	.option('-l, --list', 'List the current browser support', default_support_list)
-	.option('-e, --explorer <version>', 'Changes the minimum version supported in Internet Explorer', function (version) { default_support_set('explorer', version); })
-	.option('-f, --firefox <version>', 'Changes the minimum version supported in Mozilla Firefox', function (version) { default_support_set('firefox', version); })
-	.option('-c, --chrome <version>', 'Changes the minimum version supported in Google Chrome', function (version) { default_support_set('chrome', version); })
-	.option('-s, --safari <version>', 'Changes the minimum version supported in Safari', function (version) { default_support_set('safari', version); })
-	.option('-o, --opera <version>', 'Changes the minimum version supported in Opera', function (version) { default_support_set('opera', version); })
-	.option('-a, --android <version>', 'Changes the minimum version supported in Android', function (version) { default_support_set('android', version); })
-	.option('-i, --ios <version>', 'Changes the minimum version supported in Safari iOS', function (version) { default_support_set('ios', version); })
-	.action(function () {});
-
-
-program
-	.command('default:code')
-	.description('Configure the code style used to generate the css')
-	.option('-l, --list', 'List the current code style variables', default_code_list)
-	.option('-s --set <style>', 'Changes the code style used to generate the css (default|minify)', default_code_set)
-	.action(function () {});
-
+	.command('config')
+	.description('Manages the configurations values')
+	.option('-l, --list', 'List all configuration values')
+	.option('-i, --input <file>', 'Load the configuration from a file instead use the default')
+	.option('-o, --output <file>', 'Saves the configuration in a file instead as default')
+	.option('--explorer <version>', 'Changes the min version supported in Internet Explorer', optionBrowser)
+	.option('--firefox <version>', 'Changes the min version supported in Mozilla Firefox', optionBrowser)
+	.option('--chrome <version>', 'Changes the min version supported in Google Chrome', optionBrowser)
+	.option('--safari <version>', 'Changes the min version supported in Safari', optionBrowser)
+	.option('--opera <version>', 'Changes the min version supported in Opera', optionBrowser)
+	.option('--android <version>', 'Changes the min version supported in Android', optionBrowser)
+	.option('--ios <version>', 'Changes the min version supported in Safari iOS', optionBrowser)
+	.option('--code <style>', 'Changes the code style used to generate the css (default|minify)', optionPlugins)
+	.option('--plugins <plugins>', 'Changed the list of plugins used by default', optionPlugins)
+	.option('--plugins:add <plugins>', 'Adds more plugins to be executed by default', optionPlugins)
+	.option('--plugins:remove <plugins>', 'Removes plugins from the defaults', optionPlugins)
+	.action(config);
 
 program.parse(process.argv);
 
@@ -83,153 +79,171 @@ function execute (code, plugins, minSupport, codeStyle, output) {
 }
 
 
+//CONFIG
+
+function config (command) {
+	var config;
+
+	if (command.input) {
+		config = JSON.parse(fs.readFileSync(command.input, 'utf8'));
+	} else {
+		config = getConfig();
+	}
+
+	if (command.list) {
+		console.log('');
+		console.log('BROWSER SUPPORT:');
+
+		for (var browser in config.support) {
+			console.log(browser + ':', config.support[browser]);
+		}
+
+		console.log('');
+		console.log('PLUGINS:');
+
+		if (!config.plugins.length) {
+			console.log('No default plugins');
+		} else {
+			config.plugins.forEach(function (plugin) {
+				console.log('- ' + plugin);
+			});
+		}
+
+		console.log('');
+		console.log('CODE:');
+
+		for (var k in config.code) {
+			console.log(k + ':', '"' + config.code[k].replace('\n', '\\n').replace('\t', '\\t') + '"');
+		}
+
+		return;
+	}
+
+	modifyConfig(config, command, function (config) {
+		if (command.output) {
+			fs.writeFileSync(command.output, JSON.stringify(config, null, '\t'));
+		} else {
+			saveConfig(config);
+		}
+	});
+}
+
+
 
 //PLUGIN
-function plugin_list () {
-	getInstalledPlugins(function (plugins) {
-		plugins.forEach(function (plugin) {
-			console.log('- ' + plugin);
+
+function plugin (command) {
+	if (command.list) {
+		getInstalledPlugins(function (plugins) {
+			plugins.forEach(function (plugin) {
+				console.log('- ' + plugin);
+			});
 		});
-	});
-}
 
-function plugin_install (plugin) {
-	loadNpm(function (npm) {
-		var packageName = stylecow.getPluginPackage(plugin);
+		return;
+	}
 
-		npm.commands.install([packageName], function (err, data) {
-			if (err) {
-				console.error('Error installing the plugin "' + plugin + '"');
-			} else {
-				console.log('The plugin "' + plugin + '" was installed');
-			}
+	if (command.install) {
+		loadNpm(function (npm) {
+			var packages = [];
+
+			command.install.forEach(function (plugin) {
+				packages.push(stylecow.getPluginPackage(plugin));
+
+			});
+
+			npm.commands.install(packages, function (err, data) {
+				if (!err) {
+					console.log('');
+					console.log('Plugins installed successfully!!');
+					console.log('');
+				}
+			});
 		});
-	});
-}
+	}
 
-function plugin_uninstall (plugin) {
-	loadNpm(function (npm) {
-		var packageName = stylecow.getPluginPackage(plugin);
+	if (command.uninstall) {
+		loadNpm(function (npm) {
+			var packages = [];
 
-		npm.commands.uninstall([packageName], function (err, data) {
-			if (err) {
-				console.error('Error uninstalling the plugin "' + plugin + '"');
-			} else {
-				console.log('The plugin "' + plugin + '" was uninstalled');
-			}
-		});
-	});
-}
+			command.uninstall.forEach(function (plugin) {
+				packages.push(stylecow.getPluginPackage(plugin));
 
+			});
 
-// DEFAULT:PLUGINS
-function default_plugins_list () {
-	var plugins = getConfig('plugins', []);
-
-	if (!plugins.length) {
-		console.log('No default plugins');
-	} else {
-		plugins.forEach(function (plugin) {
-			console.log('- ' + plugin);
+			npm.commands.uninstall(packages, function (err, data) {
+				if (!err) {
+					console.log('');
+					console.log('Plugins uninstalled successfully!!');
+					console.log('');
+				}
+			});
 		});
 	}
 }
 
-function default_plugins_set (plugins) {
-	getInstalledPlugins(function (installed) {
-		var defaults = getConfig('plugins', []);
-		var error = false;
 
-		plugins.split(',').forEach(function (plugin) {
-			if (installed.indexOf(plugin) === -1) {
-				console.log("The plugin '" + plugin + "' is not installed. Use `stylecow plugin install " + plugin + "` to install");
-				error = true;
-			} else if (defaults.indexOf(plugin) === -1) {
-				defaults.push(plugin);
-			}
-		});
 
-		if (error) {
-			return false;
+
+// Misc
+
+function modifyConfig (config, command, callback) {
+	if (command.code) {
+		config.code = stylecow.getCodeStyle(command.code);
+
+		if (!config.code) {
+			console.error('The code style ' + command.code + ' is not valid');
 		}
+	}
 
-		saveConfig('plugins', defaults);
-
-		console.log("Default plugins updated:");
-
-		default_plugins_list();
-	});
-}
-
-function default_plugins_unset (plugins) {
-	var defaults = getConfig('plugins', []);
-
-	plugins.split(',').forEach(function (plugin) {
-		var index = defaults.indexOf(plugin);
-
-		if (index === -1) {
-			console.error("The plugin '" + plugin + "' is not default");
-		} else {
-			defaults.splice(index, 1);
+	['explorer','firefox','chrome','safari','opera','android','ios'].forEach(function (browser) {
+		if (command[browser]) {
+			config.support[browser] = command[browser];
 		}
 	});
 
-	saveConfig('plugins', defaults);
-
-	console.log("Default plugins updated:");
-
-	default_plugins_list();
-}
-
-
-// DEFAULT:SUPPORT
-function default_support_list () {
-	var support = getConfig('support');
-
-	for (var browser in support) {
-		console.log(browser + ':', support[browser]);
+	if (command.plugins) {
+		config.plugins = command.plugins;
 	}
-}
 
-function default_support_set (name, version) {
-	var support = getConfig('support');
+	if (command['plugins:remove']) {
+		command['plugins:remove'].forEach(function (plugin) {
+			var index = plugins.indexOf(plugin);
 
-	support[name] = version;
-
-	saveConfig('support', support);
-
-	console.log('The minimal version supported in ' + name + ' is ' + version);
-}
-
-
-
-// DEFAULT:CODE
-function default_code_list () {
-	var code = getConfig('code');
-
-	for (var k in code) {
-		console.log(k + ':', '"' + code[k].replace('\n', '\\n').replace('\t', '\\t') + '"');
+			if (index !== -1) {
+				config.plugins.splice(index, 1);
+			}
+		});
 	}
-}
 
-function default_code_set (name) {
-	var code = stylecow.getCodeStyle(name);
+	if (command['plugins:add']) {
+		getInstalledPlugins(function (installed) {
+			command['plugins:add'].forEach(function (plugin) {
+				if (installed.indexOf(plugin) === -1) {
+					console.error("The plugin '" + plugin + "' is not installed. Use `stylecow plugin install " + plugin + "` to install");
+				} else if (config.plugins.indexOf(plugin) === -1) {
+					config.plugins.push(plugin);
+				}
+			});
 
-	if (!code) {
-		console.error('The code style ' + name + ' is not valid');
+			callback(config);
+		});
 	} else {
-		saveConfig('code', code);
-		console.log('The new code style is "' + name + '"');
-		console.log('');
-		default_code_list();
+		callback(config);
 	}
-
 }
 
+function optionBrowser (value) {
+	if (value === 'false') {
+		return false;
+	}
 
+	return parseFloat(value, 10);
+}
 
-
-//Functions
+function optionPlugins (value) {
+	return value.split(',');
+}
 
 function loadNpm (callback) {
 	var npm = require('npm');
@@ -256,8 +270,8 @@ function getInstalledPlugins (callback) {
 	});
 }
 
-function getConfig (file, def) {
-	file = __dirname + '/../config/' + file + '.json';
+function getConfig () {
+	file = __dirname + '/../config/default.json';
 
 	if (!fs.existsSync(file)) {
 		return def;
@@ -266,8 +280,8 @@ function getConfig (file, def) {
 	return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 
-function saveConfig (file, value) {
-	file = __dirname + '/../config/' + file + '.json';
+function saveConfig (value) {
+	file = __dirname + '/../config/default.json';
 
-	fs.writeFileSync(file, JSON.stringify(value));
+	fs.writeFileSync(file, JSON.stringify(value, null, '\t'));
 }

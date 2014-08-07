@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "commander": "*",
+    "inquirer": "*",
+    "cli-color": "*",
     "npm": "*"
   },
   "main": "./lib/index",

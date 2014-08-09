@@ -5,6 +5,7 @@ var inquirer = require('inquirer');
 var clc = require('cli-color');
 var stylecow = require('../lib');
 var fs = require('fs');
+var path = require('path');
 
 var header = clc.cyan.bold;
 var value = clc.yellow;
@@ -15,6 +16,7 @@ var configFile = (process.env.HOME || process.env.HOMEPATH || process.env.USERPR
 var packageInfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
 
 program.version(packageInfo.version);
+
 
 program
 	.command('convert <input> [<output>]')
@@ -38,8 +40,9 @@ program
 	.command('plugins')
 	.description('Manage the installed plugins')
 	.option('-l, --list', 'List all installed plugins')
-	.option('-i, --install <plugin>', 'Installs a new plugin', optionPlugins)
-	.option('-u, --uninstall <plugin>', 'Uninstalls a plugin', optionPlugins)
+	.option('-i, --install <plugin>', 'Installs new plugins', optionPlugins)
+	.option('-u, --uninstall <plugin>', 'Uninstalls plugins', optionPlugins)
+	.option('-s, --search <plugin>', 'Search a specific plugin')
 	.action(plugins);
 
 
@@ -67,7 +70,6 @@ program
 	.action(create_manifest);
 
 
-
 //CONVERT
 function convert (input, output, command) {
 	var config = getConfig(true);
@@ -78,6 +80,7 @@ function convert (input, output, command) {
 		});
 	});
 }
+
 
 function execute (input, output, plugins, minSupport, codeStyle, watch) {
 	var code = stylecow.readFile(input);
@@ -165,6 +168,7 @@ function defaults (command) {
 	});
 }
 
+
 function create_manifest (file, command) {
 	var config = getConfig();
 
@@ -234,7 +238,7 @@ function create_manifest (file, command) {
 			type: "list",
 			name: "code",
 			message: "Code style used to generate the css",
-			choices: ['default', 'minify'],
+			choices: ['default', 'normal', 'minify'],
 			default: 'default'
 		},
 		{
@@ -262,8 +266,13 @@ function create_manifest (file, command) {
 			manifest.support[browser] = optionBrowser(answers[browser]);
 		});
 
-		manifest.code = stylecow.getCodeStyle(answers.code);
-		manifest.plugins = answers.code;
+		if (answers.code === 'default') {
+			manifest.code = config.code;
+		} else {
+			manifest.code = stylecow.getCodeStyle(answers.code);
+		}
+
+		manifest.plugins = answers.plugins;
 
 		var json = JSON.stringify(manifest, null, '\t');
 
@@ -286,7 +295,6 @@ function create_manifest (file, command) {
 }
 
 
-
 //PLUGIN
 
 function plugins (command) {
@@ -302,6 +310,24 @@ function plugins (command) {
 		} else {
 			console.log('No installed plugins');
 		}
+
+		return;
+	}
+
+	if (command.search) {
+		loadNpm(function (npm) {
+			npm.commands.search([stylecow.pluginPrefix, command.search], function (err, data) {
+				/*var i, plugin;
+
+				for (i in data) {
+					plugin = data[i];
+					console.log(value(stylecow.getPluginName(plugin.name)));
+					console.log(plugin.description);
+					console.log(plugin.version, plugin.author, plugin.date);
+					console.log('')
+				}*/
+			});
+		});
 
 		return;
 	}
@@ -326,8 +352,6 @@ function plugins (command) {
 
 	saveConfig(config);
 }
-
-
 
 
 // Misc
@@ -420,7 +444,9 @@ function optionPlugins (value) {
 function loadNpm (callback) {
 	var npm = require('npm');
 
-	npm.load(function (err) {
+	npm.load({
+		prefix: path.dirname(__dirname)
+	}, function (err) {
 		if (err) {
 			console.log(error(err));
 			return;
@@ -463,11 +489,7 @@ function getConfig (asManifest) {
 		return JSON.parse(fs.readFileSync(configFile, 'utf8'));
 	}
 
-	return {
-		"support": stylecow.getDefaultMinSupport(),
-		"plugins": [],
-		"code": stylecow.getCodeStyle('default')
-	};
+	return stylecow.getDefaults();
 }
 
 function saveConfig (value) {

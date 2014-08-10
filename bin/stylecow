@@ -6,6 +6,7 @@ var clc = require('cli-color');
 var stylecow = require('../lib');
 var fs = require('fs');
 var path = require('path');
+var glob = require('glob');
 
 var header = clc.cyan.bold;
 var value = clc.yellow;
@@ -20,8 +21,9 @@ program.version(packageInfo.version);
 
 program
 	.command('convert <input> [<output>]')
+	.usage('<input> [<output>] [options]')
 	.description('Convert the css code of a file')
-	.option('-w, --watch', 'Watches the changes in the css files', optionBrowser)
+	.option('-w, --watch', 'Watches the changes in the css files')
 	.option('--explorer <version>', 'Min version supported in Internet Explorer instead the default', optionBrowser)
 	.option('--firefox <version>', 'Min version supported in Mozilla Firefox instead the default', optionBrowser)
 	.option('--chrome <version>', 'Min version supported in Google Chrome instead the default', optionBrowser)
@@ -41,7 +43,8 @@ program
 	.description('Manage the installed plugins')
 	.option('-l, --list', 'List all installed plugins')
 	.option('-i, --install <plugin>', 'Installs new plugins', optionPlugins)
-	.option('-u, --uninstall <plugin>', 'Uninstalls plugins', optionPlugins)
+	.option('-r, --uninstall <plugin>', 'Uninstalls plugins', optionPlugins)
+	.option('-u, --update', 'Update all installed plugins to the latest version')
 	.option('-s, --search <plugin>', 'Search a specific plugin')
 	.action(plugins);
 
@@ -66,6 +69,7 @@ program
 
 program
 	.command('create-manifest <file>')
+	.usage('<file>')
 	.description('Creates a manifest file for a css conversion')
 	.action(create_manifest);
 
@@ -76,7 +80,28 @@ function convert (input, output, command) {
 
 	modifyConfig(config, command, function (config) {
 		stylecow.loadPlugins(config.plugins, function (loadedPlugins) {
-			execute(input, output, loadedPlugins, config.support, config.code, command.watch);
+
+			if (!fs.existsSync(input)) {
+				console.log(error('The path "' + input + '" does not exists'));
+				return;
+			}
+
+			if (fs.lstatSync(input).isFile()) {
+				return execute(input, output, loadedPlugins, config.support, config.code, command.watch);
+			}
+
+			if (fs.lstatSync(input).isDirectory()) {
+				return glob('**/*.css', {
+						cwd: path.resolve(input)
+					}, function (er, files) {
+						files.forEach(function (file) {
+							var finput = path.join(input, file);
+							var foutput = output ? path.join(output, file) : null;
+
+							execute(finput, foutput, loadedPlugins, config.support, config.code, command.watch);
+						});
+				});
+			}
 		});
 	});
 }
@@ -87,8 +112,14 @@ function execute (input, output, plugins, minSupport, codeStyle, watch) {
 	code.executePlugins(plugins, minSupport);
 
 	if (output) {
+		var dir = path.dirname(output);
+
+		if (!fs.existsSync(dir)) {
+			fs.mkdirSync(dir);
+		}
+
 		fs.writeFileSync(output, code.toCode(codeStyle));
-		console.log(success('CSS saved in "' + output + '"'));
+		console.log(success('Generated "' + output + '"'));
 	} else {
 		console.log(code.toCode(codeStyle));
 	}
@@ -350,6 +381,14 @@ function plugins (command) {
 		});
 	}
 
+	if (command.update) {
+		updatePlugins(stylecow.getInstalledPlugins(), function () {
+			console.log('');
+			console.log(success('Plugins updated successfully!!'));
+			console.log('');
+		});
+	}
+
 	saveConfig(config);
 }
 
@@ -393,26 +432,25 @@ function modifyConfig (config, command, callback) {
 		});
 	}
 
-	var notInstalled = [];
-
 	if (command['plugins:add']) {
-		var installed = stylecow.getInstalledPlugins();
-
 		command['plugins:add'].forEach(function (plugin) {
-			if (installed.indexOf(plugin) === -1) {
-				notInstalled.push(plugin);
-			} else if (config.plugins.indexOf(plugin) === -1) {
+			if (config.plugins.indexOf(plugin) === -1) {
 				config.plugins.push(plugin);
 			}
 		});
 	}
+
+	var installed = stylecow.getInstalledPlugins();
+	var notInstalled = config.plugins.filter(function (plugin) {
+		return installed.indexOf(plugin) === -1;
+	});
 
 	if (notInstalled.length) {
 		inquirer.prompt([
 			{
 				type: "confirm",
 				name: "install",
-				message: "The following required plugins are not installed. Do you want install now? \n" + notInstalled.join(', ')
+				message: "The following plugins are not installed. Do you want install them now? \n" + value(notInstalled.join(', '))
 			}
 		], function (answers) {
 			if (answers.install) {
@@ -484,6 +522,20 @@ function uninstallPlugins (plugins, callback) {
 	});
 }
 
+function updatePlugins (plugins, callback) {
+	loadNpm(function (npm) {
+		var packages = plugins.map(function (plugin) {
+			return stylecow.getPluginPackage(plugin);
+		});
+
+		npm.commands.update(packages, function (err, data) {
+			if (!err) {
+				callback();
+			}
+		});
+	});
+}
+
 function getConfig (asManifest) {
 	if (fs.existsSync(configFile)) {
 		return JSON.parse(fs.readFileSync(configFile, 'utf8'));
@@ -500,6 +552,4 @@ program.parse(process.argv);
 
 if (program.args.length === 0) {
 	program.help();
-} else if (['convert', 'plugins', 'defaults', 'create-manifest'].indexOf(program.args[0]._name) === -1) {
-	console.log(error('Command not valid. Use -h or --help for usage information'));
 }

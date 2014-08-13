@@ -21,39 +21,60 @@ program.version(packageInfo.version);
 
 program
 	.command('convert <input> [<output>]')
-	.description('Convert the css code from a file or directory')
-	.option('-m, --manifest <file>', 'Use a specific manifest file instead the default')
+	.description('Converts the css code from a file or directory')
+	.option('-m, --manifest <file>', 'Uses a specific manifest file instead the default one')
 	.option('-w, --watch', 'Watches the changes in the css files')
+	.option('-c, --cwd <dir>', 'Changes the current working directory', process.cwd())
 	.action(convert);
 
 
 program
 	.command('plugins')
-	.description('Manage the installed plugins')
-	.option('-l, --list', 'List all installed plugins')
+	.description('Manages the installed plugins')
+	.option('-l, --installed', 'List all installed plugins')
 	.option('-i, --install <plugin>', 'Installs new plugins', function (value) { return value.split(','); })
 	.option('-u, --uninstall <plugin>', 'Uninstalls plugins', function (value) { return value.split(','); })
-	.option('-p, --update', 'Update all installed plugins to the latest version')
+	.option('-p, --update', 'Updates all installed plugins to the latest version')
 	.option('-a, --all', 'List all plugins')
 	.action(plugins);
 
 
 program
 	.command('manifest')
-	.description('Create manifest files with specific configuration to reuse')
-	.option('-d, --default', 'Show the default manifest file')
+	.description('Manages manifest files with specific configuration to reuse them')
+	.option('-d, --default', 'Shows the default manifest file')
 	.option('-e, --edit-default', 'Edit the default manifest file')
-	.option('-c, --create <file>', 'Create a new manifest file')
+	.option('-c, --create <file>', 'Creates a new manifest file')
+	.option('-m, --edit <file>', 'Edit a custom manifest file')
 	.action(manifest);
 
 
 //CONVERT
 function convert (input, output, command) {
-	var config = getConfig(command.manifest);
+	var config;
+
+	if (command.manifest) {
+		var manifest = path.resolve(command.cwd, command.manifest);
+
+		config = getConfig(manifest);
+
+		if (!config) {
+			console.log(error('The manifest file "' + manifest + '" does not exist'));
+			return;
+		}
+	} else {
+		config = getConfig();
+	}
+
+	input = path.resolve(command.cwd, input);
+
+	if (output) {
+		output = path.resolve(command.cwd, output);
+	}
 
 	preparePlugins(config.plugins, function (loadedPlugins) {
 		if (!fs.existsSync(input)) {
-			console.log(error('The path "' + input + '" does not exists'));
+			console.log(error('The path "' + input + '" does not exist'));
 			return;
 		}
 
@@ -131,7 +152,7 @@ function execute (input, output, plugins, minSupport, codeStyle, watch) {
 function plugins (command) {
 	showHelpOnEmpty('plugins', command);
 
-	if (command.list) {
+	if (command.installed) {
 		var plugins = stylecow.getInstalledPlugins();
 
 		if (plugins.length) {
@@ -206,6 +227,16 @@ function manifest (command) {
 			saveConfig(config, command.create);
 
 			console.log(success('Manifest file created!'));
+		});
+
+		return;
+	}
+
+	if (command.edit) {
+		modifyManifest(getConfig(command.edit), function (config) {
+			saveConfig(config, command.edit);
+
+			console.log(success('Manifest file saved!'));
 		});
 
 		return;

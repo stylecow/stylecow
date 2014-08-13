@@ -20,3 +20,9 @@ assert.deepEqual(r, ['div.ola ', 'font-size: 3em; a {color: blue;}}']);
 
 r = utils.explodeTrim(',', 'one');
 assert.deepEqual(r, ['one']);
+
+r = utils.parseSelector('div.ola:not(.active)>img');
+assert.deepEqual(r, ['div', '.ola', ':not(.active)', '>', 'img']);
+
+r = utils.parseSelector(':not(.active)');
+assert.deepEqual(r, [':not(.active)']);

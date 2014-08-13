@@ -13,7 +13,7 @@ var value = clc.yellow;
 var error = clc.red.bold;
 var success = clc.green.bold;
 
-var configFile = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + '/.stylecow_config.json';
+var configFile = process.env.USERPROFILE + '/.stylecow_config.json';
 var packageInfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
 
 program.version(packageInfo.version);
@@ -21,8 +21,7 @@ program.version(packageInfo.version);
 
 program
 	.command('convert <input> [<output>]')
-	.usage('<input> [<output>] [options]')
-	.description('Convert the css code of a file')
+	.description('Convert the css code from a file or directory')
 	.option('-m, --manifest <file>', 'Use a specific manifest file instead the default')
 	.option('-w, --watch', 'Watches the changes in the css files')
 	.action(convert);
@@ -421,7 +420,7 @@ function getConfig (file) {
 		return JSON.parse(fs.readFileSync(f, 'utf8'));
 	}
 
-	if (!f) {
+	if (!file) {
 		return stylecow.getDefaults();
 	}
 }

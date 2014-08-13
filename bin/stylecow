@@ -396,7 +396,7 @@ function modifyManifest (config, callback) {
 
 
 function allPlugins (callback) {
-	var cache = 'all-plugins.json';
+	var cache = path.dirname(__dirname) + '/all-plugins.json';
 
 	if (fs.existsSync(cache)) {
 		var stat = fs.lstatSync(cache);

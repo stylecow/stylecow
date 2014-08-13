@@ -131,20 +131,22 @@ function execute (input, output, plugins, minSupport, codeStyle, watch) {
 			.forEach(function (file) {
 				files[file] = null;
 			});
-		
-		for (var file in files) {
+
+		files = Object.getOwnPropertyNames(files);
+
+		files.forEach(function (file) {
 			fs.watchFile(file, {persistent: true, interval: 2000}, function (curr, prev) {
 				if (curr.mtime !== prev.mtime) {
 					console.log(value('changed detected in "' + file + '"'));
 					
-					for (var f in files) {
+					files.forEach(function (f) {
 						fs.unwatchFile(f);
-					}
+					});
 
 					execute(input, output, plugins, minSupport, codeStyle, watch);
 				}
 			});
-		}
+		});
 	}
 }
 

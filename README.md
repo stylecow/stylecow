@@ -18,20 +18,20 @@ $ stylecow convert input.css output.css
 Available plugins:
 ------------------
 
-Support for CSS incoming features:
+### Support for CSS incoming features:
 
 * [color](https://github.com/stylecow/stylecow-plugin-color)
 * [matches](https://github.com/stylecow/stylecow-plugin-matches)
 * [nested-rules](https://github.com/stylecow/stylecow-plugin-nested-rules)
 * [variables](https://github.com/stylecow/stylecow-plugin-variables)
 
-Utilities:
+### Utilities:
 
 * [import](https://github.com/stylecow/stylecow-plugin-import)
 * [source-comment](https://github.com/stylecow/stylecow-plugin-source-comment)
 
 
-Apply vendor prefixes, fixes well know bugs:
+### Apply vendor prefixes, fixes well know bugs:
 
 * [animation](https://github.com/stylecow/stylecow-plugin-animation)
 * [appearance](https://github.com/stylecow/stylecow-plugin-appearance)
@@ -66,11 +66,12 @@ Apply vendor prefixes, fixes well know bugs:
 * [user-select](https://github.com/stylecow/stylecow-plugin-user-select)
 * [vmin](https://github.com/stylecow/stylecow-plugin-vmin)
 
-Emulate some features in old explorers using ms-filters:
+### Emulate some features in old explorers using ms-filters:
 
 * [msfilter-background-alpha](https://github.com/stylecow/stylecow-plugin-msfilter-background-alpha)
 * [msfilter-linear-gradient](https://github.com/stylecow/stylecow-plugin-msfilter-linear-gradient)
 * [msfilter-transform](https://github.com/stylecow/stylecow-plugin-msfilter-transform)
 
-* Created by Oscar Otero <http://oscarotero.com> / <oom@oscarotero.com>
-* License: MIT
+Created by Oscar Otero <http://oscarotero.com> / <oom@oscarotero.com>
+
+License: MIT

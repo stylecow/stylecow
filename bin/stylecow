@@ -6,7 +6,6 @@ var clc = require('cli-color');
 var stylecow = require('../lib');
 var fs = require('fs');
 var path = require('path');
-var glob = require('glob');
 
 var header = clc.cyan.bold;
 var value = clc.yellow;
@@ -35,6 +34,7 @@ program
 	.option('-i, --install <plugin>', 'Installs new plugins', function (value) { return value.split(','); })
 	.option('-u, --uninstall <plugin>', 'Uninstalls plugins', function (value) { return value.split(','); })
 	.option('-p, --update', 'Updates all installed plugins to the latest version')
+	.option('-t, --test <plugin>', 'Test a plugin')
 	.option('-a, --all', 'List all plugins')
 	.action(plugins);
 
@@ -83,6 +83,8 @@ function convert (input, output, command) {
 		}
 
 		if (fs.lstatSync(input).isDirectory()) {
+			var glob = require('glob');
+
 			return glob('**/*.css', {
 					cwd: path.resolve(input)
 				}, function (er, files) {
@@ -200,6 +202,38 @@ function plugins (command) {
 				console.log(plugin.description);
 				console.log('')
 			}
+		});
+	}
+
+	if (command.test) {
+		var dir = path.resolve(command.test);
+
+		if (!fs.existsSync(dir + '/package.json')) {
+			console.log(error('package.json file not found here'));
+			return;
+		}
+
+		if (!fs.existsSync(dir + '/tests')) {
+			console.log(error('No tests directory not found here'));
+			return;
+		}
+
+		var plugin = require(path.resolve(command.test, JSON.parse(fs.readFileSync(dir + '/package.json', 'utf8')).main));
+		var glob = require('glob');
+
+		glob('tests/{1..9}.css', {
+			cwd: dir
+		}, function (er, files) {
+			files.forEach(function (file) {
+				var expected = file.replace('.css', '.expected.css');
+
+				if (!fs.existsSync(dir + '/' + expected)) {
+					console.log(error(expected + 'file not found'));
+					return;
+				}
+
+				stylecow.testPlugin(dir + '/' + file, dir + '/' + expected, plugin);
+			});
 		});
 	}
 }

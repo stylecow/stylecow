@@ -187,6 +187,13 @@ function plugins (command) {
 	}
 
 	if (command.update) {
+		var plugins = stylecow.getInstalledPlugins();
+
+		if (!plugins.length) {
+			console.log('No installed plugins');
+			return;
+		}
+
 		stylecow.managePlugins('update', stylecow.getInstalledPlugins(), function () {
 			console.log('');
 			console.log(success('Plugins updated successfully!!'));
@@ -335,16 +342,12 @@ function preparePlugins (plugins, callback) {
 				stylecow.managePlugins('install', notInstalled, function () {
 					console.log(success('Plugins installed!'));
 
-					stylecow.loadPlugins(plugins, function (loadedPlugins) {
-						callback(loadedPlugins);
-					});
+					callback(stylecow.preparePlugins(plugins));
 				});
 			}
 		});
 	} else {
-		stylecow.loadPlugins(plugins, function (loadedPlugins) {
-			callback(loadedPlugins);
-		});
+		callback(stylecow.preparePlugins(plugins));
 	}
 }
 

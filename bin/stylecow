@@ -331,20 +331,12 @@ function preparePlugins (plugins, callback) {
 	});
 
 	if (notInstalled.length) {
-		inquirer.prompt([
-			{
-				type: "confirm",
-				name: "install",
-				message: "The following plugins will be installed. Continue? \n" + value(notInstalled.join(', '))
-			}
-		], function (answers) {
-			if (answers.install) {
-				stylecow.managePlugins('install', notInstalled, function () {
-					console.log(success('Plugins installed!'));
+		console.log("Installing the following required plugins:\n" + value(notInstalled.join(', ')));
 
-					callback(stylecow.preparePlugins(plugins));
-				});
-			}
+		stylecow.managePlugins('install', notInstalled, function () {
+			console.log(success('Plugins installed!'));
+
+			callback(stylecow.preparePlugins(plugins));
 		});
 	} else {
 		callback(stylecow.preparePlugins(plugins));
@@ -476,6 +468,8 @@ function allPlugins (callback) {
 			return callback(JSON.parse(fs.readFileSync(cache, 'utf8')));
 		}
 	}
+
+	console.log("Loading all available plugins");
 
 	stylecow.getAllPlugins(function (all) {
 		fs.writeFileSync(cache, JSON.stringify(all, null, '\t'));

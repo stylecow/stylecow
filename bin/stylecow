@@ -33,9 +33,9 @@ program
 	.option('-l, --installed', 'List all installed plugins')
 	.option('-i, --install <plugin>', 'Installs new plugins', function (value) { return value.split(','); })
 	.option('-u, --uninstall <plugin>', 'Uninstalls plugins', function (value) { return value.split(','); })
-	.option('-p, --update', 'Updates all installed plugins to the latest version')
+	.option('-c, --clean', 'Uninstalls all plugins')
 	.option('-t, --test <plugin>', 'Test a plugin')
-	.option('-a, --all', 'List all plugins')
+	.option('-a, --all', 'Search for all available plugins in npm')
 	.action(plugins);
 
 
@@ -186,7 +186,7 @@ function plugins (command) {
 		});
 	}
 
-	if (command.update) {
+	if (command.clean) {
 		var plugins = stylecow.getInstalledPlugins();
 
 		if (!plugins.length) {
@@ -194,9 +194,9 @@ function plugins (command) {
 			return;
 		}
 
-		stylecow.managePlugins('update', stylecow.getInstalledPlugins(), function () {
+		stylecow.managePlugins('uninstall', plugins, function () {
 			console.log('');
-			console.log(success('Plugins updated successfully!!'));
+			console.log(success('All plugins removed successfully!!'));
 			console.log('');
 		});
 	}

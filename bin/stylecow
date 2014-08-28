@@ -7,39 +7,44 @@ var fs = require('fs');
 var path = require('path');
 
 var configFile = process.env.USERPROFILE + '/.stylecow_config.json';
-var packageInfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
 
-program.version(packageInfo.version);
+program.version(require('../package.json').version);
 
 
 program
 	.command('convert <input> [<output>]')
-	.description('Converts the css code from a file or directory')
-	.option('-m, --manifest <file>', 'Uses a specific manifest file instead the default one')
-	.option('-w, --watch', 'Watches the changes in the css files')
-	.option('-c, --cwd <dir>', 'Changes the current working directory', process.cwd())
-	.action(convert);
+	.description('converts the css code from a file or directory')
+	.option('-m, --manifest <file>', 'uses a specific manifest file instead the default one')
+	.option('-w, --watch', 'watches the changes in the css files')
+	.option('-c, --cwd <dir>', 'changes the current working directory', process.cwd())
+	.action(convert)
+	.on('--help', function () {
+		console.log('  Example:');
+		console.log('');
+		console.log('  $ stylecow convert input.css output.css --manifest my-config.json');
+		console.log('');
+	});
 
 
 program
 	.command('plugins')
-	.description('Manages the installed plugins')
-	.option('-l, --installed', 'List all installed plugins')
-	.option('-i, --install <plugin>', 'Installs new plugins', function (value) { return value.split(','); })
-	.option('-u, --uninstall <plugin>', 'Uninstalls plugins', function (value) { return value.split(','); })
-	.option('-c, --clean', 'Uninstalls all plugins')
-	.option('-t, --test <plugin>', 'Test a plugin')
-	.option('-a, --all', 'Search for all available plugins in npm')
+	.description('manages the installed plugins')
+	.option('-l, --installed', 'list all installed plugins')
+	.option('-i, --install <plugin>', 'installs new plugins', function (value) { return value.split(','); })
+	.option('-u, --uninstall <plugin>', 'uninstalls plugins', function (value) { return value.split(','); })
+	.option('-c, --uninstall-all', 'uninstalls all plugins')
+	.option('-t, --test <plugin>', 'test a plugin')
+	.option('-a, --all', 'search for all available plugins in npm')
 	.action(plugins);
 
 
 program
 	.command('manifest')
-	.description('Manages manifest files with specific configuration to reuse them')
-	.option('-d, --default', 'Shows the default manifest file')
-	.option('-e, --edit-default', 'Edit the default manifest file')
-	.option('-c, --create <file>', 'Creates a new manifest file')
-	.option('-m, --edit <file>', 'Edit a custom manifest file')
+	.description('manages manifest files with specific configuration to reuse them')
+	.option('-d, --default', 'shows the default manifest file')
+	.option('-e, --edit-default', 'edit the default manifest file')
+	.option('-c, --create <file>', 'creates a new manifest file')
+	.option('-m, --edit <file>', 'edit a custom manifest file')
 	.action(manifest);
 
 
@@ -196,7 +201,7 @@ function plugins (command) {
 		});
 	}
 
-	if (command.clean) {
+	if (command.uninstallAll) {
 		var plugins = stylecow.getInstalledPlugins();
 
 		if (!plugins.length) {
@@ -242,7 +247,7 @@ function plugins (command) {
 			return;
 		}
 
-		var plugin = require(path.resolve(command.test, JSON.parse(fs.readFileSync(dir + '/package.json', 'utf8')).main));
+		var plugin = stylecow.preparePlugin(require(path.resolve(command.test, require(dir + '/package.json', 'utf8').main)));
 		var glob = require('glob');
 
 		glob('tests/{1..9}.css', {
@@ -258,27 +263,23 @@ function plugins (command) {
 					return;
 				}
 
-				var testPlugins = [plugin];
 				var manifest = file.replace('.css', '.json');
 
 				if (fs.existsSync(dir + '/' + manifest)) {
 					manifest = getConfig(dir + '/' + manifest);
 
+					var support = manifest.support || {};
+
 					if (manifest.plugins) {
 						preparePlugins(manifest.plugins, function (plugins) {
-							plugins = plugins.push(plu);
-							
-							stylecow.testPlugins(dir + '/' + file, dir + '/' + expected, plugins);
+							plugins.push(plugin);
+
+							testPlugins(dir + '/' + file, dir + '/' + expected, plugins, support);
 						});
 					}
+				} else {
+					testPlugins(dir + '/' + file, dir + '/' + expected, [plugin], {});
 				}
-
-				preparePlugins(testPlugins, function (plugins) {
-					stylecow.testPlugins(dir + '/' + file, dir + '/' + expected, plugins);
-				});
-
-				testPlugins = stylecow.preparePlugins(testPlugins);
-
 			});
 		});
 	}
@@ -525,7 +526,7 @@ function allPlugins (callback) {
 		var diff = (new Date()).getTime() - stat.mtime.getTime();
 
 		if (diff < 3600000) { //1 hour
-			return callback(JSON.parse(fs.readFileSync(cache, 'utf8')));
+			return callback(require(cache));
 		}
 	}
 
@@ -539,11 +540,46 @@ function allPlugins (callback) {
 	});
 }
 
+function testPlugins (testFile, expectedFile, plugins, support) {
+	var code = fs.readFileSync(testFile, 'utf8');
+	var css = stylecow.create(code);
+	var expected = fs.readFileSync(expectedFile, 'utf8');
+
+	css.executePlugins(plugins, support);
+
+	var string = css.toString();
+	var assert = require('assert');
+
+	try {
+		assert.strictEqual(string.replace(/\r/g, '').trim(), expected.replace(/\r/g, '').trim());
+		console.log('');
+		console.log('  Test passed successfully: `' + testFile + '`');
+		console.log('');
+	} catch (exception) {
+		console.log('');
+		console.log('ORIGINAL CODE: `' + testFile + '`');
+		console.log('------------------------------');
+		console.log('');
+		console.log(code);
+		console.log('');
+		console.log('MUST BECOME TO: `' + expectedFile + '`');
+		console.log('------------------------------');
+		console.log('');
+		console.log(expected);
+		console.log('');
+		console.log('BUT IT IS:');
+		console.log('------------------------------');
+		console.log('');
+		console.log(string);
+		console.log('');
+	}
+}
+
 function getConfig (file) {
 	var f = file || configFile;
 
 	if (fs.existsSync(f)) {
-		return JSON.parse(fs.readFileSync(f, 'utf8'));
+		return require(f);
 	}
 
 	if (!file) {

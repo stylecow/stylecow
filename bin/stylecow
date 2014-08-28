@@ -258,7 +258,27 @@ function plugins (command) {
 					return;
 				}
 
-				stylecow.testPlugin(dir + '/' + file, dir + '/' + expected, plugin);
+				var testPlugins = [plugin];
+				var manifest = file.replace('.css', '.json');
+
+				if (fs.existsSync(dir + '/' + manifest)) {
+					manifest = getConfig(dir + '/' + manifest);
+
+					if (manifest.plugins) {
+						preparePlugins(manifest.plugins, function (plugins) {
+							plugins = plugins.push(plu);
+							
+							stylecow.testPlugins(dir + '/' + file, dir + '/' + expected, plugins);
+						});
+					}
+				}
+
+				preparePlugins(testPlugins, function (plugins) {
+					stylecow.testPlugins(dir + '/' + file, dir + '/' + expected, plugins);
+				});
+
+				testPlugins = stylecow.preparePlugins(testPlugins);
+
 			});
 		});
 	}

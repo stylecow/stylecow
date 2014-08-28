@@ -12,7 +12,6 @@
   "dependencies": {
     "commander": "*",
     "inquirer": "*",
-    "cli-color": "*",
     "glob": "*",
     "npm": "*"
   },

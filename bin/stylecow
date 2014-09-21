@@ -104,7 +104,7 @@ function convert (input, output, command) {
 
 function execute (input, output, plugins, minSupport, codeStyle, watch) {
 	var code = stylecow.readFile(input);
-	code.executePlugins(plugins, minSupport);
+	code.convert(plugins, minSupport);
 
 	if (output) {
 		var dir = path.dirname(output);
@@ -214,7 +214,7 @@ function plugins (command) {
 			for (i in data) {
 				plugin = data[i];
 				console.log('')
-				console.log(stylecow.getPluginName(plugin.name));
+				console.log(plugin.name);
 				console.log(plugin.description);
 				console.log('')
 			}
@@ -238,7 +238,7 @@ function plugins (command) {
 			return;
 		}
 
-		var plugin = stylecow.preparePlugin(require(path.resolve(command.test, require(dir + '/package.json', 'utf8').main)));
+		var plugin = require(path.resolve(command.test, require(dir + '/package.json', 'utf8').main));
 		var glob = require('glob');
 
 		glob('tests/{1..9}.css', {
@@ -383,10 +383,10 @@ function preparePlugins (plugins, callback) {
 			console.log('Plugins installed!');
 			console.log('');
 
-			callback(stylecow.preparePlugins(plugins));
+			callback(plugins);
 		});
 	} else {
-		callback(stylecow.preparePlugins(plugins));
+		callback(plugins);
 	}
 }
 
@@ -441,7 +441,7 @@ function modifyManifest (config, callback) {
 				type: "list",
 				name: "code",
 				message: "Code style used to generate the css",
-				choices: ['default', 'normal', 'minify'],
+				choices: ['default'].concat(Object.keys(stylecow.config.codeStyles)),
 				default: 'default'
 			},
 			{
@@ -479,7 +479,7 @@ function modifyManifest (config, callback) {
 			if (answers.code === 'default') {
 				manifest.code = config.code;
 			} else {
-				manifest.code = stylecow.getCodeStyle(answers.code);
+				manifest.code = stylecow.config.codeStyles[answers.code];
 			}
 
 			manifest.plugins = answers.plugins;

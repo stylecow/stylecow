@@ -6,105 +6,77 @@ var stylecow = require('../lib');
 var fs = require('fs');
 var path = require('path');
 
-var configFile = process.env.USERPROFILE + '/.stylecow_config.json';
-
 program.version(require('../package.json').version);
 
 
-program
-	.command('convert <input> [<output>]')
-	.description('converts the css code from a file or directory')
-	.option('-m, --manifest <file>', 'uses a specific manifest file instead the default one')
-	.option('-w, --watch', 'watches the changes in the css files')
-	.option('-c, --cwd <dir>', 'changes the current working directory', process.cwd())
-	.action(convert)
-	.on('--help', function () {
-		console.log('  Example:');
-		console.log('');
-		console.log('  $ stylecow convert input.css output.css --manifest my-config.json');
-		console.log('');
-	});
-
+// EXECUTE
 
 program
-	.command('plugins')
-	.description('manages the installed plugins')
-	.option('-l, --installed', 'list all installed plugins')
-	.option('-i, --install <plugin>', 'installs new plugins', function (value) { return value.split(','); })
-	.option('-u, --uninstall <plugin>', 'uninstalls plugins', function (value) { return value.split(','); })
-	.option('-c, --uninstall-all', 'uninstalls all plugins')
-	.option('-t, --test <plugin>', 'test a plugin')
-	.option('-a, --all', 'search for all available plugins in npm')
-	.action(plugins);
+	.command('execute <config>')
+	.description('converts the css using a config file')
+	.option('-i, --input <file>', 'Use a specific input file instead the defined in the config file')
+	.option('-o, --output <file>', 'Use a specific output file instead the defined in the config file')
+	.option('-c, --code <name>', 'Use a specific code style instead the defined in the config file')
+	.option('-w, --watch', 'watches the changes in the input css files')
+	.option('-d, --cwd <dir>', 'changes the current working directory', process.cwd())
+	.action(function (configFile, command) {
+		var config, input, output, code;
+
+		config = getConfig(path.resolve(command.cwd, configFile));
 
 
-program
-	.command('manifest')
-	.description('manages manifest files with specific configuration to reuse them')
-	.option('-d, --default', 'shows the default manifest file')
-	.option('-e, --edit-default', 'edit the default manifest file')
-	.option('-c, --create <file>', 'creates a new manifest file')
-	.option('-m, --edit <file>', 'edit a custom manifest file')
-	.action(manifest);
+		input = command.input || config.input;
 
-
-function convert (input, output, command) {
-	var config;
-
-	if (command.manifest) {
-		var manifest = path.resolve(command.cwd, command.manifest);
-
-		config = getConfig(manifest);
-
-		if (!config) {
+		if (!input) {
 			console.log('');
-			console.log('  error: Manifest file `' + manifest + '` not found');
+			console.log('  error: No input file defined');
 			console.log('');
 			return;
 		}
-	} else {
-		config = getConfig();
-	}
 
-	input = path.resolve(command.cwd, input);
+		input = path.resolve(command.cwd, input);
 
-	if (output) {
-		output = path.resolve(command.cwd, output);
-	}
-
-	preparePlugins(config.plugins, function (loadedPlugins) {
 		if (!fs.existsSync(input)) {
 			console.log('');
-			console.log('  error: Input file `' + manifest + '` not found');
+			console.log('  error: Input file `' + input + '` not found');
 			console.log('');
 			return;
 		}
 
-		if (fs.lstatSync(input).isFile()) {
-			return execute(input, output, loadedPlugins, config.support, config.code, command.watch);
+		output = command.output || config.output;
+
+		if (output) {
+			output = path.resolve(command.cwd, output);
 		}
 
-		if (fs.lstatSync(input).isDirectory()) {
-			var glob = require('glob');
+		code = stylecow.getCodeStyle(command.code || config.code);
 
-			return glob('**/*.css', {
-					cwd: path.resolve(input)
-				}, function (er, files) {
-					files.forEach(function (file) {
-						var finput = path.join(input, file);
-						var foutput = output ? path.join(output, file) : null;
+		preparePlugins(config.plugins, function () {
+			if (fs.lstatSync(input).isFile()) {
+				return convert(input, output, config.plugins, config.support, code, command.watch);
+			}
 
-						execute(finput, foutput, loadedPlugins, config.support, config.code, command.watch);
-					});
-			});
-		}
+			if (fs.lstatSync(input).isDirectory()) {
+				var glob = require('glob');
+
+				return glob('**/*.css', {
+						cwd: path.resolve(input)
+					}, function (er, files) {
+						files.forEach(function (file) {
+							var finput = path.join(input, file);
+							var foutput = output ? path.join(output, file) : null;
+
+							convert(finput, foutput, loadedPlugins, config.support, code, command.watch);
+						});
+				});
+			}
+		});
 	});
-}
 
 
-function execute (input, output, plugins, minSupport, codeStyle, watch) {
-	var code = stylecow.readFile(input);
-	code.convert(plugins, minSupport);
+function convert (input, output, plugins, support, code, watch) {
+	var css = stylecow.readFile(input);
+	css.convert(plugins, support);
 
 	if (output) {
 		var dir = path.dirname(output);
@@ -113,12 +85,12 @@ function execute (input, output, plugins, minSupport, codeStyle, watch) {
 			fs.mkdirSync(dir);
 		}
 
-		fs.writeFileSync(output, code.toCode(codeStyle));
+		fs.writeFileSync(output, css.toCode(code));
 
 		console.log('success: Generated "' + output + '"');
 	} else {
 		console.log('');
-		console.log(code.toCode(codeStyle));
+		console.log(css.toCode(code));
 		console.log('');
 	}
 
@@ -128,7 +100,7 @@ function execute (input, output, plugins, minSupport, codeStyle, watch) {
 		
 		var files = {};
 
-		code
+		css
 			.search()
 			.filter(function (child) {
 				return (child._data && child._data['sourceFile']);
@@ -152,7 +124,7 @@ function execute (input, output, plugins, minSupport, codeStyle, watch) {
 						fs.unwatchFile(f);
 					});
 
-					execute(input, output, plugins, minSupport, codeStyle, watch);
+					execute(input, output, plugins, minSupport, code, watch);
 				}
 			});
 		});
@@ -160,165 +132,165 @@ function execute (input, output, plugins, minSupport, codeStyle, watch) {
 }
 
 
-function plugins (command) {
-	showHelpOnEmpty('plugins', command);
+// PLUGINS
 
-	if (command.installed) {
-		var plugins = stylecow.getInstalledPlugins();
+program
+	.command('plugins')
+	.description('manages the plugins')
+	.option('-l, --list', 'list all installed plugins')
+	.option('-i, --install <config>', 'installs new plugins from a config file')
+	.option('-c, --clear', 'Removes all installed plugins')
+	.option('-t, --test <plugin>', 'test a plugin')
+	.option('-s, --search', 'search for all uninstalled plugins')
+	.action(function plugins (command) {
+		showHelpOnEmpty('plugins', command);
 
-		if (plugins.length) {
-			console.log('');
-			plugins.forEach(function (plugin) {
-				console.log('  - ' + plugin);
-			});
-			console.log('');
-		} else {
-			console.log('No installed plugins');
-			console.log('');
-		}
+		if (command.list) {
+			var plugins = stylecow.getInstalledPlugins();
 
-		return;
-	}
-
-	if (command.install) {
-		stylecow.managePlugins('install', command.install, function () {
-			console.log('success: Plugins installed successfully!!');
-			console.log('');
-		});
-	}
-
-	if (command.uninstall) {
-		stylecow.managePlugins('uninstall', command.uninstall, function () {
-			console.log('success: Plugins uninstalled successfully!!');
-			console.log('');
-		});
-	}
-
-	if (command.uninstallAll) {
-		var plugins = stylecow.getInstalledPlugins();
-
-		if (!plugins.length) {
-			console.log('No installed plugins');
-			console.log('');
-			return;
-		}
-
-		stylecow.managePlugins('uninstall', plugins, function () {
-			console.log('success: All plugins removed successfully!!');
-			console.log('');
-		});
-	}
-
-	if (command.all) {
-		allPlugins(function (data) {
-			for (i in data) {
-				plugin = data[i];
-				console.log('')
-				console.log(plugin.name);
-				console.log(plugin.description);
-				console.log('')
+			if (plugins.length) {
+				console.log('');
+				plugins.forEach(function (plugin) {
+					console.log('  - ' + plugin);
+				});
+				console.log('');
+			} else {
+				console.log('No installed plugins');
+				console.log('');
 			}
-		});
-	}
 
-	if (command.test) {
-		var dir = path.resolve(command.test);
-
-		if (!fs.existsSync(dir + '/package.json')) {
-			console.log('');
-			console.log('  error: `package.json` not found');
-			console.log('');
 			return;
 		}
 
-		if (!fs.existsSync(dir + '/tests')) {
-			console.log('');
-			console.log('  error: `tests` directory not found');
-			console.log('');
-			return;
-		}
+		if (command.install) {
+			var config = getConfig(command.install);
 
-		var plugin = require(path.resolve(command.test, require(dir + '/package.json', 'utf8').main));
-		var glob = require('glob');
-
-		glob('tests/{1..9}.css', {
-			cwd: dir
-		}, function (er, files) {
-			files.forEach(function (file) {
-				var expected = file.replace('.css', '.expected.css');
-
-				if (!fs.existsSync(dir + '/' + expected)) {
-					console.log('');
-					console.log('  error: file `' + expected + '` not found');
-					console.log('');
-					return;
-				}
-
-				var manifest = file.replace('.css', '.json');
-
-				if (fs.existsSync(dir + '/' + manifest)) {
-					manifest = getConfig(dir + '/' + manifest);
-
-					var support = manifest.support || {};
-
-					if (manifest.plugins) {
-						preparePlugins(manifest.plugins, function (plugins) {
-							plugins.push(plugin);
-
-							testPlugins(dir + '/' + file, dir + '/' + expected, plugins, support);
-						});
-					}
-				} else {
-					testPlugins(dir + '/' + file, dir + '/' + expected, [plugin], {});
-				}
+			stylecow.managePlugins('install', config.plugins, function () {
+				console.log('success: Plugins installed successfully!!');
+				console.log('');
 			});
+
+			return;
+		}
+
+		if (command.clear) {
+			var plugins = stylecow.getInstalledPlugins();
+
+			if (!plugins.length) {
+				console.log('No installed plugins');
+				console.log('');
+				return;
+			}
+
+			stylecow.managePlugins('uninstall', plugins, function () {
+				console.log('success: All plugins removed successfully!!');
+				console.log('');
+			});
+
+			return;
+		}
+
+		if (command.search) {
+			var plugins = stylecow.getInstalledPlugins();
+
+			allPlugins(function (data) {
+				for (i in data) {
+					plugin = data[i];
+
+					if (plugins.indexOf(plugin.name) === -1) {
+						console.log('');
+						console.log(plugin.name);
+						console.log(plugin.description);
+					}
+				}
+
+				console.log('');
+			});
+
+			return;
+		}
+
+		if (command.test) {
+			var dir = path.resolve(command.test);
+
+			if (!fs.existsSync(dir + '/package.json')) {
+				console.log('');
+				console.log('  error: `package.json` not found');
+				console.log('');
+				return;
+			}
+
+			if (!fs.existsSync(dir + '/tests')) {
+				console.log('');
+				console.log('  error: `tests` directory not found');
+				console.log('');
+				return;
+			}
+
+			var plugin = require(path.resolve(command.test, require(dir + '/package.json', 'utf8').main));
+			var glob = require('glob');
+
+			glob('tests/{1..9}.css', {
+				cwd: dir
+			}, function (er, files) {
+				files.forEach(function (file) {
+					var expected = file.replace('.css', '.expected.css');
+
+					if (!fs.existsSync(dir + '/' + expected)) {
+						console.log('');
+						console.log('  error: file `' + expected + '` not found');
+						console.log('');
+						return;
+					}
+
+					var config = dir + '/' + file.replace('.css', '.json');
+
+					if (fs.existsSync(config)) {
+						config = getConfig(config);
+
+						var support = config.support || {};
+
+						if (config.plugins) {
+							preparePlugins(config.plugins, function () {
+								config.plugins.push(plugin);
+
+								testPlugins(dir + '/' + file, dir + '/' + expected, config.plugins, support);
+							});
+						}
+					} else {
+						testPlugins(dir + '/' + file, dir + '/' + expected, [plugin], {});
+					}
+				});
+			});
+		}
+	});
+
+
+// CONFIG
+
+program
+	.command('config')
+	.description('manages configuration files')
+	.option('-c, --create', 'creates a new config file')
+	.option('-m, --edit <file>', 'edit a config file')
+	.action(function config (command) {
+		showHelpOnEmpty('config', command);
+
+		var config;
+
+		if (command.create) {
+			config = stylecow.getDefaults();
+		} else {
+			config = getConfig(command.edit);
+		}
+
+		modifyConfig(config, command.edit, function (config, file) {
+			saveConfig(config, file);
 		});
-	}
-}
+	});
 
 
-function manifest (command) {
-	showHelpOnEmpty('manifest', command);
-
-	if (command['default']) {
-		showConfig(getConfig());
-
-		return;
-	}
-
-	if (command.editDefault) {
-		modifyManifest(getConfig(), function (config) {
-			saveConfig(config);
-
-			console.log('success: Default manifest saved: `' + configFile + '`');
-			console.log('');
-		});
-
-		return;
-	}
-
-	if (command.create) {
-		modifyManifest(getConfig(), function (config) {
-			saveConfig(config, command.create);
-
-			console.log('success: Manifest file created: `' + command.create + '`');
-			console.log('');
-		});
-
-		return;
-	}
-
-	if (command.edit) {
-		modifyManifest(getConfig(command.edit), function (config) {
-			saveConfig(config, command.edit);
-
-			console.log('success: Manifest file saved: `' + command.create + '`');
-			console.log('');
-		});
-
-		return;
-	}
-}
+// No available command
 
 program.command('*').action(function (command) {
 	console.log('');
@@ -340,33 +312,6 @@ function showHelpOnEmpty (name, command) {
 	}
 }
 
-function showConfig (config) {
-	console.log('');
-	console.log('  BROWSER SUPPORT:');
-
-	for (var browser in config.support) {
-		console.log('  - ' + browser + ': ', config.support[browser]);
-	}
-
-	console.log('');
-	console.log('  PLUGINS:');
-
-	if (config.plugins.length) {
-		config.plugins.forEach(function (plugin) {
-			console.log('  - ' + plugin);
-		});
-	} else {
-		console.log('    No plugins applied by default');
-	}
-
-	console.log('');
-	console.log('  CODE:');
-
-	for (var k in config.code) {
-		console.log('  - ' + k + ': ', '"' + config.code[k].replace('\n', '\\n').replace('\t', '\\t') + '"');
-	}
-}
-
 function preparePlugins (plugins, callback) {
 	var installed = stylecow.getInstalledPlugins();
 	var notInstalled = plugins.filter(function (plugin) {
@@ -383,15 +328,15 @@ function preparePlugins (plugins, callback) {
 			console.log('Plugins installed!');
 			console.log('');
 
-			callback(plugins);
+			callback();
 		});
 	} else {
-		callback(plugins);
+		callback();
 	}
 }
 
 
-function modifyManifest (config, callback) {
+function modifyConfig (config, output, callback) {
 	allPlugins(function (allPlugins) {
 
 		var questions = [
@@ -441,8 +386,8 @@ function modifyManifest (config, callback) {
 				type: "list",
 				name: "code",
 				message: "Code style used to generate the css",
-				choices: ['default'].concat(Object.keys(stylecow.config.codeStyles)),
-				default: 'default'
+				choices: Object.keys(stylecow.config.codeStyles),
+				default: config.code
 			},
 			{
 				type: "checkbox",
@@ -456,35 +401,53 @@ function modifyManifest (config, callback) {
 						checked: (config.plugins.indexOf(plugin.name) !== -1)
 					};
 				})
+			},
+			{
+				type: "input",
+				name: "input",
+				message: "Input css filename or directory (optional)"
+			},
+			{
+				type: "input",
+				name: "output",
+				message: "Output css filename or directory (optional)"
+			},
+			{
+				type: "input",
+				name: "file",
+				message: "Filename of the config file",
+				validate: function (e) {
+					if (e) {
+						return true;
+					}
+
+					return 'You must specify a filename to the config file'
+				},
+				default: output
 			}
 		];
 
 		inquirer.prompt(questions, function (answers) {
-			var manifest = {};
+			var newConfig = {};
 
 			if (answers.input) {
-				manifest.input = answers.input;
+				newConfig.input = answers.input;
 			}
 
 			if (answers.output) {
-				manifest.output = answers.output;
+				newConfig.output = answers.output;
 			}
 
-			manifest.support = {};
+			newConfig.support = {};
 
 			['explorer','firefox','chrome','safari','opera','android','ios'].forEach(function (browser) {
-				manifest.support[browser] = (answers[browser] === 'false') ? false : parseFloat(answers[browser], 10);
+				newConfig.support[browser] = (answers[browser] === 'false') ? false : parseFloat(answers[browser], 10);
 			});
 
-			if (answers.code === 'default') {
-				manifest.code = config.code;
-			} else {
-				manifest.code = stylecow.config.codeStyles[answers.code];
-			}
+			newConfig.plugins = answers.plugins;
+			newConfig.code = answers.code;
 
-			manifest.plugins = answers.plugins;
-
-			console.log(JSON.stringify(manifest, null, '\t'));
+			console.log(JSON.stringify(newConfig, null, '\t'));
 
 			inquirer.prompt([
 				{
@@ -492,9 +455,9 @@ function modifyManifest (config, callback) {
 					name: "ok",
 					message: "Looks fine?"
 				}
-			], function (answers) {
-				if (answers.ok) {
-					callback(manifest);
+			], function (confirmed) {
+				if (confirmed.ok) {
+					callback(newConfig, answers.file);
 				}
 			});
 
@@ -505,24 +468,10 @@ function modifyManifest (config, callback) {
 
 
 function allPlugins (callback) {
-	var cache = path.dirname(__dirname) + '/all-plugins.json';
-
-	if (fs.existsSync(cache)) {
-		var stat = fs.lstatSync(cache);
-		var diff = (new Date()).getTime() - stat.mtime.getTime();
-
-		if (diff < 3600000) { //1 hour
-			return callback(require(cache));
-		}
-	}
-
-	console.log('Loading all available plugins...');
+	console.log('Searching for all available plugins in npm...');
 	console.log('');
 
-	stylecow.getAllPlugins(function (all) {
-		fs.writeFileSync(cache, JSON.stringify(all, null, '\t'));
-		callback(all);
-	});
+	stylecow.getAllPlugins(callback);
 }
 
 function testPlugins (testFile, expectedFile, plugins, support) {
@@ -560,19 +509,22 @@ function testPlugins (testFile, expectedFile, plugins, support) {
 }
 
 function getConfig (file) {
-	var f = file || configFile;
-
-	if (fs.existsSync(f)) {
-		return require(f);
+	if (fs.existsSync(file)) {
+		return require(file);
 	}
 
-	if (!file) {
-		return stylecow.getDefaults();
-	}
+	console.log('');
+	console.log('  error: Config file `' + file + '` not found');
+	console.log('');
+
+	process.exit();
 }
 
 function saveConfig (value, file) {
-	fs.writeFileSync(file || configFile, JSON.stringify(value, null, '\t'));
+	fs.writeFileSync(file, JSON.stringify(value, null, '\t'));
+
+	console.log('success: Config file saved: `' + file + '`');
+	console.log('');
 }
 
 program.parse(process.argv);

@@ -124,7 +124,7 @@ function convert (input, output, plugins, support, code, watch) {
 						fs.unwatchFile(f);
 					});
 
-					execute(input, output, plugins, minSupport, code, watch);
+					execute(input, output, plugins, support, code, watch);
 				}
 			});
 		});
@@ -411,19 +411,6 @@ function modifyConfig (config, output, callback) {
 				type: "input",
 				name: "output",
 				message: "Output css filename or directory (optional)"
-			},
-			{
-				type: "input",
-				name: "file",
-				message: "Filename of the config file",
-				validate: function (e) {
-					if (e) {
-						return true;
-					}
-
-					return 'You must specify a filename to the config file'
-				},
-				default: output
 			}
 		];
 
@@ -455,9 +442,29 @@ function modifyConfig (config, output, callback) {
 					name: "ok",
 					message: "Looks fine?"
 				}
-			], function (confirmed) {
-				if (confirmed.ok) {
-					callback(newConfig, answers.file);
+			], function (answers) {
+				if (answers.ok) {
+					inquirer.prompt([
+						{
+							type: "input",
+							name: "file",
+							message: "Filename where to save the configuration",
+							validate: function (e) {
+								if (!e) {
+									return 'You must specify a filename to the config file (for example: myconfig.json)';
+								}
+
+								if (path.extname(e) !== '.json') {
+									return 'The config file must end in ".json"';
+								}
+
+								return true;
+							},
+							default: output
+						}
+					], function (answers) {
+						callback(newConfig, answers.file);
+					});
 				}
 			});
 

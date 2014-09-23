@@ -124,7 +124,7 @@ function convert (input, output, plugins, support, code, watch) {
 						fs.unwatchFile(f);
 					});
 
-					execute(input, output, plugins, support, code, watch);
+					convert(input, output, plugins, support, code, watch);
 				}
 			});
 		});

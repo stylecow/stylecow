@@ -18,12 +18,12 @@ program
 	.option('-o, --output <file>', 'Use a specific output file instead the defined in the config file')
 	.option('-c, --code <name>', 'Use a specific code style instead the defined in the config file')
 	.option('-w, --watch', 'watches the changes in the input css files')
-	.option('-d, --cwd <dir>', 'changes the current working directory', process.cwd())
 	.action(function (configFile, command) {
-		var config, input, output, code;
+		configFile = path.resolve(process.cwd(), configFile);
 
-		config = getConfig(path.resolve(command.cwd, configFile));
-
+		var config = getConfig(configFile),
+			basePath = path.dirname(configFile),
+			input, output, code;
 
 		input = command.input || config.input;
 
@@ -34,7 +34,7 @@ program
 			return;
 		}
 
-		input = path.resolve(command.cwd, input);
+		input = path.resolve(basePath, input);
 
 		if (!fs.existsSync(input)) {
 			console.log('');
@@ -46,7 +46,7 @@ program
 		output = command.output || config.output;
 
 		if (output) {
-			output = path.resolve(command.cwd, output);
+			output = path.resolve(basePath, output);
 		}
 
 		code = stylecow.getCodeStyle(command.code || config.code);

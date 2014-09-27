@@ -49,34 +49,30 @@ program
 			output = path.resolve(basePath, output);
 		}
 
-		code = stylecow.getCodeStyle(command.code || config.code);
+		if (command.code) {
+			config.code = command.code;
+		}
 
-		preparePlugins(config.plugins, function () {
-			if (fs.lstatSync(input).isFile()) {
-				return convert(input, output, config.plugins, config.support, code, command.watch);
-			}
+		stylecow.setConfig(config);
 
-			if (fs.lstatSync(input).isDirectory()) {
-				var glob = require('glob');
+		if (fs.lstatSync(input).isFile()) {
+			return convert(input, output, command.watch);
+		}
 
-				return glob('**/*.css', {
-						cwd: path.resolve(input)
-					}, function (er, files) {
-						files.forEach(function (file) {
-							var finput = path.join(input, file);
-							var foutput = output ? path.join(output, file) : null;
+		if (fs.lstatSync(input).isDirectory()) {
+			var glob = require('glob');
 
-							convert(finput, foutput, loadedPlugins, config.support, code, command.watch);
-						});
+			return glob('**/*.css', { cwd: path.resolve(input) }, function (er, files) {
+				files.forEach(function (file) {
+					convert(path.join(input, file), output ? path.join(output, file) : null, command.watch);
 				});
-			}
-		});
+			});
+		}
 	});
 
 
-function convert (input, output, plugins, support, code, watch) {
-	var css = stylecow.readFile(input);
-	css.convert(plugins, support);
+function convert (input, output, watch) {
+	var css = stylecow.convertFromFile(input);
 
 	if (output) {
 		var dir = path.dirname(output);
@@ -85,12 +81,12 @@ function convert (input, output, plugins, support, code, watch) {
 			fs.mkdirSync(dir);
 		}
 
-		fs.writeFileSync(output, css.toCode(code));
+		fs.writeFileSync(output, css.toCode());
 
 		console.log('success: Generated "' + output + '"');
 	} else {
 		console.log('');
-		console.log(css.toCode(code));
+		console.log(css.toCode());
 		console.log('');
 	}
 
@@ -124,7 +120,7 @@ function convert (input, output, plugins, support, code, watch) {
 						fs.unwatchFile(f);
 					});
 
-					convert(input, output, plugins, support, code, watch);
+					convert(input, output, watch);
 				}
 			});
 		});
@@ -132,159 +128,13 @@ function convert (input, output, plugins, support, code, watch) {
 }
 
 
-// PLUGINS
-
-program
-	.command('plugins')
-	.description('manages the plugins')
-	.option('-l, --list', 'list all installed plugins')
-	.option('-i, --install <config>', 'installs new plugins from a config file')
-	.option('-c, --clear', 'Removes all installed plugins')
-	.option('-t, --test <plugin>', 'test a plugin')
-	.option('-s, --search', 'search for all uninstalled plugins')
-	.action(function plugins (command) {
-		showHelpOnEmpty('plugins', command);
-
-		if (command.list) {
-			var plugins = stylecow.getInstalledPlugins();
-
-			if (plugins.length) {
-				console.log('');
-				plugins.forEach(function (plugin) {
-					console.log('  - ' + plugin);
-				});
-				console.log('');
-			} else {
-				console.log('No installed plugins');
-				console.log('');
-			}
-
-			return;
-		}
-
-		if (command.install) {
-			var config = getConfig(command.install);
-
-			stylecow.managePlugins('install', config.plugins, function () {
-				console.log('success: Plugins installed successfully!!');
-				console.log('');
-			});
-
-			return;
-		}
-
-		if (command.clear) {
-			var plugins = stylecow.getInstalledPlugins();
-
-			if (!plugins.length) {
-				console.log('No installed plugins');
-				console.log('');
-				return;
-			}
-
-			stylecow.managePlugins('uninstall', plugins, function () {
-				console.log('success: All plugins removed successfully!!');
-				console.log('');
-			});
-
-			return;
-		}
-
-		if (command.search) {
-			var plugins = stylecow.getInstalledPlugins();
-
-			allPlugins(function (data) {
-				for (i in data) {
-					plugin = data[i];
-
-					if (plugins.indexOf(plugin.name) === -1) {
-						console.log('');
-						console.log(plugin.name);
-						console.log(plugin.description);
-					}
-				}
-
-				console.log('');
-			});
-
-			return;
-		}
-
-		if (command.test) {
-			var dir = path.resolve(command.test);
-
-			if (!fs.existsSync(dir + '/package.json')) {
-				console.log('');
-				console.log('  error: `package.json` not found');
-				console.log('');
-				return;
-			}
-
-			if (!fs.existsSync(dir + '/tests')) {
-				console.log('');
-				console.log('  error: `tests` directory not found');
-				console.log('');
-				return;
-			}
-
-			var plugin = require(path.resolve(command.test, require(dir + '/package.json', 'utf8').main));
-			var glob = require('glob');
-
-			glob('tests/{1..9}.css', {
-				cwd: dir
-			}, function (er, files) {
-				files.forEach(function (file) {
-					var expected = file.replace('.css', '.expected.css');
-
-					if (!fs.existsSync(dir + '/' + expected)) {
-						console.log('');
-						console.log('  error: file `' + expected + '` not found');
-						console.log('');
-						return;
-					}
-
-					var config = dir + '/' + file.replace('.css', '.json');
-
-					if (fs.existsSync(config)) {
-						config = getConfig(config);
-
-						var support = config.support || {};
-
-						if (config.plugins) {
-							preparePlugins(config.plugins, function () {
-								config.plugins.push(plugin);
-
-								testPlugins(dir + '/' + file, dir + '/' + expected, config.plugins, support);
-							});
-						}
-					} else {
-						testPlugins(dir + '/' + file, dir + '/' + expected, [plugin], {});
-					}
-				});
-			});
-		}
-	});
-
-
 // CONFIG
 
 program
-	.command('config')
-	.description('manages configuration files')
-	.option('-c, --create', 'creates a new config file')
-	.option('-m, --edit <file>', 'edit a config file')
+	.command('init')
+	.description('Creates a new configuration file')
 	.action(function config (command) {
-		showHelpOnEmpty('config', command);
-
-		var config;
-
-		if (command.create) {
-			config = stylecow.getDefaults();
-		} else {
-			config = getConfig(command.edit);
-		}
-
-		modifyConfig(config, command.edit, function (config, file) {
+		modifyConfig(stylecow.config.defaults, function (config, file) {
 			saveConfig(config, file);
 		});
 	});
@@ -304,215 +154,132 @@ program.command('*').action(function (command) {
 
 // Misc
 
-function showHelpOnEmpty (name, command) {
-	var l = program.rawArgs.length - 1;
-
-	if (program.rawArgs[l] === name) {
-		command.help();
-	}
-}
-
-function preparePlugins (plugins, callback) {
-	var installed = stylecow.getInstalledPlugins();
-	var notInstalled = plugins.filter(function (plugin) {
-		return installed.indexOf(plugin) === -1;
-	});
-
-	if (notInstalled.length) {
-		console.log('Installing the following required plugins:');
-		console.log('');
-		console.log(notInstalled.join(', '));
-		console.log('');
-
-		stylecow.managePlugins('install', notInstalled, function () {
-			console.log('Plugins installed!');
-			console.log('');
-
-			callback();
-		});
-	} else {
-		callback();
-	}
-}
-
-
-function modifyConfig (config, output, callback) {
-	allPlugins(function (allPlugins) {
-
-		var questions = [
-			{
-				type: "input",
-				name: "explorer",
-				message: "Min version supported in Internet Explorer",
-				default: config.support.explorer
-			},
-			{
-				type: "input",
-				name: "firefox",
-				message: "Min version supported in Mozilla Firefox",
-				default: config.support.firefox
-			},
-			{
-				type: "input",
-				name: "chrome",
-				message: "Min version supported in Google Chrome",
-				default: config.support.chrome
-			},
-			{
-				type: "input",
-				name: "safari",
-				message: "Min version supported in Safari",
-				default: config.support.safari
-			},
-			{
-				type: "input",
-				name: "opera",
-				message: "Min version supported in Opera",
-				default: config.support.opera
-			},
-			{
-				type: "input",
-				name: "android",
-				message: "Min version supported in Android",
-				default: config.support.android
-			},
-			{
-				type: "input",
-				name: "ios",
-				message: "Min version supported in Safari for iOS",
-				default: config.support.ios
-			},
-			{
-				type: "list",
-				name: "code",
-				message: "Code style used to generate the css",
-				choices: Object.keys(stylecow.config.codeStyles),
-				default: config.code
-			},
-			{
-				type: "checkbox",
-				name: "plugins",
-				message: "Plugins used to transform de css",
-				choices: allPlugins.map(function (plugin) {
-					return {
-						key: plugin.name,
-						name: plugin.name,
-						value: plugin.name,
-						checked: (config.plugins.indexOf(plugin.name) !== -1)
-					};
-				})
-			},
-			{
-				type: "input",
-				name: "input",
-				message: "Input css filename or directory (optional)"
-			},
-			{
-				type: "input",
-				name: "output",
-				message: "Output css filename or directory (optional)"
+function modifyConfig (config, callback) {
+	var questions = [
+		{
+			type: "input",
+			name: "explorer",
+			message: "Min version supported in Internet Explorer",
+			default: config.support.explorer
+		},
+		{
+			type: "input",
+			name: "firefox",
+			message: "Min version supported in Mozilla Firefox",
+			default: config.support.firefox
+		},
+		{
+			type: "input",
+			name: "chrome",
+			message: "Min version supported in Google Chrome",
+			default: config.support.chrome
+		},
+		{
+			type: "input",
+			name: "safari",
+			message: "Min version supported in Safari",
+			default: config.support.safari
+		},
+		{
+			type: "input",
+			name: "opera",
+			message: "Min version supported in Opera",
+			default: config.support.opera
+		},
+		{
+			type: "input",
+			name: "android",
+			message: "Min version supported in Android",
+			default: config.support.android
+		},
+		{
+			type: "input",
+			name: "ios",
+			message: "Min version supported in Safari for iOS",
+			default: config.support.ios
+		},
+		{
+			type: "list",
+			name: "code",
+			message: "Code style used to generate the css",
+			choices: Object.keys(stylecow.config.codeStyles),
+			default: config.code
+		},
+		{
+			type: "input",
+			name: "plugins",
+			message: "Plugins used to transform de css (comma separated)",
+			default: config.plugins.join(','),
+			filter: function (value) {
+				return value.split(',');
 			}
-		];
+		},
+		{
+			type: "input",
+			name: "input",
+			message: "Input css filename or directory (optional)"
+		},
+		{
+			type: "input",
+			name: "output",
+			message: "Output css filename or directory (optional)"
+		}
+	];
 
-		inquirer.prompt(questions, function (answers) {
-			var newConfig = {};
+	inquirer.prompt(questions, function (answers) {
+		var newConfig = {};
 
-			if (answers.input) {
-				newConfig.input = answers.input;
-			}
+		if (answers.input) {
+			newConfig.input = answers.input;
+		}
 
-			if (answers.output) {
-				newConfig.output = answers.output;
-			}
+		if (answers.output) {
+			newConfig.output = answers.output;
+		}
 
-			newConfig.support = {};
+		newConfig.support = {};
 
-			['explorer','firefox','chrome','safari','opera','android','ios'].forEach(function (browser) {
-				newConfig.support[browser] = (answers[browser] === 'false') ? false : parseFloat(answers[browser], 10);
-			});
-
-			newConfig.plugins = answers.plugins;
-			newConfig.code = answers.code;
-
-			console.log(JSON.stringify(newConfig, null, '\t'));
-
-			inquirer.prompt([
-				{
-					type: "confirm",
-					name: "ok",
-					message: "Looks fine?"
-				}
-			], function (answers) {
-				if (answers.ok) {
-					inquirer.prompt([
-						{
-							type: "input",
-							name: "file",
-							message: "Filename where to save the configuration",
-							validate: function (e) {
-								if (!e) {
-									return 'You must specify a filename to the config file (for example: myconfig.json)';
-								}
-
-								if (path.extname(e) !== '.json') {
-									return 'The config file must end in ".json"';
-								}
-
-								return true;
-							},
-							default: output
-						}
-					], function (answers) {
-						callback(newConfig, answers.file);
-					});
-				}
-			});
-
+		['explorer','firefox','chrome','safari','opera','android','ios'].forEach(function (browser) {
+			newConfig.support[browser] = (answers[browser] === 'false') ? false : parseFloat(answers[browser], 10);
 		});
 
+		newConfig.plugins = answers.plugins;
+		newConfig.code = answers.code;
+
+		console.log(JSON.stringify(newConfig, null, '\t'));
+
+		inquirer.prompt([
+			{
+				type: "confirm",
+				name: "ok",
+				message: "Looks fine?"
+			}
+		], function (answers) {
+			if (answers.ok) {
+				inquirer.prompt([
+					{
+						type: "input",
+						name: "file",
+						message: "Filename where to save the configuration",
+						validate: function (e) {
+							if (!e) {
+								return 'You must specify a filename to the config file (for example: myconfig.json)';
+							}
+
+							if (path.extname(e) !== '.json') {
+								return 'The config file must end in ".json"';
+							}
+
+							return true;
+						},
+						default: 'stylecow_config.json'
+					}
+				], function (answers) {
+					callback(newConfig, answers.file);
+				});
+			}
+		});
 	});
-}
-
-
-function allPlugins (callback) {
-	console.log('Searching for all available plugins in npm...');
-	console.log('');
-
-	stylecow.getAllPlugins(callback);
-}
-
-function testPlugins (testFile, expectedFile, plugins, support) {
-	var code = fs.readFileSync(testFile, 'utf8');
-	var css = stylecow.create(code);
-	var expected = fs.readFileSync(expectedFile, 'utf8');
-
-	css.executePlugins(plugins, support);
-
-	var string = css.toString();
-	var assert = require('assert');
-
-	try {
-		assert.strictEqual(string.replace(/\r/g, '').trim(), expected.replace(/\r/g, '').trim());
-		console.log('Test passed successfully: `' + testFile + '`');
-		console.log('');
-	} catch (exception) {
-		console.log('');
-		console.log('ORIGINAL CODE: `' + testFile + '`');
-		console.log('------------------------------');
-		console.log('');
-		console.log(code);
-		console.log('');
-		console.log('MUST BECOME TO: `' + expectedFile + '`');
-		console.log('------------------------------');
-		console.log('');
-		console.log(expected);
-		console.log('');
-		console.log('BUT IT IS:');
-		console.log('------------------------------');
-		console.log('');
-		console.log(string);
-		console.log('');
-	}
 }
 
 function getConfig (file) {

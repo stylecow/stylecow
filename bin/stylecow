@@ -195,7 +195,7 @@ function modifyConfig (config, callback) {
 			message: "Plugins used to transform de css (comma separated)",
 			default: config.plugins.join(','),
 			filter: function (value) {
-				return value.split(',');
+				return value ? value.split(',') : [];
 			}
 		},
 		{

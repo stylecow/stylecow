@@ -1,7 +1,7 @@
 {
 	"name": "stylecow",
 	"description": "Modern CSS for all browsers",
-	"version": "1.2.0-rc3",
+	"version": "1.2.0-rc4",
 	"author": "Oscar Otero <oom@oscarotero.com>",
 	"homepage": "https://github.com/stylecow/stylecow",
 	"bugs": "https://github.com/stylecow/stylecow/issues",
@@ -9,15 +9,7 @@
 		"type": "git",
 		"url": "https://github.com/stylecow/stylecow.git"
 	},
-	"dependencies": {
-		"commander": "*",
-		"inquirer": "*",
-		"glob": "*"
-	},
 	"main": "./lib/index",
-	"bin": {
-		"stylecow": "./bin/stylecow"
-	},
 	"license": "MIT",
 	"jshintConfig": {
 		"node": true,

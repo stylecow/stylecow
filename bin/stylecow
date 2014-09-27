@@ -94,29 +94,13 @@ function convert (input, output, watch) {
 		console.log('Waiting for changes...');
 		console.log('');
 		
-		var files = {};
-
-		css
-			.search()
-			.filter(function (child) {
-				return (child._data && child._data['sourceFile']);
-			})
-			.map(function (child) {
-				return child._data['sourceFile'];
-			})
-			.forEach(function (file) {
-				files[file] = null;
-			});
-
-		files = Object.getOwnPropertyNames(files);
-
-		files.forEach(function (file) {
+		css.files.forEach(function (file) {
 			fs.watchFile(file, {persistent: true, interval: 2000}, function (curr, prev) {
 				if (curr.mtime !== prev.mtime) {
 					console.log('changed detected: ' + file);
 					console.log('');
 					
-					files.forEach(function (f) {
+					css.files.forEach(function (f) {
 						fs.unwatchFile(f);
 					});
 

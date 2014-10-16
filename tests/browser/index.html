@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+
+    <style type="text/css">
+        textarea {
+            width: 30em;
+            height: 20em;
+        }
+    </style>
+</head>
+<body>
+<textarea>
+body {
+    color: linear-gradient(rgba(23, 24, 56, .4), #333);
+}
+</textarea>
+	<script type="text/javascript" src="b.js"></script>
+    <script type="text/javascript">
+        var stylecow = require('./browser');
+
+        var code = stylecow.parse('body {color: rgba(23, 24, 56, .4);}');
+
+        code.search('Function').forEach(function (fn) {
+            console.log(fn.toString());
+            console.log(fn.getContent());
+            fn.setContent([1, 2, 3, 4]);
+            //console.log(fn.getContent());
+        });
+
+        var textarea = document.querySelector('textarea');
+        
+        textarea.onblur = function () {
+            var result = stylecow.parse(this.value);
+            console.log(result);
+        	console.log(result.toString());
+        }
+    </script>
+</body>
+</html>

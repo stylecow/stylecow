@@ -1,0 +1,43 @@
+@charset "UTF-8";
+@import url("fineprint.css");
+@import 'custom.css';
+
+@font-face {
+	font-family: "Open Sans";
+	src: local("Open Sans"), local("OpenSans"),
+		url("/path/to/OpenSans.svg#OpenSans") format("svg");
+	src: url("/path/to/OpenSans.eot");
+	font-style: normal;
+}
+@keyframes fadeInAnimation {
+	/* starting state */
+	from {
+		opacity: 0;
+	}
+	/* ending state */
+	to {
+		opacity: 1;
+	}
+}
+@media screen and (max-width:400px) {
+	div {border:none;}
+}
+@namespace "http://www.w3.org/1999/xhtml";
+@namespace prfx url("http://prfx.contoso.com");
+@namespace prfx "http://prfx.contoso.com";
+@page :left {
+	@left-middle {
+		margin: 10px;
+	}
+}
+@region-style #intro {
+	p { color: blue; }
+}
+@supports (display: flex) {
+	div {
+		display: flex;
+	}
+}
+@viewport {
+	width: device-width;
+}

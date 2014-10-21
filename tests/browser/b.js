@@ -801,6 +801,20 @@ module.exports = stylecow;
 		}
 	});
 
+	function arrayUnique (array) {
+		var i, k, a = [];
+
+		for (i = array.length - 1; i >= 0; i--) {
+			k = a.indexOf(array[i]);
+
+			if (k === -1) {
+				a.unshift(array[i]);
+			}
+		}
+
+		return a;
+	}
+
 })(require('../index'));
 
 },{"../index":16}],11:[function(require,module,exports){
@@ -1046,8 +1060,8 @@ module.exports = stylecow;
 
 	//CSS elements
 	require('./css/base');
-	require('./css/atrule');
 	require('./css/argument');
+	require('./css/atrule');
 	require('./css/comment');
 	require('./css/condition');
 	require('./css/declaration');
@@ -1236,6 +1250,8 @@ module.exports = stylecow;
         '@namespace':   DECLARATION | HAS_VALUE | HAS_URL,
     };
 
+    var uniqueArgumentFunctions = ['url', 'src'];
+
     var Parser = function (code, parent) {
         this.code = code;
         this.parent = parent;
@@ -1396,28 +1412,28 @@ module.exports = stylecow;
                 }
 
                 if (this.currType & IS_OPENED) {
-                    if (this.openedRule(false, true)) {
-                        if (this.currType & SELECTOR) {
-                            this.up();
-                        }
-
-                        this.currType = this.currType | IS_OPENED;
-
-                        return true;
-                    }
-                } else {
-                    this.notOpenedRuleOrDeclaration();
+                    this.down(new stylecow.Rule).notOpenedRuleOrDeclaration();
 
                     if (this.currType & SELECTOR) {
                         this.up();
                     }
-
+                    
                     this.currType = this.currType | IS_OPENED;
+
                     return true;
                 }
+
+                this.notOpenedRuleOrDeclaration();
+
+                if (this.currType & SELECTOR) {
+                    this.up();
+                }
+
+                this.currType = this.currType | IS_OPENED;
+                return true;
             }
 
-            else if (this.currType & SELECTOR) {
+            if (this.currType & SELECTOR) {
                 this.selector();
                 this.up();
                 this.currType = this.currType | IS_OPENED;
@@ -1448,10 +1464,11 @@ module.exports = stylecow;
         ':': function () {
             if (this.currType & RULE) {
                 if (this.currType & IS_OPENED) {
-                    if (!this.openedRule()) {
-                        this.down(new stylecow.Declaration(this.buffer)).down(new stylecow.Value);
+                    if (this.isNested()) {
+                        return this.down(new stylecow.Rule).notOpenedRuleOrDeclaration();
                     }
 
+                    this.down(new stylecow.Declaration(this.buffer)).down(new stylecow.Value);
                     return true;
                 }
             }
@@ -1469,7 +1486,7 @@ module.exports = stylecow;
 
             else if (this.currType & RULE) {
                 if (this.currType & IS_OPENED) {
-                    return this.openedRule();
+                    return this.down(new stylecow.Rule).notOpenedRuleOrDeclaration();
                 } else {
                     return this.notOpenedRuleOrDeclaration();
                 }
@@ -1500,10 +1517,10 @@ module.exports = stylecow;
 
             else if (this.currType & RULE) {
                 if (this.currType & IS_OPENED) {
-                    return this.openedRule();
-                } else {
-                    return this.notOpenedRuleOrDeclaration();
+                    this.down(new stylecow.Rule);
                 }
+
+                return this.notOpenedRuleOrDeclaration();
             }
 
             else if (this.currType & SELECTOR) {
@@ -1550,7 +1567,10 @@ module.exports = stylecow;
                 return true;
             }
 
-            else if (this.currType & DECLARATION && this.notOpenedRuleOrDeclaration()) {
+            else if (this.currType & DECLARATION) {
+                if (this.buffer) {
+                    this.notOpenedRuleOrDeclaration();
+                }
                 this.up();
                 return true;
             }
@@ -1558,8 +1578,22 @@ module.exports = stylecow;
 
         '(': function () {
             if (this.buffer) {
-                if (this.currType & VALUE || this.currType & SELECTOR) {
-                    this.down(new stylecow.Function(this.buffer)).down(new stylecow.Argument);
+                if (this.currType & VALUE || this.currType & SELECTOR || this.currType & HAS_URL) {
+                    this.down(new stylecow.Function(this.buffer));
+
+                    if (uniqueArgumentFunctions.indexOf(this.buffer) !== -1) {
+                        this.buffer = '';
+
+                        while (this.next()) {
+                            if (this.currChar === ')') {
+                                return this[')']();
+                            }
+
+                            this.buffer += this.currChar;
+                        }
+                    }
+
+                    this.down(new stylecow.Argument);
                     return true;
                 }
             } else {
@@ -1578,13 +1612,22 @@ module.exports = stylecow;
                 this.up().up();
                 return true;
             }
+
+            if (this.currType & FUNCTION) {
+                if (this.buffer) {
+                    this.add(new stylecow.Argument).add(new stylecow.Keyword(this.buffer));
+                }
+
+                this.up();
+                return true;
+            }
         },
 
         '&': function () {
             if (this.currType & RULE) {
                 this.down(new stylecow.Rule);
 
-                return notOpenedRuleOrDeclaration();
+                return this.notOpenedRuleOrDeclaration(true);
             }
         },
 
@@ -1596,7 +1639,15 @@ module.exports = stylecow;
                     this.buffer += this.currChar;
                 }
 
-                if (this.isNested()) {
+                var nested;
+
+                if (atRulesTypes[this.buffer]) {
+                    nested = atRulesTypes[this.buffer] & RULE;
+                } else {
+                    nested = this.isNested();
+                }
+
+                if (nested) {
                     this.down(new stylecow.NestedAtRule(this.buffer));
                 } else {
                     this.down(new stylecow.AtRule(this.buffer));
@@ -1629,12 +1680,12 @@ module.exports = stylecow;
                 return this.selector(operator);
             }
 
-            else if (this.currType & RULE) {
+            if (this.currType & RULE) {
                 if (this.currType & IS_OPENED) {
-                    return this.openedRule();
-                } else {
-                    return this.notOpenedRuleOrDeclaration();
+                    this.down(new stylecow.Rule);
                 }
+                
+                return this.notOpenedRuleOrDeclaration(operator);
             }
         },
 
@@ -1658,17 +1709,6 @@ module.exports = stylecow;
             var isNested = this.code.indexOf('{', this.pos);
 
             return (isNested !== -1 && isNested < this.code.indexOf(';', this.pos) && isNested < this.code.indexOf('}', this.pos));
-        },
-
-        openedRule: function (operator, nested) {
-            if (nested === undefined) {
-                nested = this.isNested();
-            }
-
-            if (nested) {
-                this.down(new stylecow.Rule).notOpenedRuleOrDeclaration(operator);
-                return true;
-            }
         },
 
         notOpenedRuleOrDeclaration: function (operator) {

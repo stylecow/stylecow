@@ -283,6 +283,19 @@ module.exports = stylecow;
 			}
 		},
 
+		parseChildren: {
+			value: function (string) {
+				var root = new stylecow[this.type];
+				stylecow.parse(string, root);
+
+				if (root.parent) {
+					root = root.parent;
+				}
+
+				return root.slice();
+			}
+		},
+
 		setContent: {
 			value: function (value) {
 				this.splice(0);
@@ -362,6 +375,16 @@ module.exports = stylecow;
 
 		add: {
 			value: function (child, index, after) {
+				if (typeof child === 'string') {
+					child = this.parseChildren(child);
+
+					child.forEach(function (value, key) {
+						this.add(value, index + key, after);
+					}, this);
+
+					return child[0];
+				}
+
 				child.detach();
 				child.parent = this;
 
@@ -1149,7 +1172,7 @@ module.exports = stylecow;
 		stylecow.tasks = {};
 
 		config.plugins.forEach(function (name) {
-			if (name[0] === '.') {
+			if (name[0] === '.' || name[0] === '/') {
 				require(name)(stylecow);
 			} else {
 				require(stylecow.pluginPrefix + name)(stylecow);
@@ -1279,6 +1302,35 @@ module.exports = stylecow;
         },
 
         up: function () {
+            if (!this.current.parent) {
+                switch (this.current.type) {
+                    case 'Value':
+                        this.current.parent = new stylecow.Declaration;
+                        break;
+
+                    case 'Argument':
+                        this.current.parent = new stylecow.Function;
+                        break;
+
+                    case 'Function':
+                    case 'Keyword':
+                        this.current.parent = new stylecow.Value;
+                        break;
+
+                    case 'Condition':
+                    case 'Selector':
+                        this.current.parent = new stylecow.Rule;
+                        break;
+
+                    default:
+                        this.current.parent = new stylecow.Root;
+                        break;
+                }
+
+                this.treeTypes.unshift(types[this.current.parent.type]);
+                this.current.parent.push(this.current);
+            }
+
             this.current = this.current.parent;
             this.currType = this.treeTypes.pop();
 
@@ -1378,8 +1430,13 @@ module.exports = stylecow;
             if (this.currType & VALUE || this.currType & SELECTOR) {
                 this.add(new stylecow.Keyword(this.buffer));
             }
+
             else if (this.currType & FUNCTION) {
                 this.add(new stylecow.Argument).add(new stylecow.Keyword(this.buffer));
+            }
+
+            else if (this.currType & DECLARATION) {
+                this.add(new stylecow.Value).add(new stylecow.Keyword(this.buffer));
             }
         },
 
@@ -1499,23 +1556,35 @@ module.exports = stylecow;
 
         ',': function () {
             if (this.currType & FUNCTION) {
+                if (this.buffer) {
+                    this.add(new stylecow.Argument).add(new stylecow.Keyword(this.buffer));
+                }
+
                 this.down(new stylecow.Argument);
+
+                return true;
             }
 
-            else if (this.currType & DECLARATION) {
+            if (this.currType & DECLARATION) {
+                if (this.buffer) {
+                    this.add(new stylecow.Value).add(new stylecow.Keyword(this.buffer));
+                }
+
                 this.down(new stylecow.Value);
+                return true;
             }
 
-            else if (this.currType & VALUE) {
+            if (this.currType & VALUE) {
                 if (this.buffer) {
                     this.add(new stylecow.Keyword(this.buffer));
                 }
+
                 var child = new stylecow[this.current.type];
                 this.up().down(child);
                 return true;
             }
 
-            else if (this.currType & RULE) {
+            if (this.currType & RULE) {
                 if (this.currType & IS_OPENED) {
                     this.down(new stylecow.Rule);
                 }
@@ -1523,7 +1592,7 @@ module.exports = stylecow;
                 return this.notOpenedRuleOrDeclaration();
             }
 
-            else if (this.currType & SELECTOR) {
+            if (this.currType & SELECTOR) {
                 this.selector();
                 this.up().down(new stylecow.Selector);
                 return true;

@@ -158,7 +158,7 @@ module.exports = stylecow;
 
 		clone: {
 			value: function () {
-				var clone = new stylecow[type](this.name);
+				var clone = new stylecow[this.type](this.name);
 
 				this.forEach(function (child) {
 					var childClone = child.clone();
@@ -891,7 +891,7 @@ module.exports = stylecow;
 						declaration.append(filter);
 					}
 				} else {
-					declaration = this.add(stylecow.Declaration.create('-ms-filter:' + filter));
+					this.add(new stylecow.Declaration('-ms-filter')).setValue(filter);
 				}
 			}
 		},

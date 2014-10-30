@@ -1,8 +1,0 @@
-:root {
-	--black: #282933;
-	--color: #505166;
-}
-a {
-	/*color: var(--black);*/
-	color: color(blue a(0.5));
-}

@@ -12,6 +12,7 @@
   "main": "./lib/index",
   "license": "MIT",
   "dependencies": {
+    "multi-stage-sourcemap": "^0.2.1",
     "source-map": "^0.1.40"
   }
 }

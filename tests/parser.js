@@ -1,8 +1,11 @@
 var stylecow = require(__dirname + '/../lib');
+var fs = require('fs');
+var assert = require('assert');
 
 var code = stylecow.Reader.readFile('test.css');
-var css = new stylecow.Root();
+var expected = fs.readFileSync('test.expected.css', 'utf8');
 
+var css = new stylecow.Root();
 css.parse(code);
 
-console.log(css.toString());
+assert.equal(css.toString(), expected);

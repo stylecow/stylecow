@@ -9,7 +9,7 @@ p a /* Comment in selector */ {
 		text-decoration: underline;
 	}
 }
-@media (min-width:300px) {
+@media (min-width: 300px) {
 	p {
 		margin: 10px 30px 15px 16px;
 		span {
@@ -32,7 +32,8 @@ p a /* Comment in selector */ {
 p:not(a:matches(.one, .two, .three.four.five > .six) span), div {
 	background: red;
 }
-@media only screen and (min-width:35em) {
+@media only screen and (min-width: 35em) 
+ {
 	#content {
 		width: 50%;
 	}
@@ -45,4 +46,9 @@ p:not(a:matches(.one, .two, .three.four.five > .six) span), div {
 }
 blockquote::before, blockquote::after {
 	content: "\201d";
+}
+@media (min-width: 35em AND (max-width: 2000px) OR (max-height: 1000px)) {
+	p {
+		width: calc(12em + (5px -3em));
+	}
 }

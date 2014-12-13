@@ -9,3 +9,9 @@ var css = new stylecow.Root();
 css.parse(code);
 
 assert.equal(css.toString(), expected);
+
+var output = new stylecow.Coder(css, {
+	style: "minify"
+});
+
+console.log(output.code);

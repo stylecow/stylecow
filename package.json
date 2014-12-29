@@ -1,7 +1,7 @@
 {
   "name": "stylecow",
   "description": "Modern CSS for all browsers",
-  "version": "3.1.1",
+  "version": "4.0.0-beta",
   "author": "Oscar Otero <oom@oscarotero.com>",
   "homepage": "https://github.com/stylecow/stylecow",
   "bugs": "https://github.com/stylecow/stylecow/issues",
@@ -13,6 +13,20 @@
   "license": "MIT",
   "dependencies": {
     "multi-stage-sourcemap": "^0.2.1",
-    "source-map": "^0.1.40"
+    "source-map": "^0.1.*",
+    "stylecow-color": "stylecow/stylecow-color",
+    "stylecow-plugin-color": "stylecow/stylecow-plugin-color",
+    "stylecow-plugin-fixes": "stylecow/stylecow-plugin-fixes",
+    "stylecow-plugin-flex": "stylecow/stylecow-plugin-flex",
+    "stylecow-plugin-import": "stylecow/stylecow-plugin-import",
+    "stylecow-plugin-initial": "stylecow/stylecow-plugin-initial",
+    "stylecow-plugin-matches": "stylecow/stylecow-plugin-matches",
+    "stylecow-plugin-msfilter-background-alpha": "stylecow/stylecow-plugin-msfilter-background-alpha",
+    "stylecow-plugin-msfilter-linear-gradient": "stylecow/stylecow-plugin-msfilter-linear-gradient",
+    "stylecow-plugin-msfilter-transform": "stylecow/stylecow-plugin-msfilter-transform",
+    "stylecow-plugin-nested-rules": "stylecow/stylecow-plugin-nested-rules",
+    "stylecow-plugin-prefixes": "stylecow/stylecow-plugin-prefixes",
+    "stylecow-plugin-rem": "stylecow/stylecow-plugin-rem",
+    "stylecow-plugin-variables": "stylecow/stylecow-plugin-variables"
   }
 }

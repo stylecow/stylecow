@@ -14,18 +14,18 @@
   "dependencies": {
     "multi-stage-sourcemap": "^0.2.1",
     "source-map": "^0.1.*",
-    "stylecow-plugin-color": "stylecow/stylecow-plugin-color",
-    "stylecow-plugin-fixes": "stylecow/stylecow-plugin-fixes",
-    "stylecow-plugin-flex": "stylecow/stylecow-plugin-flex",
-    "stylecow-plugin-import": "stylecow/stylecow-plugin-import",
-    "stylecow-plugin-initial": "stylecow/stylecow-plugin-initial",
-    "stylecow-plugin-matches": "stylecow/stylecow-plugin-matches",
-    "stylecow-plugin-msfilter-background-alpha": "stylecow/stylecow-plugin-msfilter-background-alpha",
-    "stylecow-plugin-msfilter-linear-gradient": "stylecow/stylecow-plugin-msfilter-linear-gradient",
-    "stylecow-plugin-msfilter-transform": "stylecow/stylecow-plugin-msfilter-transform",
-    "stylecow-plugin-nested-rules": "stylecow/stylecow-plugin-nested-rules",
-    "stylecow-plugin-prefixes": "stylecow/stylecow-plugin-prefixes",
-    "stylecow-plugin-rem": "stylecow/stylecow-plugin-rem",
-    "stylecow-plugin-variables": "stylecow/stylecow-plugin-variables"
+    "stylecow-plugin-color": "3.*",
+    "stylecow-plugin-fixes": "3.*",
+    "stylecow-plugin-flex": "3.*",
+    "stylecow-plugin-import": "3.*",
+    "stylecow-plugin-initial": "3.*",
+    "stylecow-plugin-matches": "3.*",
+    "stylecow-plugin-msfilter-background-alpha": "3.*",
+    "stylecow-plugin-msfilter-linear-gradient": "3.*",
+    "stylecow-plugin-msfilter-transform": "3.*",
+    "stylecow-plugin-nested-rules": "3.*",
+    "stylecow-plugin-prefixes": "3.*",
+    "stylecow-plugin-rem": "3.*",
+    "stylecow-plugin-variables": "3.*"
   }
 }

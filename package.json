@@ -1,7 +1,7 @@
 {
   "name": "stylecow",
   "description": "Modern CSS for all browsers",
-  "version": "4.0.0-beta",
+  "version": "4.0.0",
   "author": "Oscar Otero <oom@oscarotero.com>",
   "homepage": "https://github.com/stylecow/stylecow",
   "bugs": "https://github.com/stylecow/stylecow/issues",
@@ -14,7 +14,6 @@
   "dependencies": {
     "multi-stage-sourcemap": "^0.2.1",
     "source-map": "^0.1.*",
-    "stylecow-color": "stylecow/stylecow-color",
     "stylecow-plugin-color": "stylecow/stylecow-plugin-color",
     "stylecow-plugin-fixes": "stylecow/stylecow-plugin-fixes",
     "stylecow-plugin-flex": "stylecow/stylecow-plugin-flex",

@@ -11,6 +11,16 @@ License: MIT
 
 ## Changelog
 
+v.4.1
+
+* The plugin "initial" is deprecated. Now it's included in "fixes"
+
+v.4.0
+
+* Rewritten the parser to be more consitent
+* Changed some API methods to create and traverse through the elements
+* The standard plugins are included as dependencies, so they are installed with stylecow
+
 v.3.1
 
 * Implemented source maps

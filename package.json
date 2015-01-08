@@ -1,7 +1,7 @@
 {
   "name": "stylecow",
   "description": "Modern CSS for all browsers",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "author": "Oscar Otero <oom@oscarotero.com>",
   "homepage": "https://github.com/stylecow/stylecow",
   "bugs": "https://github.com/stylecow/stylecow/issues",
@@ -18,7 +18,6 @@
     "stylecow-plugin-fixes": "3.*",
     "stylecow-plugin-flex": "3.*",
     "stylecow-plugin-import": "3.*",
-    "stylecow-plugin-initial": "3.*",
     "stylecow-plugin-matches": "3.*",
     "stylecow-plugin-msfilter-background-alpha": "3.*",
     "stylecow-plugin-msfilter-linear-gradient": "3.*",

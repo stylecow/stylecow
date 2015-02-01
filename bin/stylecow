@@ -1,0 +1,420 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+var fs = require('fs');
+var path = require('path');
+var stylecow = require('../lib/index');
+
+program.version(require('../package.json').version);
+
+
+// EXECUTE
+
+program
+	.command('execute [<config>]')
+	.description('converts the css using a config file (by default "./stylecow.json")')
+	.option('-i, --input <file>', 'Use a specific input file instead the defined in the config file')
+	.option('-o, --output <file>', 'Use a specific output file instead the defined in the config file')
+	.option('-c, --code <name>', 'Use a specific code style instead the defined in the config file')
+	.option('-w, --watch', 'watches the changes in the input css files')
+	.option('-r, --live-reload', 'Live reload the browser on change the css')
+	.option('-m, --map <dest>', 'Generates a source map? (false|embed|<file.map>)')
+	.action(function (configFile, command) {
+		configFile = path.resolve(process.cwd(), configFile || './stylecow.json');
+
+		var config = readConfig(configFile),
+			basePath = path.dirname(configFile),
+			input, output, code, socket;
+
+
+		input = command.input || config.input;
+
+		if (!input) {
+			console.log('');
+			console.log('  error: No input file defined');
+			console.log('');
+			return;
+		}
+
+		output = command.output || config.output;
+		map = command.map || config.map;
+
+		if (map === 'false') {
+			map = false;
+		}
+
+		//Configure stylecow
+		stylecow.cwd(basePath);
+
+		if (config.support) {
+			stylecow.minSupport(config.support);
+		}
+
+		if (config.plugins) {
+			config.plugins.forEach(function (plugin) {
+				stylecow.loadPlugin(plugin);
+			});
+		}
+
+		if (config.modules) {
+			config.modules.forEach(function (module) {
+				stylecow.loadNpmModule(module);
+			});
+		}
+
+		//Live reload
+		if (command.liveReload) {
+			//Open the websocket server
+			var WebSocketServer = require('ws').Server,
+				wss = new WebSocketServer({port: 8080});
+
+			wss.on('connection', function (ws) {
+				socket = ws;
+			});
+
+			//Create a webserver to serve the js code
+			var http = require('http');
+			var script = fs.readFileSync(__dirname + '/ws-script.js', {encoding: 'utf-8'});
+
+			http.createServer(function (req, res) {
+				res.writeHead(200, {'Content-Type': 'text/javascript'});
+				res.end(script);
+			}).listen(8081, '127.0.0.1');
+
+			console.log('WebSocket server running at ws://127.0.0.1:8080');
+			console.log('Web server running at http://127.0.0.1:8081');
+
+			console.log('Put this code in the html page:');
+			console.log('');
+			console.log('<script type="text/javascript" src="//127.0.0.1:8081"></script>');
+			console.log('');
+		}
+
+		//Converts the code and output the result
+		var executeConvert = function () {
+			var css = stylecow.Root.create(stylecow.Reader.readFile(input));
+
+			stylecow.run(css);
+
+			var code = new stylecow.Coder(css, {
+				sourceMap: map,
+				file: output,
+				style: command.code
+			});
+
+			if (output) {
+				code.save();
+				console.log('success: Generated "' + output + '"');
+			} else {
+				console.log('');
+				console.log(code.code);
+				console.log('');
+			}
+
+			if (socket) {
+				socket.send(JSON.stringify({
+					output: output,
+					code: code.code
+				}), {
+					mask: true
+				}, function () {
+					console.log('success: Code sent to socket');
+				});
+			}
+
+			return css;
+		}
+
+		//Convert the code
+		var css = executeConvert();
+
+		//Watch changes
+		if (command.watch || command.liveReload) {
+			var gaze = require('gaze');
+			var cwd = process.cwd();
+			var files = [];
+
+			getFiles(css).forEach(function (file) {
+				files.push(path.relative(cwd, file));
+			});
+
+			console.log('Waiting for changes...');
+			console.log('');
+
+			gaze(files, function (err, watcher) {
+				watcher.on('changed', function (filepath) {
+					console.log('');
+					console.log('changed detected: ' + filepath);
+
+					getFiles(executeConvert()).forEach(function (file) {
+						file = path.relative(cwd, file);
+
+						if (files.indexOf(file) === -1) {
+							files.push(file);
+
+							watcher.add([file]);
+						}
+					});
+				});
+			});
+		}
+	});
+
+
+// CONFIG
+
+program
+	.command('init [<config>]')
+	.description('Creates a new configuration file')
+	.action(function config (file, command) {
+		var config = file ? readConfig(path.resolve(process.cwd(), file)) : {};
+
+		if (!config.support) {
+			config.support = stylecow.support;
+		}
+
+		config.file = file || 'stylecow.json';
+
+		modifyConfig(config, function (config, file) {
+			writeConfig(config, file);
+		});
+	});
+
+
+// No available command
+
+program.command('*').action(function (command) {
+	console.log('');
+	console.log('  error: unknown command `' + command + '`');
+	console.log('');
+	console.log('  type stylecow -h for help');
+	console.log('');
+});
+
+
+
+// Misc
+
+function modifyConfig (config, callback) {
+	var inquirer = require('inquirer');
+
+	var questions = [
+		{
+			type: "input",
+			name: "explorer",
+			message: "Min version supported in Internet Explorer",
+			default: config.support.explorer
+		},
+		{
+			type: "input",
+			name: "firefox",
+			message: "Min version supported in Mozilla Firefox",
+			default: config.support.firefox
+		},
+		{
+			type: "input",
+			name: "chrome",
+			message: "Min version supported in Google Chrome",
+			default: config.support.chrome
+		},
+		{
+			type: "input",
+			name: "safari",
+			message: "Min version supported in Safari",
+			default: config.support.safari
+		},
+		{
+			type: "input",
+			name: "opera",
+			message: "Min version supported in Opera",
+			default: config.support.opera
+		},
+		{
+			type: "input",
+			name: "android",
+			message: "Min version supported in Android",
+			default: config.support.android
+		},
+		{
+			type: "input",
+			name: "ios",
+			message: "Min version supported in Safari for iOS",
+			default: config.support.ios
+		},
+		{
+			type: "checkbox",
+			name: "plugins",
+			message: "Plugins to apply",
+			choices: fs.readdirSync(__dirname + '/../node_modules/stylecow/node_modules')
+				.filter(function (value) {
+					return value.slice(0, 16) === 'stylecow-plugin-';
+				}).map(function (value) {
+					return value.slice(16);
+				}),
+			default: config.plugins
+		},
+		{
+			type: "list",
+			name: "code",
+			message: "Code style used to generate the css",
+			choices: Object.keys(stylecow.Coder.styles),
+			default: config.code
+		},
+		{
+			type: "input",
+			name: "input",
+			message: function () {
+				if (config.input) {
+					return "Input css filename";
+				} else {
+					return "Input css filename (optional)";
+				}
+			},
+			default: config.input
+		},
+		{
+			type: "input",
+			name: "output",
+			message: function () {
+				if (config.input) {
+					return "Output css filename";
+				} else {
+					return "Output css filename (optional)";
+				}
+			},
+			default: config.output
+		},
+		{
+			type: "list",
+			name: "map",
+			message: "Generate the css source map?",
+			choices: function (answers) {
+				var options = [
+					{
+						name: 'Yes, embed the map in the css file',
+						value: 'embed'
+					},{
+						name: 'No',
+						value: false
+					}
+				];
+
+				if (answers.output) {
+					var file = answers.output.replace('.css', '.map');
+
+					options.unshift({
+						name: 'Yes, save in ' + file,
+						value: file,
+						default: true
+					});
+				} else {
+					options[1].default = true;
+				}
+
+				return options;
+			}
+		}
+	];
+
+	inquirer.prompt(questions, function (answers) {
+		var newConfig = {};
+
+		if (answers.input) {
+			newConfig.input = answers.input;
+		}
+
+		if (answers.output) {
+			newConfig.output = answers.output;
+		}
+
+		if (answers.map) {
+			newConfig.map = answers.map;
+		}
+
+		newConfig.support = {};
+
+		['explorer','firefox','chrome','safari','opera','android','ios'].forEach(function (browser) {
+			newConfig.support[browser] = (answers[browser] === 'false') ? false : parseFloat(answers[browser], 10);
+		});
+
+		newConfig.plugins = answers.plugins;
+		newConfig.code = answers.code;
+
+		console.log(JSON.stringify(newConfig, null, '\t'));
+
+		inquirer.prompt([
+			{
+				type: "confirm",
+				name: "ok",
+				message: "Looks fine?"
+			}
+		], function (answers) {
+			if (answers.ok) {
+				inquirer.prompt([
+					{
+						type: "input",
+						name: "file",
+						message: "Filename where to save the configuration",
+						validate: function (e) {
+							if (!e) {
+								return 'You must specify a filename to the config file (for example: myconfig.json)';
+							}
+
+							if (path.extname(e) !== '.json') {
+								return 'The config file must end in ".json"';
+							}
+
+							return true;
+						},
+						default: config.file
+					}
+				], function (answers) {
+					callback(newConfig, answers.file);
+				});
+			}
+		});
+	});
+}
+
+function getFiles (css) {
+	var files = {};
+	var nodes = css.search();
+	nodes.push(css);
+
+	nodes.filter(function (child) {
+			return (child._data && child._data['sourceFile']);
+		})
+		.map(function (child) {
+			return child._data['sourceFile'];
+		})
+		.forEach(function (file) {
+			files[file] = null;
+		});
+
+	return Object.getOwnPropertyNames(files);
+}
+
+function readConfig (file) {
+	if (fs.existsSync(file)) {
+		return require(file);
+	}
+
+	console.log('');
+	console.log('  error: Config file `' + file + '` not found');
+	console.log('');
+
+	process.exit();
+}
+
+function writeConfig (value, file) {
+	fs.writeFileSync(file, JSON.stringify(value, null, '\t'));
+
+	console.log('success: Config file saved: `' + file + '`');
+	console.log('');
+}
+
+program.parse(process.argv);
+
+if (program.args.length === 0) {
+	program.help();
+}

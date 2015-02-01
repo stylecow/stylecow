@@ -11,8 +11,12 @@ License: MIT
 
 ## Changelog
 
-v.4.1
+v.4.2
 
+* Included the command line interface (and deprecated stylecow-cli package)
+* The separate the parser in an external package: [stylecow-parser](https://github.com/stylecow/stylecow-parser)
+
+v.4.1
 * The plugin "initial" is deprecated. Now it's included in "fixes"
 
 v.4.0

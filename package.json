@@ -1,8 +1,7 @@
 {
   "name": "stylecow",
   "description": "Modern CSS for all browsers",
-  "version": "4.0.1",
-  "version": "4.1.0",
+  "version": "4.2.1",
   "author": "Oscar Otero <oom@oscarotero.com>",
   "homepage": "https://github.com/stylecow/stylecow",
   "bugs": "https://github.com/stylecow/stylecow/issues",

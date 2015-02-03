@@ -245,7 +245,7 @@ function modifyConfig (config, callback) {
 			type: "checkbox",
 			name: "plugins",
 			message: "Plugins to apply",
-			choices: fs.readdirSync(__dirname + '/../node_modules/stylecow/node_modules')
+			choices: fs.readdirSync(__dirname + '/../node_modules')
 				.filter(function (value) {
 					return value.slice(0, 16) === 'stylecow-plugin-';
 				}).map(function (value) {

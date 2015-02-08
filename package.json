@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "commander": "*",
-    "gaze": "*",
+    "chokidar": "*",
     "inquirer": "*",
     "ws": "*",
     "stylecow-parser": "1.*",

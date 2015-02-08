@@ -130,32 +130,36 @@ program
 
 		//Watch changes
 		if (command.watch || command.liveReload) {
-			var gaze = require('gaze');
+			var chokidar = require('chokidar');
 			var cwd = process.cwd();
-			var files = [];
-
-			getFiles(css).forEach(function (file) {
-				files.push(path.relative(cwd, file));
+			var files = getFiles(css);
+			var watcher = chokidar.watch(files, {
+				persistent: true,
+				cwd: cwd
 			});
 
 			console.log('Waiting for changes...');
 			console.log('');
 
-			gaze(files, function (err, watcher) {
-				watcher.on('changed', function (filepath) {
-					console.log('');
-					console.log('changed detected: ' + filepath);
+			watcher.on('change', function (filepath) {
+				console.log('');
+				console.log('change detected: ' + filepath);
 
-					getFiles(executeConvert()).forEach(function (file) {
-						file = path.relative(cwd, file);
+				var newFiles = getFiles(executeConvert());
 
-						if (files.indexOf(file) === -1) {
-							files.push(file);
-
-							watcher.add([file]);
-						}
-					});
+				files.forEach(function (file) {
+					if (newFiles.indexOf(file) === -1) {
+						watcher.unwatch(file);
+					}
 				});
+
+				newFiles.forEach(function (file) {
+					if (files.indexOf(file) === -1) {
+						watcher.add(file);
+					}
+				});
+
+				files = newFiles;
 			});
 		}
 	});

@@ -131,11 +131,10 @@ program
 		//Watch changes
 		if (command.watch || command.liveReload) {
 			var chokidar = require('chokidar');
-			var cwd = process.cwd();
 			var files = getFiles(css);
 			var watcher = chokidar.watch(files, {
 				persistent: true,
-				cwd: cwd
+				cwd: stylecow.cwd()
 			});
 
 			console.log('Waiting for changes...');

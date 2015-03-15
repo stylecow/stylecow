@@ -9,10 +9,18 @@
 
       ws.onmessage = function (e) {
         var data = JSON.parse(e.data);
-        style.innerHTML = data.code;
 
         if (data.output) {
           var link = document.querySelector('link[rel="stylesheet"][href$="' + data.output + '"]');
+        }
+
+        if (data.subject === 'baseUrl') {
+          ws.send(JSON.stringify({
+            subject: 'baseUrl',
+            baseUrl: link.href
+          }));
+        } else if (data.subject === 'code') {
+          style.innerHTML = data.code;
 
           if (link) {
             link.parentNode.removeChild(link);

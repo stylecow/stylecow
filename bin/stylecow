@@ -24,7 +24,7 @@ program
 
 		var config = readConfig(configFile),
 			basePath = path.dirname(configFile),
-			input, output, code, socket;
+			input, output, code, socket, baseUrl;
 
 
 		input = command.input || config.input;
@@ -70,6 +70,22 @@ program
 
 			wss.on('connection', function (ws) {
 				socket = ws;
+
+				socket.send(JSON.stringify({
+					subject: 'baseUrl',
+					output: output
+				}), {
+					mask: true
+				});
+
+				socket.on('message', function (data) {
+					var data = JSON.parse(data);
+
+					if (data.subject === 'baseUrl') {
+						baseUrl = data.baseUrl ? path.dirname(data.baseUrl) : '';
+						console.log('connected and syncing ' + data.baseUrl);
+					}
+				});
 			});
 
 			//Create a webserver to serve the js code
@@ -112,9 +128,32 @@ program
 			}
 
 			if (socket) {
+				if (baseUrl) {
+					var url = require('url');
+
+					css.search({
+						type: 'Function',
+						name: 'url'
+					}).search({
+						type: ['Keyword', 'String']
+					}).forEach(function (keyword) {
+						if (!url.parse(keyword.name).hostname && (keyword.name[0] !== '/')) {
+							keyword.name = baseUrl + '/' + keyword.name;
+						}
+					});
+
+					code = new stylecow.Coder(css, {
+						sourceMap: map,
+						file: output,
+						style: command.code
+					});
+				}
+
 				socket.send(JSON.stringify({
+					subject: 'code',
 					output: output,
-					code: code.code
+					code: code.code,
+					baseUrl: baseUrl
 				}), {
 					mask: true
 				}, function () {

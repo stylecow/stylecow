@@ -9,12 +9,27 @@
 
       ws.onmessage = function (e) {
         var data = JSON.parse(e.data);
+        var link;
 
         if (data.output) {
-          var link = document.querySelector('link[rel="stylesheet"][href$="' + data.output + '"]');
+          Array.prototype.forEach.call(
+            document.querySelectorAll('link[rel="stylesheet"]'),
+            function (node) {
+              var href = node.href;
+
+              if (node.href.substr(-(data.output.length)) === data.output) {
+                link = node;
+              }
+            }
+          )
         }
 
         if (data.subject === 'baseUrl') {
+          if (!link) {
+            console.error('Stylecow live reload error: No stylesheet link found in the document for the file ' + data.output);
+            return;
+          }
+
           ws.send(JSON.stringify({
             subject: 'baseUrl',
             baseUrl: link.href

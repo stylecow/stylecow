@@ -1,49 +1,70 @@
 (function () {
-  var ws, style = document.createElement('style');
+	"use strict";
 
-  document.head.appendChild(style);
+	var ws, styles = {}, links = Array.prototype.slice.call(document.querySelectorAll('link[rel="stylesheet"]'));
 
-  function socket () {
-    if (!ws || ws.readyState !== 1) {
-      ws = new WebSocket('ws://127.0.0.1:8080');
+	function getLink(url) {
+		var link = links.filter(function (node) {
+				return (node.href.substr(-(url.length)) === url);
+			}).pop();
 
-      ws.onmessage = function (e) {
-        var data = JSON.parse(e.data);
-        var link;
+		if (link) {
+			links.splice(links.indexOf(link), 1);
+		}
 
-        if (data.output) {
-          Array.prototype.forEach.call(
-            document.querySelectorAll('link[rel="stylesheet"]'),
-            function (node) {
-              var href = node.href;
+		return link;
+	}
 
-              if (node.href.substr(-(data.output.length)) === data.output) {
-                link = node;
-              }
-            }
-          )
-        }
+	function socket () {
+		if (ws && ws.readyState !== 3) {
+			return true;
+		}
 
-        if (data.subject === 'baseUrl') {
-          if (!link) {
-            console.error('Stylecow live reload error: No stylesheet link found in the document for the file ' + data.output);
-            return;
-          }
+		ws = new WebSocket('ws://127.0.0.1:8080');
 
-          ws.send(JSON.stringify({
-            subject: 'baseUrl',
-            baseUrl: link.href
-          }));
-        } else if (data.subject === 'code') {
-          style.innerHTML = data.code;
+		ws.onmessage = function (e) {
+			var data = JSON.parse(e.data);
 
-          if (link) {
-            link.parentNode.removeChild(link);
-          }
-        }
-      }
-    }
-  }
+			if (data.subject === 'connection') {
+				data.files.forEach(function (file) {
+					var link = getLink(file.output);
 
-  setInterval(socket, 1000);
+					if (link) {
+						file.baseUrl = link.href;
+
+						var style = document.createElement('style');
+						document.head.appendChild(style);
+
+						styles[file.baseUrl] = {
+							style: style,
+							link: link
+						};
+					
+						console.log('Stylecow live reload is syncing: ' + file.baseUrl);
+					}
+				});
+
+				ws.send(JSON.stringify({
+					subject: 'connection',
+					agent: navigator.userAgent,
+					files: data.files
+				}));
+
+				return;
+			}
+
+			if (data.subject === 'code') {
+				var style = styles[data.baseUrl];
+
+				style.style.innerHTML = data.code;
+
+				if (style.link) {
+					style.link.parentNode.removeChild(style.link);
+					style.link = null;
+				}
+			}
+		}
+	}
+
+	setInterval(socket, 1000);
 })();

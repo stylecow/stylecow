@@ -68,21 +68,31 @@ program
 			wss.on('connection', function (ws) {
 				config.socket = ws;
 
-				//Get the baseurl for each file
-				config.socket.send(JSON.stringify({
-					subject: 'baseUrl',
-					output: config.files
-				}), {
-					mask: true
-				});
-
-				config.socket.on('message', function (data) {
+				ws.on('message', function (data) {
 					var data = JSON.parse(data);
 
-					if (data.subject === 'baseUrl') {
-						config.files = data.files;
+					if (data.subject === 'connection') {
+						console.log('');
 						console.log('connected to browser');
+						console.log(data.agent);
+
+						config.files.forEach(function (file) {
+							data.files.forEach(function (f) {
+								if (f.baseUrl && file.output === f.output) {
+									console.log('syncing: ' + f.baseUrl);
+									file.baseUrl = f.baseUrl;
+								}
+							});
+						});
 					}
+				});
+
+				//Get the baseurl for each file
+				ws.send(JSON.stringify({
+					subject: 'connection',
+					files: config.files
+				}), {
+					mask: true
 				});
 			});
 
@@ -173,11 +183,10 @@ program
 				file.files.forEach(function (f) {
 					if (!config.watchingFiles[f]) {
 						config.watchingFiles[f] = [file];
+						config.watch.add(f);
 					} else {
-						config.watchingFiles.push(file);
+						config.watchingFiles[f].push(file);
 					}
-
-					config.watch.add(f);
 				});
 			}
 		});
@@ -243,6 +252,7 @@ function executeConvert (config, file) {
 	//Send the code to socket
 	if (config.socket && file.baseUrl) {
 		var url = require('url');
+		var basepath = path.dirname(file.baseUrl);
 
 		css.search({
 			type: 'Function',
@@ -251,12 +261,12 @@ function executeConvert (config, file) {
 			type: ['Keyword', 'String']
 		}).forEach(function (keyword) {
 			if (!url.parse(keyword.name).hostname && (keyword.name[0] !== '/')) {
-				keyword.name = file.baseUrl + '/' + keyword.name;
+				keyword.name = basepath + '/' + keyword.name;
 			}
 		});
 
 		code = new stylecow.Coder(css, {
-			sourceMap: 'embed',
+			//sourceMap: 'embed',
 			style: 'minify'
 		});
 

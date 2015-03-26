@@ -5,207 +5,23 @@ var fs = require('fs');
 var path = require('path');
 var stylecow = require('../lib/index');
 
-program.version(require('../package.json').version);
-
-
-// EXECUTE
-
 program
-	.command('execute [<config>]')
-	.description('converts the css using a config file (by default "./stylecow.json")')
+	.version(require('../package.json').version)
+	.usage('[options]')
+	.option('-c, --config', 'use a specific config file instead ./stylecow.json')
 	.option('-w, --watch', 'watches the changes in the input css files')
-	.option('-r, --live-reload', 'Live reload the browser on change the css')
-	.action(function (configFile, command) {
-		//Load config
-		configFile = path.resolve(process.cwd(), configFile || './stylecow.json');
-
-		var config = readConfig(configFile),
-			basePath = path.dirname(configFile),
-			socket;
-
-		if (!config.files) {
-			console.log('');
-			console.log('  error: No files defined');
-			console.log('');
-			return;
-		}
-
-		config.liveReload = command.liveReload;
-
-		if (config.liveReload) {
-			config.watch = true;
-		} else {
-			config.watch = command.watch;
-		}
-
-		config.watchingFiles = {};
-
-		//Configure stylecow
-		stylecow.cwd(basePath);
-
-		if (config.support) {
-			stylecow.minSupport(config.support);
-		}
-
-		if (config.plugins) {
-			config.plugins.forEach(function (plugin) {
-				stylecow.loadPlugin(plugin);
-			});
-		}
-
-		if (config.modules) {
-			config.modules.forEach(function (module) {
-				stylecow.loadNpmModule(module);
-			});
-		}
-
-		//Init websocket for live reload
-		if (config.liveReload) {
-			//Open the websocket server
-			var WebSocketServer = require('ws').Server,
-				wss = new WebSocketServer({port: 8080});
-
-			wss.on('connection', function (ws) {
-				config.socket = ws;
-
-				ws.on('message', function (data) {
-					var data = JSON.parse(data);
-
-					if (data.subject === 'connection') {
-						console.log('');
-						console.log('connected to browser');
-						console.log(data.agent);
-
-						config.files.forEach(function (file) {
-							data.files.forEach(function (f) {
-								if (f.baseUrl && file.output === f.output) {
-									console.log('syncing: ' + f.baseUrl);
-									file.baseUrl = f.baseUrl;
-								}
-							});
-						});
-					}
-				});
-
-				//Get the baseurl for each file
-				ws.send(JSON.stringify({
-					subject: 'connection',
-					files: config.files
-				}), {
-					mask: true
-				});
-			});
-
-			//Create a webserver to serve the js code
-			var http = require('http');
-			var script = fs.readFileSync(__dirname + '/ws-script.js', {encoding: 'utf-8'});
-
-			http.createServer(function (req, res) {
-				res.writeHead(200, {'Content-Type': 'text/javascript'});
-				res.end(script);
-			}).listen(8081, '127.0.0.1');
-
-			console.log('WebSocket server running at ws://127.0.0.1:8080');
-			console.log('Web server running at http://127.0.0.1:8081');
-
-			console.log('Put this code in the html page:');
-			console.log('');
-			console.log('<script type="text/javascript" src="//127.0.0.1:8081"></script>');
-			console.log('');
-		}
-
-		//Init watcher
-		if (config.watch) {
-			config.watch = require('chokidar').watch([], {
-				persistent: true,
-				cwd: stylecow.cwd()
-			});
-
-			console.log('Waiting for changes...');
-			console.log('');
-
-			config.watch.on('change', function (filepath) {
-				var files = config.watchingFiles[filepath];
-
-				if (!files) {
-					return;
-				}
-
-				console.log('');
-				console.log('change detected: ' + filepath);
-
-				files.forEach(function (file) {
-					executeConvert(config, file);
-
-					//Add new files to watching index
-					file.files.forEach(function (f) {
-						if (config.watchingFiles[f]) {
-							if (config.watchingFiles[f].indexOf(file) === -1) {
-								config.watchingFiles[f].push(file);
-							}
-						} else {
-							config.watchingFiles[f] = [file];
-							config.watch.add(f);
-							console.log('watch: ' + f);
-						}
-					});
-
-					//Remove old files from watching index
-					for (var f in config.watchingFiles) {
-						var index = config.watchingFiles[f].indexOf(file);
-
-						if (index !== -1) {
-							if (file.files.indexOf(f) === -1) {
-								config.watchingFiles[f].splice(index, 1);
-
-								if (!config.watchingFiles[f].length) {
-									delete config.watchingFiles[f];
-									config.watch.unwatch(f);
-									console.log('unwatch: ' + f);
-								}
-							}
-						}
-					}
-				});
-			});
-		}
-
-		//Convert the code
-		config.files.forEach(function (file) {
-			if (file.map === 'false') {
-				file.map = false;
-			}
-
-			executeConvert(config, file);
-
-			//Watch changes
-			if (config.watch) {
-				file.files.forEach(function (f) {
-					if (!config.watchingFiles[f]) {
-						config.watchingFiles[f] = [file];
-						config.watch.add(f);
-					} else {
-						config.watchingFiles[f].push(file);
-					}
-				});
-			}
-		});
-	});
+	.option('-r, --live-reload', 'Live reload the browser on change the css');
 
 
-// CONFIG
-
+// init command
 program
-	.command('init [<config>]')
+	.command('init')
 	.description('Creates a new configuration file')
-	.action(function config (file, command) {
-		var config = file ? readConfig(path.resolve(process.cwd(), file)) : {};
-
-		if (!config.support) {
-			config.support = stylecow.support;
-		}
-
-		config.file = file || 'stylecow.json';
+	.action(function config (command) {
+		var config = {
+			support: stylecow.support,
+			file: 'stylecow.json'
+		};
 
 		modifyConfig(config, function (config, file) {
 			writeConfig(config, file);
@@ -213,19 +29,191 @@ program
 	});
 
 
-// No available command
+// run
+program.parse(process.argv);
 
-program.command('*').action(function (command) {
-	console.log('');
-	console.log('  error: unknown command `' + command + '`');
-	console.log('');
-	console.log('  type stylecow -h for help');
-	console.log('');
-});
+run(program.config, program.watch, program.liveReload);
 
 
 
-// Misc
+/* =================================================== */
+
+function run (configFile, watch, liveReload) {
+	//Load config
+	configFile = path.resolve(process.cwd(), configFile || './stylecow.json');
+
+	var config = readConfig(configFile),
+		basePath = path.dirname(configFile),
+		socket;
+
+	if (!config.files) {
+		console.log('');
+		console.log('  error: No files defined');
+		console.log('');
+		return;
+	}
+
+	config.liveReload = liveReload;
+
+	if (config.liveReload) {
+		config.watch = true;
+	} else {
+		config.watch = watch;
+	}
+
+	config.watchingFiles = {};
+
+	//Configure stylecow
+	stylecow.cwd(basePath);
+
+	if (config.support) {
+		stylecow.minSupport(config.support);
+	}
+
+	if (config.plugins) {
+		config.plugins.forEach(function (plugin) {
+			stylecow.loadPlugin(plugin);
+		});
+	}
+
+	if (config.modules) {
+		config.modules.forEach(function (module) {
+			stylecow.loadNpmModule(module);
+		});
+	}
+
+	//Init websocket for live reload
+	if (config.liveReload) {
+		//Open the websocket server
+		var WebSocketServer = require('ws').Server,
+			wss = new WebSocketServer({port: 8080});
+
+		wss.on('connection', function (ws) {
+			config.socket = ws;
+
+			ws.on('message', function (data) {
+				var data = JSON.parse(data);
+
+				if (data.subject === 'connection') {
+					console.log('');
+					console.log('connected to browser');
+					console.log(data.agent);
+
+					config.files.forEach(function (file) {
+						data.files.forEach(function (f) {
+							if (f.baseUrl && file.output === f.output) {
+								console.log('syncing: ' + f.baseUrl);
+								file.baseUrl = f.baseUrl;
+							}
+						});
+					});
+				}
+			});
+
+			//Get the baseurl for each file
+			ws.send(JSON.stringify({
+				subject: 'connection',
+				files: config.files
+			}), {
+				mask: true
+			});
+		});
+
+		//Create a webserver to serve the js code
+		var http = require('http');
+		var script = fs.readFileSync(__dirname + '/ws-script.js', {encoding: 'utf-8'});
+
+		http.createServer(function (req, res) {
+			res.writeHead(200, {'Content-Type': 'text/javascript'});
+			res.end(script);
+		}).listen(8081, '127.0.0.1');
+
+		console.log('WebSocket server running at ws://127.0.0.1:8080');
+		console.log('Web server running at http://127.0.0.1:8081');
+
+		console.log('Put this code in the html page:');
+		console.log('');
+		console.log('<script type="text/javascript" src="//127.0.0.1:8081"></script>');
+		console.log('');
+	}
+
+	//Init watcher
+	if (config.watch) {
+		config.watch = require('chokidar').watch([], {
+			persistent: true,
+			cwd: stylecow.cwd()
+		});
+
+		console.log('Waiting for changes...');
+		console.log('');
+
+		config.watch.on('change', function (filepath) {
+			var files = config.watchingFiles[filepath];
+
+			if (!files) {
+				return;
+			}
+
+			console.log('');
+			console.log('change detected: ' + filepath);
+
+			files.forEach(function (file) {
+				executeConvert(config, file);
+
+				//Add new files to watching index
+				file.files.forEach(function (f) {
+					if (config.watchingFiles[f]) {
+						if (config.watchingFiles[f].indexOf(file) === -1) {
+							config.watchingFiles[f].push(file);
+						}
+					} else {
+						config.watchingFiles[f] = [file];
+						config.watch.add(f);
+						console.log('watch: ' + f);
+					}
+				});
+
+				//Remove old files from watching index
+				for (var f in config.watchingFiles) {
+					var index = config.watchingFiles[f].indexOf(file);
+
+					if (index !== -1) {
+						if (file.files.indexOf(f) === -1) {
+							config.watchingFiles[f].splice(index, 1);
+
+							if (!config.watchingFiles[f].length) {
+								delete config.watchingFiles[f];
+								config.watch.unwatch(f);
+								console.log('unwatch: ' + f);
+							}
+						}
+					}
+				}
+			});
+		});
+	}
+
+	//Convert the code
+	config.files.forEach(function (file) {
+		if (file.map === 'false') {
+			file.map = false;
+		}
+
+		executeConvert(config, file);
+
+		//Watch changes
+		if (config.watch) {
+			file.files.forEach(function (f) {
+				if (!config.watchingFiles[f]) {
+					config.watchingFiles[f] = [file];
+					config.watch.add(f);
+				} else {
+					config.watchingFiles[f].push(file);
+				}
+			});
+		}
+	});
+}
 
 //Converts the code and output the result
 function executeConvert (config, file) {
@@ -479,10 +467,4 @@ function writeConfig (value, file) {
 
 	console.log('success: Config file saved: `' + file + '`');
 	console.log('');
-}
-
-program.parse(process.argv);
-
-if (program.args.length === 0) {
-	program.help();
 }

@@ -32,6 +32,9 @@ v.5.0
 	// here the rest of configuration
 }
 ```
+* Removed `--input`, `--output`, `--code` and `--map` configuration
+* Simplified api. The command `stylecow execute` is now simply `stylecow`
+* On create new configuration file with `stylecow init`, all plugins are checked by default
 
 v.4.2
 

@@ -13,35 +13,32 @@ program.version(require('../package.json').version);
 program
 	.command('execute [<config>]')
 	.description('converts the css using a config file (by default "./stylecow.json")')
-	.option('-i, --input <file>', 'Use a specific input file instead the defined in the config file')
-	.option('-o, --output <file>', 'Use a specific output file instead the defined in the config file')
-	.option('-c, --code <name>', 'Use a specific code style instead the defined in the config file')
 	.option('-w, --watch', 'watches the changes in the input css files')
 	.option('-r, --live-reload', 'Live reload the browser on change the css')
-	.option('-m, --map <dest>', 'Generates a source map? (false|embed|<file.map>)')
 	.action(function (configFile, command) {
+		//Load config
 		configFile = path.resolve(process.cwd(), configFile || './stylecow.json');
 
 		var config = readConfig(configFile),
 			basePath = path.dirname(configFile),
-			input, output, code, socket, baseUrl;
+			socket;
 
-
-		input = command.input || config.input;
-
-		if (!input) {
+		if (!config.files) {
 			console.log('');
-			console.log('  error: No input file defined');
+			console.log('  error: No files defined');
 			console.log('');
 			return;
 		}
 
-		output = command.output || config.output;
-		map = command.map || config.map;
+		config.liveReload = command.liveReload;
 
-		if (map === 'false') {
-			map = false;
+		if (config.liveReload) {
+			config.watch = true;
+		} else {
+			config.watch = command.watch;
 		}
+
+		config.watchingFiles = {};
 
 		//Configure stylecow
 		stylecow.cwd(basePath);
@@ -62,28 +59,29 @@ program
 			});
 		}
 
-		//Live reload
-		if (command.liveReload) {
+		//Init websocket for live reload
+		if (config.liveReload) {
 			//Open the websocket server
 			var WebSocketServer = require('ws').Server,
 				wss = new WebSocketServer({port: 8080});
 
 			wss.on('connection', function (ws) {
-				socket = ws;
+				config.socket = ws;
 
-				socket.send(JSON.stringify({
+				//Get the baseurl for each file
+				config.socket.send(JSON.stringify({
 					subject: 'baseUrl',
-					output: output
+					output: config.files
 				}), {
 					mask: true
 				});
 
-				socket.on('message', function (data) {
+				config.socket.on('message', function (data) {
 					var data = JSON.parse(data);
 
 					if (data.subject === 'baseUrl') {
-						baseUrl = data.baseUrl ? path.dirname(data.baseUrl) : '';
-						console.log('connected and syncing ' + data.baseUrl);
+						config.files = data.files;
+						console.log('connected to browser');
 					}
 				});
 			});
@@ -106,72 +104,9 @@ program
 			console.log('');
 		}
 
-		//Converts the code and output the result
-		var executeConvert = function () {
-			var css = stylecow.Root.create(stylecow.Reader.readFile(input));
-
-			stylecow.run(css);
-
-			var code = new stylecow.Coder(css, {
-				sourceMap: map,
-				file: output,
-				style: command.code
-			});
-
-			if (output) {
-				code.save();
-				console.log('success: Generated "' + output + '"');
-			} else {
-				console.log('');
-				console.log(code.code);
-				console.log('');
-			}
-
-			if (socket) {
-				if (baseUrl) {
-					var url = require('url');
-
-					css.search({
-						type: 'Function',
-						name: 'url'
-					}).search({
-						type: ['Keyword', 'String']
-					}).forEach(function (keyword) {
-						if (!url.parse(keyword.name).hostname && (keyword.name[0] !== '/')) {
-							keyword.name = baseUrl + '/' + keyword.name;
-						}
-					});
-
-					code = new stylecow.Coder(css, {
-						sourceMap: map,
-						file: output,
-						style: command.code
-					});
-				}
-
-				socket.send(JSON.stringify({
-					subject: 'code',
-					output: output,
-					code: code.code,
-					baseUrl: baseUrl
-				}), {
-					mask: true
-				}, function () {
-					console.log('success: Code sent to socket');
-				});
-			}
-
-			return css;
-		}
-
-		//Convert the code
-		var css = executeConvert();
-
-		//Watch changes
-		if (command.watch || command.liveReload) {
-			var chokidar = require('chokidar');
-			var files = getFiles(css);
-			var watcher = chokidar.watch(files, {
+		//Init watcher
+		if (config.watch) {
+			config.watch = require('chokidar').watch([], {
 				persistent: true,
 				cwd: stylecow.cwd()
 			});
@@ -179,27 +114,73 @@ program
 			console.log('Waiting for changes...');
 			console.log('');
 
-			watcher.on('change', function (filepath) {
+			config.watch.on('change', function (filepath) {
+				var files = config.watchingFiles[filepath];
+
+				if (!files) {
+					return;
+				}
+
 				console.log('');
 				console.log('change detected: ' + filepath);
 
-				var newFiles = getFiles(executeConvert());
-
 				files.forEach(function (file) {
-					if (newFiles.indexOf(file) === -1) {
-						watcher.unwatch(file);
+					executeConvert(config, file);
+
+					//Add new files to watching index
+					file.files.forEach(function (f) {
+						if (config.watchingFiles[f]) {
+							if (config.watchingFiles[f].indexOf(file) === -1) {
+								config.watchingFiles[f].push(file);
+							}
+						} else {
+							config.watchingFiles[f] = [file];
+							config.watch.add(f);
+							console.log('watch: ' + f);
+						}
+					});
+
+					//Remove old files from watching index
+					for (var f in config.watchingFiles) {
+						var index = config.watchingFiles[f].indexOf(file);
+
+						if (index !== -1) {
+							if (file.files.indexOf(f) === -1) {
+								config.watchingFiles[f].splice(index, 1);
+
+								if (!config.watchingFiles[f].length) {
+									delete config.watchingFiles[f];
+									config.watch.unwatch(f);
+									console.log('unwatch: ' + f);
+								}
+							}
+						}
 					}
 				});
-
-				newFiles.forEach(function (file) {
-					if (files.indexOf(file) === -1) {
-						watcher.add(file);
-					}
-				});
-
-				files = newFiles;
 			});
 		}
+
+		//Convert the code
+		config.files.forEach(function (file) {
+			if (file.map === 'false') {
+				file.map = false;
+			}
+
+			executeConvert(config, file);
+
+			//Watch changes
+			if (config.watch) {
+				file.files.forEach(function (f) {
+					if (!config.watchingFiles[f]) {
+						config.watchingFiles[f] = [file];
+					} else {
+						config.watchingFiles.push(file);
+					}
+
+					config.watch.add(f);
+				});
+			}
+		});
 	});
 
 
@@ -237,8 +218,72 @@ program.command('*').action(function (command) {
 
 // Misc
 
+//Converts the code and output the result
+function executeConvert (config, file) {
+	var css = stylecow.Root.create(stylecow.Reader.readFile(file.input));
+
+	//Convert the code
+	stylecow.run(css);
+
+	var code = new stylecow.Coder(css, {
+		sourceMap: file.map,
+		file: file.output,
+		style: config.code
+	});
+
+	if (file.output) {
+		code.save();
+		console.log('success: Generated "' + file.output + '"');
+	} else {
+		console.log('');
+		console.log(code.code);
+		console.log('');
+	}
+
+	//Send the code to socket
+	if (config.socket && file.baseUrl) {
+		var url = require('url');
+
+		css.search({
+			type: 'Function',
+			name: 'url'
+		}).search({
+			type: ['Keyword', 'String']
+		}).forEach(function (keyword) {
+			if (!url.parse(keyword.name).hostname && (keyword.name[0] !== '/')) {
+				keyword.name = file.baseUrl + '/' + keyword.name;
+			}
+		});
+
+		code = new stylecow.Coder(css, {
+			sourceMap: 'embed',
+			style: 'minify'
+		});
+
+		config.socket.send(JSON.stringify({
+			subject: 'code',
+			code: code.code,
+			baseUrl: file.baseUrl
+		}), {
+			mask: true
+		}, function () {
+			console.log('success: Code sent to socket');
+		});
+	}
+
+	//Get secondary files
+	file.files = getFiles(css);
+}
+
 function modifyConfig (config, callback) {
 	var inquirer = require('inquirer');
+	var files = config.files ? (config.files[0] || {}) : {};
+	var availablePlugins = fs.readdirSync(__dirname + '/../node_modules')
+		.filter(function (value) {
+			return value.slice(0, 16) === 'stylecow-plugin-';
+		}).map(function (value) {
+			return value.slice(16);
+		});
 
 	var questions = [
 		{
@@ -287,13 +332,8 @@ function modifyConfig (config, callback) {
 			type: "checkbox",
 			name: "plugins",
 			message: "Plugins to apply",
-			choices: fs.readdirSync(__dirname + '/../node_modules')
-				.filter(function (value) {
-					return value.slice(0, 16) === 'stylecow-plugin-';
-				}).map(function (value) {
-					return value.slice(16);
-				}),
-			default: config.plugins
+			choices: availablePlugins,
+			default: config.plugins || availablePlugins
 		},
 		{
 			type: "list",
@@ -305,34 +345,28 @@ function modifyConfig (config, callback) {
 		{
 			type: "input",
 			name: "input",
-			message: function () {
-				if (config.input) {
-					return "Input css filename";
-				} else {
-					return "Input css filename (optional)";
-				}
-			},
-			default: config.input
+			message: "Input css filename",
+			default: files.input
 		},
 		{
 			type: "input",
 			name: "output",
-			message: function () {
-				if (config.input) {
-					return "Output css filename";
-				} else {
-					return "Output css filename (optional)";
-				}
-			},
-			default: config.output
+			message: "Output css filename",
+			default: files.output
 		},
 		{
 			type: "list",
 			name: "map",
 			message: "Generate the css source map?",
 			choices: function (answers) {
-				var options = [
+				var file = answers.output.replace('.css', '.map');
+
+				return [
 					{
+						name: 'Yes, save in ' + file,
+						value: file,
+						default: true
+					},{
 						name: 'Yes, embed the map in the css file',
 						value: 'embed'
 					},{
@@ -340,38 +374,20 @@ function modifyConfig (config, callback) {
 						value: false
 					}
 				];
-
-				if (answers.output) {
-					var file = answers.output.replace('.css', '.map');
-
-					options.unshift({
-						name: 'Yes, save in ' + file,
-						value: file,
-						default: true
-					});
-				} else {
-					options[1].default = true;
-				}
-
-				return options;
 			}
 		}
 	];
 
 	inquirer.prompt(questions, function (answers) {
-		var newConfig = {};
-
-		if (answers.input) {
-			newConfig.input = answers.input;
-		}
-
-		if (answers.output) {
-			newConfig.output = answers.output;
-		}
-
-		if (answers.map) {
-			newConfig.map = answers.map;
-		}
+		var newConfig = {
+			files: [
+				{
+					input: answers.input,
+					output: answers.output,
+					map: answers.map
+				}
+			]
+		};
 
 		newConfig.support = {};
 
@@ -430,7 +446,7 @@ function getFiles (css) {
 			return child._data['sourceFile'];
 		})
 		.forEach(function (file) {
-			files[file] = null;
+			files[path.normalize(file)] = null;
 		});
 
 	return Object.getOwnPropertyNames(files);

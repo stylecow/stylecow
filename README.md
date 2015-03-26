@@ -11,6 +11,28 @@ License: MIT
 
 ## Changelog
 
+v.5.0
+
+* Added support for convert various files. From now, the stylecow.json structure has the following format:
+
+```json
+{
+	"files": [
+		{
+			"input": "styles.css",
+			"output": "styles.min.css",
+			"map": "styles.min.map",
+		},{
+			"input": "styles2.css",
+			"output": "styles2.min.css",
+			"map": "styles2.min.map",
+		}
+	],
+
+	// here the rest of configuration
+}
+```
+
 v.4.2
 
 * Included the command line interface (and deprecate stylecow-cli package)

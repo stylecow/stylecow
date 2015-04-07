@@ -32,7 +32,9 @@ program
 // run
 program.parse(process.argv);
 
-run(program.config, program.watch, program.liveReload);
+if (!program.args.length) {
+	run(program.config, program.watch, program.liveReload);
+}
 
 
 

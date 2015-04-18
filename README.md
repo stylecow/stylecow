@@ -11,6 +11,10 @@ License: MIT
 
 ## Changelog
 
+v.6.0
+
+* New version of stylecow-parser (2.0) with a lot of fixes and speed improvements
+
 v.5.0
 
 * Added support for convert various files. From now, the stylecow.json structure has the following format:

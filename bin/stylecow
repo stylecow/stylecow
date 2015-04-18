@@ -219,7 +219,7 @@ function run (configFile, watch, liveReload) {
 
 //Converts the code and output the result
 function executeConvert (config, file) {
-	var css = stylecow.Root.create(stylecow.Reader.readFile(file.input));
+	var css = stylecow.Root.create(stylecow.Reader.fromFile(file.input));
 
 	//Convert the code
 	stylecow.run(css);
@@ -436,7 +436,7 @@ function modifyConfig (config, callback) {
 
 function getFiles (css) {
 	var files = {};
-	var nodes = css.search();
+	var nodes = css.getAll();
 	nodes.push(css);
 
 	nodes.filter(function (child) {

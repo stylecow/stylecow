@@ -219,7 +219,7 @@ function run (configFile, watch, liveReload) {
 
 //Converts the code and output the result
 function executeConvert (config, file) {
-	var css = stylecow.Root.create(stylecow.Reader.fromFile(file.input));
+	var css = stylecow.parseFile(file.input);
 
 	//Convert the code
 	stylecow.run(css);
@@ -244,10 +244,10 @@ function executeConvert (config, file) {
 		var url = require('url');
 		var basepath = path.dirname(file.baseUrl);
 
-		css.search({
+		css.getAll({
 			type: 'Function',
 			name: 'url'
-		}).search({
+		}).getAll({
 			type: ['Keyword', 'String']
 		}).forEach(function (keyword) {
 			if (!url.parse(keyword.name).hostname && (keyword.name[0] !== '/')) {
@@ -440,10 +440,10 @@ function getFiles (css) {
 	nodes.push(css);
 
 	nodes.filter(function (child) {
-			return (child._data && child._data['sourceFile']);
+			return ('file' in child.data) && child.data.file;
 		})
 		.map(function (child) {
-			return child._data['sourceFile'];
+			return child.data.file;
 		})
 		.forEach(function (file) {
 			files[path.normalize(file)] = null;

@@ -5,7 +5,13 @@
 
 	function getLink(url) {
 		var link = links.filter(function (node) {
-				return (node.href.substr(-(url.length)) === url);
+				var href = node.href;
+
+				if (href.indexOf('?') !== -1) {
+					href = href.split('?', 2).shift();
+				}
+
+				return (href.substr(-(url.length)) === url);
 			}).pop();
 
 		if (link) {
@@ -30,7 +36,11 @@
 					var link = getLink(file.output);
 
 					if (link) {
-						file.baseUrl = link.href;
+						if (link.href.indexOf('?') !== -1) {
+							file.baseUrl = link.href.split('?', 2).shift();
+						} else {
+							file.baseUrl = link.href;
+						}
 
 						var style = document.createElement('style');
 						document.head.appendChild(style);

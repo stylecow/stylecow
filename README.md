@@ -1,5 +1,4 @@
-stylecow: modern CSS for all browser
-====================================
+# stylecow: modern CSS for all browser
 
 Node library to fix your css code and make it compatible with all browsers.
 
@@ -10,6 +9,10 @@ Created by Oscar Otero <http://oscarotero.com> / <oom@oscarotero.com>
 License: MIT
 
 ## Changelog
+
+v.6.1
+
+* New plugin "custom-media"
 
 v.6.0
 

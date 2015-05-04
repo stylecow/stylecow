@@ -10,6 +10,10 @@ License: MIT
 
 ## Changelog
 
+v.6.2
+
+* New plugin "custom-selector"
+
 v.6.1
 
 * New plugin "custom-media"

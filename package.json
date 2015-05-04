@@ -18,6 +18,7 @@
     "ws": "*",
     "stylecow-parser": "2.*",
     "stylecow-plugin-custom-media": "1.*",
+    "stylecow-plugin-custom-selector": "1.*",
     "stylecow-plugin-color": "4.*",
     "stylecow-plugin-fixes": "4.*",
     "stylecow-plugin-flex": "4.*",

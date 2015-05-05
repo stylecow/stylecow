@@ -4,9 +4,13 @@ var program = require('commander');
 var fs = require('fs');
 var path = require('path');
 var stylecow = require('../lib/index');
+var updateNotifier = require('update-notifier');
+var pkg = require('../package.json');
+ 
+updateNotifier({pkg: pkg}).notify();
 
 program
-	.version(require('../package.json').version)
+	.version(pkg.version)
 	.usage('[options]')
 	.option('-c, --config', 'use a specific config file instead ./stylecow.json')
 	.option('-w, --watch', 'watches the changes in the input css files')

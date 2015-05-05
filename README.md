@@ -10,6 +10,10 @@ License: MIT
 
 ## Changelog
 
+v.6.3
+
+* Added a update notified
+
 v.6.2
 
 * New plugin "custom-selector"

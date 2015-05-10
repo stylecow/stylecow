@@ -1,7 +1,7 @@
 {
   "name": "stylecow",
   "description": "Modern CSS for all browsers",
-  "version": "6.3.0",
+  "version": "6.4.0",
   "author": "Oscar Otero <oom@oscarotero.com>",
   "homepage": "https://github.com/stylecow/stylecow",
   "bugs": "https://github.com/stylecow/stylecow/issues",
@@ -20,6 +20,7 @@
     "stylecow-parser": "2.*",
     "stylecow-plugin-custom-media": "1.*",
     "stylecow-plugin-custom-selector": "1.*",
+    "stylecow-plugin-calc": "1.*",
     "stylecow-plugin-color": "4.*",
     "stylecow-plugin-fixes": "4.*",
     "stylecow-plugin-flex": "4.*",

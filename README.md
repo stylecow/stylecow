@@ -10,6 +10,10 @@ License: MIT
 
 ## Changelog
 
+v.6.4
+
+* New plugin "calc"
+
 v.6.3
 
 * Added a update notified

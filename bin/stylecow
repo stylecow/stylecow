@@ -146,8 +146,7 @@ function run (configFile, watch, liveReload) {
 	//Init watcher
 	if (config.watch) {
 		config.watch = require('chokidar').watch([], {
-			persistent: true,
-			cwd: stylecow.cwd()
+			persistent: true
 		});
 
 		console.log('Waiting for changes...');

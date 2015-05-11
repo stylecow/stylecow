@@ -4,6 +4,10 @@
 	var ws, styles = {}, links = Array.prototype.slice.call(document.querySelectorAll('link[rel="stylesheet"]'));
 
 	function getLink(url) {
+		while (url.indexOf('../') !== -1) {
+			url = url.replace('../', '');
+		}
+
 		var link = links.filter(function (node) {
 				var href = node.href;
 

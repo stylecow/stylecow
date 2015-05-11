@@ -12,7 +12,7 @@ updateNotifier({pkg: pkg}).notify();
 program
 	.version(pkg.version)
 	.usage('[options]')
-	.option('-c, --config', 'use a specific config file instead ./stylecow.json')
+	.option('-c, --config <file>', 'use a specific config file instead ./stylecow.json')
 	.option('-w, --watch', 'watches the changes in the input css files')
 	.option('-r, --live-reload', 'Live reload the browser on change the css');
 

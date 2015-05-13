@@ -1,0 +1,61 @@
+:root {
+	--color: red;
+	--main-font-size: 16px;
+}
+
+@import "imported.css" (min-width: 25em);
+
+html {
+	color: var(--color);
+	background: #9d9c;
+	font-size: var(--main-font-size);
+
+	p {
+		margin: 10px 0;
+	}
+}
+
+p:matches(:first-child, .special) {
+	color: red;
+}
+
+h1 {
+	font-size: calc(var(--main-font-size) * 2);
+	height: calc(100px - 2em);
+	background: color(red a(90%))
+}
+
+@custom-selector --heading h1, h2, h3, h4, h5, h6;
+
+article --heading + p { 
+	margin-top: 0;
+}
+
+@custom-media --small-viewport (max-width: 30em);
+
+@media (--small-viewport) {
+	body {
+		background: yellow;
+	}
+}
+
+.foo {
+	color: gray(0);
+}
+
+.bar {
+	color: gray(255, 0.5);
+}
+
+.baz {
+	color: gray;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

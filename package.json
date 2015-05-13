@@ -12,16 +12,16 @@
   "main": "./lib/index",
   "license": "MIT",
   "dependencies": {
-    "commander": "*",
+    "autoprefixer-core": "^5.1.11",
     "chokidar": "*",
+    "commander": "*",
     "inquirer": "*",
-    "ws": "*",
-    "update-notifier": "*",
     "stylecow-parser": "2.*",
-    "stylecow-plugin-custom-media": "1.*",
-    "stylecow-plugin-custom-selector": "1.*",
     "stylecow-plugin-calc": "1.*",
     "stylecow-plugin-color": "4.*",
+    "stylecow-plugin-custom-media": "1.*",
+    "stylecow-plugin-custom-selector": "1.*",
+    "stylecow-plugin-extend": "1.*",
     "stylecow-plugin-fixes": "4.*",
     "stylecow-plugin-flex": "4.*",
     "stylecow-plugin-import": "4.*",
@@ -32,7 +32,23 @@
     "stylecow-plugin-nested-rules": "4.*",
     "stylecow-plugin-prefixes": "4.*",
     "stylecow-plugin-rem": "4.*",
-    "stylecow-plugin-variables": "4.*"
+    "stylecow-plugin-variables": "4.*",
+    "update-notifier": "*",
+    "ws": "*"
+  },
+  "devDependencies": {
+    "postcss": "^4.1.10",
+    "postcss-calc": "^4.0.1",
+    "postcss-color-function": "^1.2.0",
+    "postcss-color-hex-alpha": "^1.2.0",
+    "postcss-color-gray": "^2.0.0",
+    "postcss-custom-media": "^3.0.0",
+    "postcss-custom-properties": "^3.3.0",
+    "postcss-custom-selectors": "^1.1.1",
+    "postcss-import": "^5.2.2",
+    "postcss-nested": "^0.3.1",
+    "postcss-selector-matches": "^1.0.1",
+    "benchmark": "^1.0.0"
   },
   "bin": {
     "stylecow": "./bin/stylecow"

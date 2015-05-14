@@ -50,6 +50,9 @@
     "postcss-selector-matches": "^1.0.1",
     "benchmark": "^1.0.0"
   },
+  "scripts": {
+    "test": "mocha tests/cases.js"
+  },
   "bin": {
     "stylecow": "./bin/stylecow"
   }

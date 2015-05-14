@@ -1,0 +1,8 @@
+%grid {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+%non-used {
+	display: none;
+}

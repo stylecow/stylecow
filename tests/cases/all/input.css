@@ -1,0 +1,46 @@
+@import "imported.css";
+
+:root {
+	--size: 25px;
+	--alpha: 0.5;
+}
+
+@custom-media --mobile screen AND (max-width: 480px);
+@custom-selector --heading h1, h2, h3, h4, h5, h6;
+
+body {
+	max-width: calc(var(--size) * 3);
+
+	p {
+		background-color: #5555;
+	}
+}
+
+article {
+	color: color(red a(var(--alpha)));
+	font-size: 2rem;
+
+	@media (--mobile) {
+		color: gray(50%, var(--alpha));
+	}
+
+	--heading {
+		font-weight: normal;
+	}
+
+	&:matches(.is-active, .is-selected, :focus) :matches(span, strong) {
+		border: solid var(--size) color(orange tint(50%));
+		background: linear-gradient(to bottom, color(red a(var(--alpha))), black);
+	}
+}
+
+ul.grid {
+	@extend %grid;
+	margin: initial;
+	transform: scale(1.1, 2);
+	transition: transform 2s;
+
+	&::before {
+		content: 'hi "you"';
+	}
+}

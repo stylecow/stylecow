@@ -52,10 +52,10 @@ stylecow.merge(main_css, other_css);
 * Changed some API methods to create and traverse through the elements
 * The standard plugins are included as dependencies, so they are installed with stylecow
 
-## 4.1
+### 4.1
 * The plugin "initial" is deprecated. Now it's included in "fixes"
 
-## 4.2
+### 4.2
 
 * Included the command line interface (and deprecate stylecow-cli package)
 * Separate the parser in an external package: [stylecow-parser](https://github.com/stylecow/stylecow-parser)
@@ -79,9 +79,7 @@ stylecow.merge(main_css, other_css);
 			"output": "styles2.min.css",
 			"map": "styles2.min.map",
 		}
-	],
-
-	// here the rest of configuration
+	]
 }
 ```
 

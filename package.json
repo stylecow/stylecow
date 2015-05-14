@@ -2,7 +2,7 @@
   "name": "stylecow",
   "description": "Modern CSS for all browsers",
   "keywords": ["css", "postproccessor"],
-  "version": "6.5",
+  "version": "6.5.0",
   "author": "Oscar Otero <oom@oscarotero.com>",
   "homepage": "https://stylecow.github.io/",
   "bugs": "https://github.com/stylecow/stylecow/issues",

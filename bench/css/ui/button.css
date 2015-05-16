@@ -1,0 +1,87 @@
+/**
+ * button.css
+ *
+ * INFORMACION
+ * Diferentes tipos de botons - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+
+/* Botón básico de csans */
+
+
+/* boton negativo principal */
+.button-normal {
+	@extend %csans-button;
+
+	background-color: var(--color-main);
+  	color: white;
+	border-radius: 3px;
+	box-shadow: 0px 3px 1px 0px var(--color-light);
+	padding: .5em 2em;
+	text-transform: uppercase;
+	font-weight: var(--fw-light);
+
+	&:hover {
+		background-color:var(--color-medium);
+	}
+}
+
+
+/* boton secundario */
+.button-secondary {
+	@extend %csans-button;
+
+	background-color: white;
+	border: solid 1px var(--color-light);
+  	color: var(--color-medium);
+	border-radius: 3px;
+	padding: .3em 1em;
+	font-weight: var(--fw-normal);
+
+	&:hover {
+		color: var(--color-main);
+		background-color:var(--color-light);
+	}
+}
+
+/* botóns modo tabs */
+.buttons-tabs {
+	display: flex;
+	border-bottom: solid 1px var(--black-10a);
+	margin-bottom: 2em;
+
+	.button {
+		@extend %csans-button;
+
+		border: solid 1px transparent;
+		border-bottom: none;
+		padding: .8em 1em;
+		border-radius: 3px 3px 0 0;
+		margin-bottom: -1px;
+		background: none;
+
+		&.is-selected {
+			background: white;
+			border-color: var(--black-10a);
+		}
+	}
+}

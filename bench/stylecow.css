@@ -1,0 +1,1880 @@
+/**
+ * main.css
+ *
+ * INFORMACION
+ * Importa todas as follas de estilo - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/* BÁSICO */
+/**
+ * isaac-font.css
+ *
+ * INFORMACION
+ * Importa a tipografia Isaac.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/* Isaac Display Bold */
+@font-face {
+	font-family: "IsaacDisplay";
+	src: url("../fonts/isaac/IsaacDisplayBold.woff") format("woff");
+	font-weight: 700;
+	font-style: normal;
+}
+/* Isaac Light */
+@font-face {
+	font-family: "Isaac";
+	src: url("../fonts/isaac/IsaacLight.woff") format("woff");
+	font-weight: 300;
+	font-style: normal;
+}
+/* Isaac Light Italic */
+@font-face {
+	font-family: "Isaac";
+	src: url("../fonts/isaac/IsaacLightItalic.woff") format("woff");
+	font-weight: 300;
+	font-style: italic;
+}
+/* Isaac Book */
+@font-face {
+	font-family: "Isaac";
+	src: url("../fonts/isaac/IsaacBook.woff") format("woff");
+	font-weight: 400;
+	font-style: normal;
+}
+/* Isaac Book Italic */
+@font-face {
+	font-family: "Isaac";
+	src: url("../fonts/isaac/IsaacBookItalic.woff") format("woff");
+	font-weight: 400;
+	font-style: italic;
+}
+/* Isaac Regular */
+@font-face {
+	font-family: "Isaac";
+	src: url("../fonts/isaac/IsaacRegular.woff") format("woff");
+	font-weight: 500;
+	font-style: normal;
+}
+/* Isaac Regular Italic */
+@font-face {
+	font-family: "Isaac";
+	src: url("../fonts/isaac/IsaacRegularItalic.woff") format("woff");
+	font-weight: 500;
+	font-style: italic;
+}
+/* Isaac Normal */
+@font-face {
+	font-family: "Isaac";
+	src: url("../fonts/isaac/IsaacNormal.woff") format("woff");
+	font-weight: 600;
+	font-style: normal;
+}
+/* Isaac Normal Italic */
+@font-face {
+	font-family: "Isaac";
+	src: url("../fonts/isaac/IsaacNormalItalic.woff") format("woff");
+	font-weight: 600;
+	font-style: italic;
+}
+/* Isaac Bold */
+@font-face {
+	font-family: "Isaac";
+	src: url("../fonts/isaac/IsaacBold.woff") format("woff");
+	font-weight: 700;
+	font-style: normal;
+}
+/* Isaac Bold Italic */
+@font-face {
+	font-family: "Isaac";
+	src: url("../fonts/isaac/IsaacBoldItalic.woff") format("woff");
+	font-weight: 700;
+	font-style: italic;
+}
+/**
+ * variables.css
+ *
+ * INFORMACION
+ * Variables xenericas para usar na web - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+:root {
+	/* cor dag principal */
+	/* cor dag gris medio */
+	/* cor dag light */
+	/* cor dag */
+	/* font-size */
+	--fs-14: 14px;
+	--fs-16: 16px;
+	--fs-18: 19.2px;
+	--fs-26: 26px;
+	--fs-32: 32px;
+	--fs-48: 48px;
+	/* font-weight */
+	/* font-family */
+	/* font-feature-settings */
+	/* font-icons */
+}
+/* Custom medias */
+/**
+ * common.css
+ *
+ * INFORMACION
+ * Estilos xenericos para usar na web - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/*
+ * Contido xeral
+ * -----------------------------------------------------------------------------
+*/
+html {
+	font-family: Isaac, Helvetica, Arial, sans-serif;
+	background-color: rgb(225, 225, 225);
+	color: #363636;
+}
+nav ul {
+	list-style-type: none;
+	padding: 0;
+}
+/* LAYOUTS */
+/**
+ * wrappers.css
+ *
+ * INFORMACION
+ * Disposicion xeral dos contenedores - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/* Contenedor básico */
+.wrapper, .wrapper-normal, .wrapper-narrow {
+	padding-left: 16px;
+	padding-left: 1rem;
+	padding-right: 16px;
+	padding-right: 1rem;
+	display: block;
+	margin: 0 auto;
+}
+@media (min-width: 320px) {
+	.wrapper, .wrapper-normal, .wrapper-narrow {
+		padding-left: 16px;
+		padding-left: 1rem;
+		padding-right: 16px;
+		padding-right: 1rem;
+	}
+}
+@media (min-width: 480px) {
+	.wrapper, .wrapper-normal, .wrapper-narrow {
+		padding-left: 32px;
+		padding-left: 2rem;
+		padding-right: 32px;
+		padding-right: 2rem;
+	}
+}
+@media (min-width: 756px) {
+	.wrapper, .wrapper-normal, .wrapper-narrow {
+		padding-left: 64px;
+		padding-left: 4rem;
+		padding-right: 64px;
+		padding-right: 4rem;
+	}
+}
+@media (min-width: 1440px) {
+	.wrapper, .wrapper-normal, .wrapper-narrow {
+		padding-left: 96px;
+		padding-left: 6rem;
+		padding-right: 96px;
+		padding-right: 6rem;
+	}
+}
+/* Contenedor comun cun tamaño máximo */
+.wrapper-normal {
+	max-width: 1200px;
+}
+/* Contenedor comun mini */
+.wrapper-narrow {
+	max-width: 740px;
+}
+/**
+ * layouts/grid.css
+ *
+ * INFORMACION
+ * Construcción de grids baseado no plugin de salvattore - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+.ly-grid[data-columns] {
+	display: -ms-flexbox;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-ms-flex-pack: center;
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	justify-content: center;
+	/* 1 columna */
+	/* 2 columnas */
+}
+.ly-grid[data-columns] > article {
+	visibility: hidden;
+}
+.ly-grid[data-columns] > .column {
+	width: 100%;
+	max-width: 530px;
+	box-sizing: border-box;
+}
+@media (max-width: 899px) {
+	.ly-grid[data-columns]:before {
+		content: "1";
+	}
+}
+@media (min-width: 900px) {
+	.ly-grid[data-columns]:before {
+		content: "2";
+	}
+	.ly-grid[data-columns] > .column {
+		width: 50%;
+	}
+	.ly-grid[data-columns] > .column .new-list {
+		padding-left: 2em;
+		padding-right: 2em;
+	}
+	.ly-grid[data-columns] > .column:nth-child(1) {
+		border-right: solid 8px rgb(245, 245, 245);
+	}
+}
+/**
+ * 2cols.css
+ *
+ * INFORMACION
+ * Contenedor con dúas columnas, unha principal e outra de navegación secundaria - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/* Contenedor básico */
+@media (min-width: 756px) {
+	.ly-with-navigation {
+		display: -ms-flexbox;
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: flex;
+		-ms-flex-pack: center;
+		-webkit-box-pack: center;
+		-webkit-justify-content: center;
+		justify-content: center;
+	}
+	.ly-with-navigation > * {
+		-ms-flex-positive: 1;
+		-webkit-box-flex: 1;
+		-webkit-flex-grow: 1;
+		flex-grow: 1;
+	}
+	.ly-with-navigation > nav {
+		border-left: solid 8px rgb(245, 245, 245);
+		box-sizing: border-box;
+		width: 320px;
+		width: 20rem;
+		-ms-flex-negative: 0;
+		-webkit-flex-shrink: 0;
+		flex-shrink: 0;
+		-ms-flex-positive: 0;
+		-webkit-box-flex: 0;
+		-webkit-flex-grow: 0;
+		flex-grow: 0;
+		padding-left: 32px;
+		padding-left: 2rem;
+		margin-left: 32px;
+		margin-left: 2rem;
+	}
+}
+/**
+ * columns.css
+ *
+ * INFORMACION
+ * Contenedor con columnas - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/* 1, 2 e tres columnas */
+.ly-1-2-3 > article {
+	box-sizing: border-box;
+}
+@media (min-width: 480px) {
+	.ly-1-2-3 {
+		display: -ms-flexbox;
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: flex;
+		-ms-flex-wrap: wrap;
+		-webkit-box-lines: multiple;
+		-webkit-flex-wrap: wrap;
+		flex-wrap: wrap;
+	}
+	.ly-1-2-3 > article {
+		width: 50%;
+	}
+}
+@media (min-width: 756px) {
+	.ly-1-2-3 > article {
+		width: 33.33%;
+	}
+}
+/**
+ * groups.css
+ *
+ * INFORMACION
+ * Estilos de layout para grupos de elementos - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+.group-1-2-4 {
+	padding: 32px;
+	padding: 2rem;
+}
+@media (min-width: 480px) {
+	.group-1-2-4 {
+		display: -ms-flexbox;
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: flex;
+	}
+	.group-1-2-4 > :first-child {
+		width: 128px;
+		width: 8rem;
+		-ms-flex-negative: 0;
+		-webkit-flex-shrink: 0;
+		flex-shrink: 0;
+	}
+	.group-1-2-4 > div {
+		-ms-flex-positive: 1;
+		-webkit-box-flex: 1;
+		-webkit-flex-grow: 1;
+		flex-grow: 1;
+		margin-left: 16px;
+		margin-left: 1rem;
+	}
+}
+@media (min-width: 756px) {
+	.group-1-2-4 > div {
+		display: -ms-flexbox;
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: flex;
+		-ms-flex-wrap: wrap;
+		-webkit-box-lines: multiple;
+		-webkit-flex-wrap: wrap;
+		flex-wrap: wrap;
+	}
+	.group-1-2-4 > div > * {
+		width: 50%;
+	}
+}
+@media (min-width: 1024px) {
+	.group-1-2-4 > div > * {
+		width: 33.33%;
+	}
+}
+.group-1-2-4 + .group-1-2-4 {
+	border-top: solid 1px rgba(54, 54, 54, 0.15);
+}
+/* UI */
+/**
+ * button.css
+ *
+ * INFORMACION
+ * Diferentes tipos de botons - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/* Botón básico de csans */
+/* boton negativo principal */
+.button-normal {
+	@extend %csans-button;
+	background-color: #363636;
+	color: white;
+	border-radius: 3px;
+	box-shadow: 0px 3px 1px 0px rgba(54, 54, 54, 0.15);
+	padding: 0.5em 2em;
+	text-transform: uppercase;
+	font-weight: 300;
+}
+.button-normal:hover {
+	background-color: rgb(155, 155, 155);
+}
+/* boton secundario */
+.button-secondary {
+	@extend %csans-button;
+	background-color: white;
+	border: solid 1px rgba(54, 54, 54, 0.15);
+	color: rgb(155, 155, 155);
+	border-radius: 3px;
+	padding: 0.3em 1em;
+	font-weight: 500;
+}
+.button-secondary:hover {
+	color: #363636;
+	background-color: rgba(54, 54, 54, 0.15);
+}
+/* botóns modo tabs */
+.buttons-tabs {
+	display: -ms-flexbox;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	border-bottom: solid 1px rgba(54, 54, 54, 0.1);
+	margin-bottom: 2em;
+}
+.buttons-tabs .button {
+	@extend %csans-button;
+	border: solid 1px transparent;
+	border-bottom: none;
+	padding: 0.8em 1em;
+	border-radius: 3px 3px 0 0;
+	margin-bottom: -1px;
+	background: none;
+}
+.buttons-tabs .button.is-selected {
+	background: white;
+	border-color: rgba(54, 54, 54, 0.1);
+}
+/* MÓDULOS */
+/**
+ * page-header.css
+ *
+ * INFORMACION
+ * Estilos para a cabeceira comun - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/*
+ * PAGE PROMO -------------------------------------------------------------
+ * Mover a unha folla de estilo nova en entities
+*/
+.promo {
+	height: 85vh;
+	display: -ms-flexbox;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-ms-flex-align: center;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	align-items: center;
+	-ms-flex-pack: center;
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	justify-content: center;
+	/* imaxe de promoción do evento */
+	background: url("../img/promo/test-promo.jpg");
+	background-size: cover;
+}
+/*
+ * /PAGE PROMO ------------------------------------------------------------
+*/
+.page-header {
+	background-color: white;
+	border-bottom: 1px solid rgba(54, 54, 54, 0.1);
+	display: -ms-flexbox;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-ms-flex-pack: space-between;
+	-webkit-box-pack: justify;
+	-webkit-justify-content: space-between;
+	justify-content: space-between;
+	-ms-flex-align: center;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	align-items: center;
+	position: relative;
+	z-index: 2;
+}
+.page-header.sticky {
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0;
+}
+/* Logo da dag */
+.page-logo {
+	text-decoration: none;
+	color: #363636;
+	display: -ms-flexbox;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-ms-flex-align: start;
+	-webkit-box-align: start;
+	-webkit-align-items: flex-start;
+	align-items: flex-start;
+	margin-right: 1em;
+	/* Texto ao lado do svg */
+	/* Svg coas siglas DAG */
+	/* Mariconeando :P */
+}
+.page-logo > h1 {
+	font-size: 12.8px;
+	font-size: 0.8rem;
+	line-height: 1;
+	font-weight: 300;
+	max-width: 10em;
+	margin: 0;
+	display: none;
+}
+@media (min-width: 480px) {
+	.page-logo > h1 {
+		display: block;
+	}
+}
+@media (min-width: 756px) {
+	.page-logo > h1 {
+		display: none;
+	}
+}
+@media (min-width: 1024px) {
+	.page-logo > h1 {
+		display: block;
+	}
+}
+.page-logo svg {
+	display: block;
+	margin-right: 0.5em;
+	-ms-flex-negative: 0;
+	-webkit-flex-shrink: 0;
+	flex-shrink: 0;
+}
+.page-logo svg path {
+	fill: #363636;
+}
+.page-logo:hover svg path {
+	filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6));
+}
+/* Menú principal */
+.page-menu {
+	/* Idiomas co select
+		.page-menu-lang {
+			margin-left: 0.5rem;
+			border-left: solid 1px var(--color-light);
+	
+			.link-select {
+				position: relative;
+				padding: 0 1em;
+				background: transparent;
+	
+				&::after {
+					font-size: 0.8em;
+				}
+			}
+		}
+		*/
+	/* Idiomas coa lista */
+}
+.page-menu > .page-menu-button {
+	background: none;
+	border: none;
+	display: inline-block;
+	margin-top: 2px;
+}
+.page-menu > .page-menu-button line {
+	stroke-width: 3px;
+	stroke-linecap: unset;
+}
+@media (min-width: 750px) {
+	.page-menu > .page-menu-button {
+		display: none;
+	}
+}
+.page-menu > ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	text-transform: uppercase;
+	font-size: 14.4px;
+	font-size: 0.9rem;
+	display: none;
+}
+.page-menu > ul > li {
+	margin: 0;
+	padding: 0 8px;
+	padding: 0 0.5rem;
+}
+@media (min-width: 750px) {
+	.page-menu > ul {
+		display: -ms-flexbox;
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: flex;
+	}
+}
+.page-menu a {
+	color: #363636;
+	text-decoration: none;
+	display: block;
+	padding: 20.8px 0.3em 16px 0.3em;
+	padding: 1.3rem 0.3em 1rem 0.3em;
+	border-bottom: solid 6px transparent;
+	-webkit-transition: border-color 0.3s;
+	transition: border-color 0.3s;
+	margin-bottom: -1px;
+}
+.page-menu a:hover {
+	border-color: rgb(245, 245, 245);
+}
+.page-menu .is-selected a {
+	border-color: #363636;
+	font-weight: 700;
+}
+.page-menu .page-menu-lang {
+	border-left: solid 1px rgba(54, 54, 54, 0.15);
+	border-right: solid 1px rgba(54, 54, 54, 0.15);
+	margin-left: 8px;
+	margin-left: 0.5rem;
+	padding: 0;
+}
+.page-menu .page-menu-lang li {
+	padding-left: 8px;
+	padding-left: 0.5rem;
+	padding-right: 8px;
+	padding-right: 0.5rem;
+	margin: 0;
+	display: none;
+}
+.page-menu .page-menu-lang li:first-child {
+	display: block;
+}
+.page-menu .page-menu-lang li:first-child a:after {
+	content: "▼";
+	font-size: 0.8em;
+	margin-left: 8px;
+	margin-left: 0.5rem;
+}
+.page-menu .page-menu-lang.see-menu-lang {
+	position: relative;
+	background-color: white;
+}
+.page-menu .page-menu-lang.see-menu-lang li:last-child {
+	border: 1px solid rgba(54, 54, 54, 0.15);
+	border-top: none;
+	background-color: white;
+	position: absolute;
+	display: block;
+	width: 46px;
+	left: -1px;
+}
+/**
+ * page-content.css
+ *
+ * INFORMACION
+ * Disposicion xeral dos contenedores - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/*
+ Contido da paxina comun. REVISAR - Pode ser comun o page-content?
+*/
+.page-content {
+	padding-top: 2em;
+	padding-bottom: 2em;
+	background-color: white;
+}
+/**
+ * page-footer.css
+ *
+ * INFORMACION
+ * Estilos para o footer comun - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+.page-footer {
+	display: -ms-flexbox;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-ms-flex-pack: space-between;
+	-webkit-box-pack: justify;
+	-webkit-justify-content: space-between;
+	justify-content: space-between;
+	-ms-flex-align: start;
+	-webkit-box-align: start;
+	-webkit-align-items: flex-start;
+	align-items: flex-start;
+	-ms-flex-flow: row wrap;
+	-webkit-box-orient: horizontal;
+	-webkit-box-lines: multiple;
+	-webkit-flex-flow: row wrap;
+	flex-flow: row wrap;
+	font-size: 14px;
+	font-size: 0.875rem;
+	font-weight: 300;
+	color: rgb(155, 155, 155);
+	padding-top: 3em;
+	padding-bottom: 3em;
+}
+.page-footer ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.page-footer address {
+	font-style: normal;
+}
+.page-footer span {
+	display: block;
+}
+.page-footer a {
+	color: rgb(155, 155, 155);
+}
+.page-footer a:hover {
+	color: #363636;
+}
+.page-footer input {
+	padding: 0.4em;
+	/* axusta verticalmente co boton */
+	position: relative;
+	top: 2px;
+}
+.page-footer nav {
+	margin-top: 2em;
+	width: 100%;
+}
+.page-footer nav a {
+	margin-right: 1em;
+}
+.page-footer .title {
+	color: #363636;
+	font-size: 16px;
+	font-size: 1rem;
+	font-weight: 500;
+	margin-bottom: 0.4em;
+}
+.page-footer .subtitle {
+	font-size: 14px;
+	font-size: 0.875rem;
+	font-weight: 300;
+	margin: 0em;
+}
+.footer-info {
+	display: -ms-inline-flexbox;
+	display: -webkit-inline-box;
+	display: -webkit-inline-flex;
+	display: inline-flex;
+	-ms-flex-flow: row wrap;
+	-webkit-box-orient: horizontal;
+	-webkit-box-lines: multiple;
+	-webkit-flex-flow: row wrap;
+	flex-flow: row wrap;
+	-ms-flex-align: end;
+	-webkit-box-align: end;
+	-webkit-align-items: flex-end;
+	align-items: flex-end;
+}
+.footer-info h4 {
+	width: 100%;
+}
+.footer-info p {
+	margin-top: 0.25em;
+}
+.footer-info address {
+	margin-bottom: 1em;
+}
+/*
+.footer-contact{}
+*/
+.social li {
+	display: inline-block;
+	margin-right: 0.5em;
+}
+.social a {
+	background-color: #363636;
+	color: white;
+	font-size: 26px;
+	font-size: 1.625rem;
+	text-decoration: none;
+	text-align: center;
+	width: 45px;
+	padding: 0.35em 0;
+	border-radius: 3px;
+}
+.social a:hover {
+	background-color: rgb(155, 155, 155);
+	color: white;
+}
+.social span {
+	display: none;
+}
+/**
+ * share.css
+ *
+ * INFORMACION
+ * Estilos para botóns de compartir - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/**
+ * carousel.css
+ *
+ * INFORMACION
+ * Estilos para carruseles - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/* importar os estilos de owl.carousel */
+.carousel {
+	box-sizing: border-box;
+	width: 100%;
+}
+.carousel .owl-nav > div {
+	position: absolute;
+	top: 50%;
+	margin-top: -48px;
+	margin-top: -3rem;
+	font-size: 1px;
+	letter-spacing: -1px;
+	color: transparent;
+}
+.carousel .owl-nav > div:after {
+	color: #363636;
+	font-size: 16px;
+	font-size: 1rem;
+	background: white;
+	padding: 16px;
+	padding: 1rem;
+	display: block;
+}
+.carousel .owl-nav .owl-prev {
+	left: 0;
+}
+.carousel .owl-nav .owl-prev:after {
+	content: "\25c0";
+}
+.carousel .owl-nav .owl-next {
+	right: 0;
+}
+.carousel .owl-nav .owl-next:after {
+	content: "\25b6";
+}
+/**
+ * sections.css
+ *
+ * INFORMACION
+ * Estilos para a visualización de seccións xenéricas - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/**
+ * estilos comúns
+ */
+.section figcaption {
+	text-align: left;
+	max-width: 560px;
+	max-width: 35rem;
+	font-size: 12.8px;
+	font-size: 0.8rem;
+	margin: 16px auto;
+	margin: 1rem auto;
+}
+/**
+ * Sección de tipo "imaxe"
+ */
+.section-image {
+	margin: 80px 0;
+	margin: 5rem 0;
+	position: relative;
+}
+.section-image img {
+	display: block;
+	margin: 0 auto;
+	max-width: 100%;
+	height: auto;
+}
+/**
+ * Sección de tipo "embed"
+ */
+.section-embed {
+	position: relative;
+	text-align: center;
+	margin: 80px 0;
+	margin: 5rem 0;
+	/* Clase para manter a proporción de widgets sendo escalables */
+}
+.section-embed a {
+	color: rgb(155, 155, 155);
+}
+.section-embed a:hover {
+	text-decoration: none;
+}
+.section-embed p {
+	font-size: 14px;
+	font-size: 0.875rem;
+	margin: 0;
+}
+.section-embed iframe {
+	margin: 0 auto;
+	max-width: 100%;
+}
+.section-embed iframe + p {
+	padding: 0 2em;
+}
+.section-embed .aspect-ratio {
+	@extend %csans-aspect-ratio;
+}
+/* ENTIDADES */
+/**
+ * news.css
+ *
+ * INFORMACION
+ * Estilos para a visualización de novas - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/*
+* Aplicar unha clase ao nav das novas e cambiar isto (trapallada provisional) ------
+*/
+nav h2 {
+	font-size: 19.2px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	padding-bottom: 0.5em;
+	border-bottom: 1px solid rgba(54, 54, 54, 0.15);
+}
+nav li {
+	font-size: 14px;
+	font-size: 0.875rem;
+	margin-bottom: 0.25em;
+	display: inline-block;
+	margin-right: 1em;
+}
+nav a {
+	color: #0002FB;
+	text-decoration: none;
+}
+nav a:hover {
+	color: #363636;
+}
+@media (min-width: 756px) {
+	nav li {
+		display: block;
+		margin-right: 0em;
+	}
+}
+/*
+* ---------------------------------------------------------------------------
+*/
+/*
+* Estilos comúns
+*/
+.new-header {
+	color: rgb(155, 155, 155);
+	/* Lista de etiquetas */
+	/* Data */
+	/* Título */
+}
+.new-header > nav {
+	display: inline;
+	font-size: 14px;
+	font-size: 0.875rem;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+.new-header > nav a {
+	text-decoration: none;
+	margin-right: 1em;
+	color: #0002FB;
+}
+.new-header > nav a:hover {
+	color: rgb(155, 155, 155);
+}
+.new-header > time {
+	font-size: 14px;
+	font-size: 0.875rem;
+	white-space: nowrap;
+}
+.new-header > h1 {
+	line-height: 1;
+	font-weight: 500;
+	color: #363636;
+	margin: 0;
+}
+.new-header > h1 a {
+	text-decoration: none;
+	color: #363636;
+}
+.new-header > h1 a:hover {
+	color: rgb(155, 155, 155);
+}
+.new-intro, .new-body {
+	color: rgb(94, 94, 94);
+	font-weight: 300;
+	font-size: 16px;
+	font-size: 1rem;
+}
+.new-intro a, .new-body a {
+	color: inherit;
+}
+.new-intro a:hover, .new-body a:hover {
+	color: #363636;
+	text-decoration: none;
+}
+.new-body {
+	line-height: 1.45;
+}
+.new-body h2, .new-body h3 {
+	color: #363636;
+	line-height: 1.1;
+	margin-top: 1.5em;
+}
+.new-body h2 {
+	font-size: 19.2px;
+	font-size: 1.2rem;
+	font-weight: 500;
+}
+.new-body h3 {
+	font-size: 16px;
+	font-size: 1rem;
+	font-weight: 700;
+}
+.new-body li {
+	margin: 0.5em 0;
+}
+.new-body strong {
+	font-weight: 500;
+	color: #363636;
+}
+/**
+ * Noticia modo listado
+ */
+.new-list {
+	border-bottom: 1px solid rgb(239, 239, 239);
+	margin-top: 2em;
+	padding-bottom: 2em;
+	margin-bottom: 2em;
+}
+.new-list:last-child {
+	border-bottom: none;
+}
+.new-list .new-header {
+	margin-bottom: 16px;
+	margin-bottom: 1rem;
+}
+.new-list .new-header > h1 {
+	margin-top: 0.2em;
+	font-size: 26px;
+	font-size: 1.625rem;
+}
+.new-list .section {
+	margin: 0 auto 32px auto;
+	margin: 0 auto 2rem auto;
+}
+.new-list .new-header ~ .section {
+	margin: 32px auto 0 auto;
+	margin: 2rem auto 0 auto;
+}
+/**
+ * Noticia modo permalink
+ */
+.new-permalink {
+	position: relative;
+}
+.new-permalink .new-header {
+	margin-bottom: 24px;
+	margin-bottom: 1.5rem;
+}
+.new-permalink .new-header > h1 {
+	margin-top: 8px;
+	margin-top: 0.5rem;
+	font-size: 32px;
+	font-size: 2rem;
+	letter-spacing: -0.02em;
+}
+@media (min-width: 30rem) {
+	.new-permalink .new-header > h1 {
+		font-size: 48px;
+		font-size: 3rem;
+		letter-spacing: -0.03em;
+	}
+}
+.new-permalink .new-header.has-background {
+	background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("http://www.asociaciondag.org/cms/modulos/noticias/actionImagenes/download.php?idimagen=503&o=1");
+	background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("http://www.asociaciondag.org/cms/modulos/noticias/actionImagenes/download.php?idimagen=503&o=1");
+	background-position: center left;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-attachment: fixed;
+	max-width: none;
+	margin-top: -32px;
+	margin-top: -2rem;
+	height: 70vh;
+	color: white;
+	display: -ms-flexbox;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-ms-flex-direction: column;
+	-webkit-box-orient: vertical;
+	-webkit-flex-direction: column;
+	flex-direction: column;
+	-ms-flex-pack: center;
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	justify-content: center;
+	-ms-flex-align: start;
+	-webkit-box-align: start;
+	-webkit-align-items: flex-start;
+	align-items: flex-start;
+}
+.new-permalink .new-header.has-background h1 {
+	color: white;
+	max-width: 640px;
+	max-width: 40rem;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.7);
+}
+.new-permalink .new-header.has-background .share {
+	margin: 32px 0;
+	margin: 2rem 0;
+}
+.new-permalink .new-intro {
+	font-size: 19.2px;
+	font-size: 1.2rem;
+	color: #363636;
+	margin-bottom: 16px;
+	margin-bottom: 1rem;
+}
+.new-permalink .new-body {
+	margin-top: 80px;
+	margin-top: 5rem;
+}
+.new-permalink .new-body .new-section {
+	margin: 48px auto;
+	margin: 3rem auto;
+}
+.new-permalink .new-body > .new-section-text {
+	/* capitular */
+	/* sangría */
+}
+.new-permalink .new-body > .new-section-text:first-of-type > p:first-child:first-letter {
+	font-size: 48px;
+	font-size: 3rem;
+	font-weight: 700;
+	display: inline-block;
+	line-height: 0;
+}
+.new-permalink .new-body > .new-section-text p + p {
+	text-indent: 1em;
+}
+@media (min-width: 756px) {
+	.new-permalink .new-intro {
+		font-size: 26px;
+		font-size: 1.625rem;
+		letter-spacing: -0.01em;
+	}
+	.new-permalink .new-body {
+		font-size: 19.2px;
+		font-size: 1.2rem;
+	}
+	.new-permalink .new-body h2 {
+		font-size: 26px;
+		font-size: 1.625rem;
+	}
+	.new-permalink .new-body h3 {
+		font-size: 19.2px;
+		font-size: 1.2rem;
+	}
+}
+/**
+ * portfolio.css
+ *
+ * INFORMACION
+ * Estilos para a visualización de portfolios dos socios - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/*
+* Estilos comuns
+*/
+.portfolio figure {
+	margin: 0;
+	line-height: 0;
+}
+.portfolio figure img {
+	max-width: 100%;
+	height: auto;
+}
+.portfolio-header > h1 {
+	font-size: 19.2px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	margin: 0em;
+}
+.portfolio-header > h1 a {
+	text-decoration: none;
+	color: #363636;
+}
+.portfolio-header > h1 a:hover {
+	color: rgb(155, 155, 155);
+}
+@-webkit-keyframes portfolio-avatar-transition {
+	0% {
+		opacity: 0;
+	}
+	25% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 1;
+	}
+	75% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+@keyframes portfolio-avatar-transition {
+	0% {
+		opacity: 0;
+		-ms-filter: "alpha(opacity=0)";
+	}
+	25% {
+		opacity: 0;
+		-ms-filter: "alpha(opacity=0)";
+	}
+	50% {
+		opacity: 1;
+		-ms-filter: "alpha(opacity=100)";
+	}
+	75% {
+		opacity: 1;
+		-ms-filter: "alpha(opacity=100)";
+	}
+	100% {
+		opacity: 0;
+		-ms-filter: "alpha(opacity=0)";
+	}
+}
+.portfolio-authors {
+	list-style: none;
+	margin: 0;
+	color: rgb(155, 155, 155);
+	padding: 0;
+	min-height: 48px;
+}
+.portfolio-authors > li {
+	display: inline;
+}
+.portfolio-authors > li:after {
+	content: ", ";
+}
+.portfolio-authors > li:last-child:after {
+	content: "";
+}
+.portfolio-authors > li img {
+	border-radius: 3px;
+}
+/**
+ * Portfolio modo listado
+ */
+.portfolio-list {
+	/* miniatura */
+	/* Iconos */
+}
+.portfolio-list > a {
+	padding: 8px;
+	padding: 0.5rem;
+	display: block;
+	color: inherit;
+	text-decoration: none;
+}
+.portfolio-list > a .portfolio-thumbnail {
+	-webkit-transition: opacity 0.5s;
+	transition: opacity 0.5s;
+}
+.portfolio-list > a:hover .portfolio-thumbnail {
+	opacity: 0.5;
+	-ms-filter: "alpha(opacity=50)";
+}
+.portfolio-list > a:hover .portfolio-header {
+	text-decoration: underline;
+}
+.portfolio-list > a > div {
+	position: relative;
+	padding: 0 0 0 60px;
+	margin-top: 16px;
+	margin-top: 1rem;
+}
+.portfolio-list .portfolio-thumbnail {
+	width: 100%;
+}
+.portfolio-list .portfolio-thumbnail img {
+	border-radius: 3px;
+}
+.portfolio-list .portfolio-icon {
+	margin-right: 0.5em;
+	float: left;
+}
+.portfolio-list .portfolio-icon + div {
+	overflow: hidden;
+	min-height: 48px;
+}
+.portfolio-list .portfolio-authors img {
+	width: auto;
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+.portfolio-list .portfolio-authors > li:nth-child(2) img {
+	-webkit-animation-name: portfolio-avatar-transition;
+	animation-name: portfolio-avatar-transition;
+	-webkit-animation-duration: 6s;
+	animation-duration: 6s;
+	-webkit-animation-iteration-count: infinite;
+	animation-iteration-count: infinite;
+}
+/**
+ * Portfolio modo permalink
+ */
+.portfolio-permalink {
+	/*
+		.portfolio-header{}
+		.portfolio-authors{}
+		.porfolio-body{}
+		*/
+}
+/**
+ * members.css
+ *
+ * INFORMACION
+ * Estilos para a visualización dos socios - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/*
+* Estilos comuns
+*/
+.member-header > h1 {
+	margin-bottom: 0;
+	font-size: 32px;
+	font-size: 2rem;
+	font-weight: 500;
+	letter-spacing: -0.02em;
+}
+@media (min-width: 30rem) {
+	.member-header > h1 {
+		font-size: 48px;
+		font-size: 3rem;
+		letter-spacing: -0.03em;
+	}
+}
+.member-header p {
+	margin-top: 0em;
+	color: rgb(155, 155, 155);
+}
+.member-address {
+	margin: 1.75em 0;
+}
+.member-address ul {
+	list-style-type: none;
+	padding: 0;
+}
+.member-address li {
+	display: inline-block;
+	margin-bottom: 0.25em;
+}
+.member-bio {
+	font-size: 16px;
+	font-size: 1rem;
+	line-height: 1.4em;
+	color: rgb(94, 94, 94);
+}
+@media (min-width: 30rem) {
+	.member-bio {
+		font-size: 19.2px;
+		font-size: 1.2rem;
+	}
+}
+.member-avatar {
+	margin: 0;
+}
+.member-avatar img {
+	border-radius: 3px;
+}
+/* Socios mini li */
+.member-mini {
+	display: inline-block;
+	margin-right: 1em;
+	font-size: 14px;
+	font-size: 0.875rem;
+}
+.member-mini a {
+	text-decoration: none;
+	color: rgb(155, 155, 155);
+}
+.member-mini a:hover {
+	color: #363636;
+}
+/**
+ * Socios modo listado
+ */
+.member-list {
+	display: -ms-flexbox;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-ms-flex-align: center;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	align-items: center;
+	padding: 8px 8px;
+	padding: 0.5rem 0.5rem;
+}
+.member-list .member-avatar {
+	-ms-flex: 0 0;
+	-webkit-box-flex: 0;
+	-webkit-flex: 0 0;
+	flex: 0 0;
+	margin-right: 1em;
+}
+.member-list .member-header {
+	-ms-flex: 1;
+	-webkit-box-flex: 1;
+	-webkit-flex: 1;
+	flex: 1;
+}
+.member-list .member-header h1 {
+	font-size: 19.2px;
+	font-size: 1.2rem;
+}
+.member-list .member-header a {
+	color: inherit;
+	text-decoration: none;
+}
+.member-list .member-header a:hover {
+	text-decoration: underline;
+}
+/**
+ * Socios modo permalink
+ */
+.member-permalink {
+	/*
+		.member-header{}
+		.member-address{}
+			.member-link{}
+		.member-bio{}
+		.member-porfolio{}
+		*/
+}
+.member-permalink + .member-portfolio {
+	margin-top: 4em;
+}
+@media (min-width: 756px) {
+	.member-permalink {
+		padding-left: 200px;
+		position: relative;
+	}
+	.member-permalink .member-avatar {
+		position: absolute;
+		left: 40px;
+	}
+}
+/**
+ * projects.css
+ *
+ * INFORMACION
+ * Estilos para a visualización de proxectos da dag - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+/*
+ * Estilos comuns
+ */
+.project .project-header > h1 {
+	margin: 0;
+	font-weight: 500;
+}
+/**
+ * Modo listado
+ */
+.project-list {
+	padding: 8px;
+	padding: 0.5rem;
+	box-sizing: border-box;
+	max-width: 320px;
+	max-width: 20rem;
+}
+.project-list > a {
+	background-color: #0002FB;
+	padding: 1em;
+	min-height: 128px;
+	min-height: 8rem;
+	display: block;
+	text-decoration: none;
+	color: white;
+	border-radius: 3px;
+}
+.project-list > a:hover {
+	background-color: rgb(155, 155, 155);
+}
+.project-list .project-header > h1 {
+	font-size: 19.2px;
+	font-size: 1.2rem;
+}

@@ -1,0 +1,121 @@
+/**
+ * page-footer.css
+ *
+ * INFORMACION
+ * Estilos para o footer comun - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+
+.page-footer{
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	flex-flow: row wrap;
+	font-size: var(--fs-14);
+	font-weight: var(--fw-light);
+	color: var(--color-medium);
+	padding-top: 3em;
+	padding-bottom: 3em;
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	address{
+		font-style: normal;
+	}
+	span{
+		display: block;
+	}
+	a{
+		color: var(--color-medium);
+		&:hover{
+			color: var(--color-main);
+		}
+	}
+	input{
+		padding: .4em;
+		/* axusta verticalmente co boton */
+		position: relative;
+		top:2px;
+	}
+	nav{
+		margin-top: 2em;
+		width: 100%;
+		a{
+			margin-right: 1em;
+		}
+	}
+
+	.title{
+		color: var(--color-main);
+		font-size: var(--fs-16);
+		font-weight: var(--fw-normal);
+		margin-bottom: .4em;
+	}
+	.subtitle{
+		font-size: var(--fs-14);
+		font-weight: var(--fw-light);
+		margin: 0em;
+	}
+}
+
+.footer-info{
+	display: inline-flex;
+	flex-flow: row wrap;
+	align-items: flex-end;
+	h4{
+		width: 100%;
+	}
+	p{
+		margin-top: .25em;
+	}
+	address{
+		margin-bottom: 1em;
+	}
+}
+/*
+.footer-contact{}
+*/
+.social{
+	li{
+		display: inline-block;
+		margin-right: .5em;
+	}
+	a{
+		background-color: var(--color-main);
+		color: white;
+		font-size: var(--fs-26);
+		text-decoration: none;
+		text-align: center;
+		width: 45px;
+		padding: .35em 0;
+		border-radius: 3px;
+		&:hover{
+			background-color:var(--color-medium);
+			color: white;
+		}
+	}
+	span{
+		display: none;
+	}
+}

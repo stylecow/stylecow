@@ -1,0 +1,67 @@
+/**
+ * groups.css
+ *
+ * INFORMACION
+ * Estilos de layout para grupos de elementos - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+
+.group-1-2-4 {
+	padding: 2rem;
+
+	@media (--mobile-landscape) {
+		display: flex;
+
+		> :first-child {
+			width: 8rem;
+			flex-shrink: 0;
+		}
+
+		> div {
+			flex-grow: 1;
+			margin-left: 1rem;
+		}
+	}
+
+	@media (--tablet) {
+		> div {
+			display: flex;
+			flex-wrap: wrap;
+			
+			> * {
+				width: 50%;
+			}
+		}
+	}
+
+	@media (--tablet-landscape) {
+		> div {
+			> * {
+				width: 33.33%;
+			}
+		}
+	}
+}
+
+.group-1-2-4 + .group-1-2-4 {
+	border-top: solid 1px var(--color-light);
+}

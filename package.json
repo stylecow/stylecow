@@ -1,7 +1,10 @@
 {
   "name": "stylecow",
   "description": "Modern CSS for all browsers",
-  "keywords": ["css", "postproccessor"],
+  "keywords": [
+    "css",
+    "postproccessor"
+  ],
   "version": "6.5.0",
   "author": "Oscar Otero <oom@oscarotero.com>",
   "homepage": "https://stylecow.github.io/",
@@ -39,6 +42,7 @@
   "devDependencies": {
     "autoprefixer-core": "^5.1.11",
     "benchmark": "^1.0.0",
+    "cssnext": "^1.4.0",
     "mocha": "^2.2.4",
     "postcss": "^4.1.10",
     "postcss-calc": "^4.0.1",

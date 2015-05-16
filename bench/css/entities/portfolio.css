@@ -1,0 +1,178 @@
+/**
+ * portfolio.css
+ *
+ * INFORMACION
+ * Estilos para a visualización de portfolios dos socios - http://asociaciondag.org.
+ *
+ * AUTORES
+ * Oscar Otero e Segundo Fdez no ano 2015.
+ * http://oscarotero.com | http://segundofdez.com
+ *
+ * FERRAMENTAS
+ * Stylecow ............... http://stylecow.github.io/
+ * Desenvolvido por Oscar Otero.
+ *
+ * XENERICO
+ * normalize.css .......... http://necolas.github.io/normalize.css
+ * Desenvolvido por Nicolas Gallagher coa axuda de Jonathan Neal.
+ *
+ * FONTES
+ * isaac-font.css ......... Importa a tipografia Isaac font.
+ * Deseñada por Marcos Dopico (http://maistypes.com).
+ *
+ * font-awesome.css ....... Importa a tipografia de iconas Font Awesome
+ * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
+ *
+ */
+
+
+/*
+* Estilos comuns
+*/
+.portfolio{
+	figure{
+		margin: 0;
+		line-height: 0;
+
+		img {
+			max-width: 100%;
+			height: auto;
+		}
+	}
+}
+.portfolio-header{
+	> h1 {
+		font-size: var(--fs-18);
+		font-weight: var(--fw-normal);
+		margin: 0em;
+
+		a {
+			text-decoration: none;
+			color: var(--color-main);
+
+			&:hover {
+				color:var(--color-medium);
+			}
+		}
+	}
+}
+
+@keyframes portfolio-avatar-transition {
+	0% {
+		opacity: 0;
+	}
+	25% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 1;
+	}
+	75% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+.portfolio-authors {
+	list-style: none;
+	margin: 0;
+	color: var(--color-medium);
+	padding: 0;
+	min-height: 48px;
+
+	> li {
+		display: inline;
+
+		&::after {
+			content: ", ";
+		}
+
+		&:last-child::after {
+			content: "";
+		}
+
+		img {
+			border-radius: 3px;
+		}
+	}
+}
+
+/**
+ * Portfolio modo listado
+ */
+.portfolio-list {
+	> a {
+		padding: 0.5rem;
+		display: block;
+		color: inherit;
+		text-decoration: none;
+
+		.portfolio-thumbnail {
+			transition: opacity 0.5s;
+		}
+
+		&:hover {
+			.portfolio-thumbnail {
+				opacity: 0.5;
+			}
+			.portfolio-header {
+				text-decoration: underline;
+			}
+		}
+
+		> div {
+			position: relative;
+			padding: 0 0 0 60px;
+			margin-top: 1rem;
+		}
+	}
+
+	/* miniatura */
+	.portfolio-thumbnail {
+		width: 100%;
+
+		img {
+			border-radius: 3px;
+		}
+	}
+
+	/* Iconos */
+	.portfolio-icon {
+		margin-right: .5em;
+		float: left;
+
+		+ div {
+			overflow: hidden;
+			min-height: 48px;
+		}
+	}
+
+	.portfolio-authors{
+		img {
+			width: auto;
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+
+		> li:nth-child(2) img {
+			animation-name: portfolio-avatar-transition;
+			animation-duration: 6s;
+			animation-iteration-count: infinite;
+		}
+	}
+}
+
+
+/**
+ * Portfolio modo permalink
+ */
+.portfolio-permalink{
+	/*
+	.portfolio-header{}
+	.portfolio-authors{}
+	.porfolio-body{}
+	*/
+}

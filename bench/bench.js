@@ -5,67 +5,50 @@ var fs = require('fs');
 
 //Configure stylecow
 stylecow
-	.loadPlugin('import')
-	.loadPlugin('variables')
-	.loadPlugin('nested-rules')
-	.loadPlugin('custom-selector')
-	.loadPlugin('custom-media')
 	.loadPlugin('calc')
 	.loadPlugin('color')
+	.loadPlugin('custom-media')
+	.loadPlugin('custom-selector')
+	.loadPlugin('fixes')
+	.loadPlugin('flex')
+	.loadPlugin('import')
 	.loadPlugin('matches')
-	.loadPlugin('prefixes');
+	.loadPlugin('nested-rules')
+	.loadPlugin('prefixes')
+	.loadPlugin('rem')
+	.loadPlugin('variables');
 
-//Configure postcss
-var postcssConfig = postcss()
-	.use(require('postcss-import')())
-	.use(require('postcss-custom-properties')())
-	.use(require('postcss-nested')())
-	.use(require('postcss-custom-selectors')())
-	.use(require('postcss-custom-media')())
-	.use(require('postcss-calc')())
-	.use(require('postcss-color-function')())
-	.use(require('postcss-color-hex-alpha')())
-	.use(require('postcss-color-gray')())
-	.use(require('postcss-selector-matches')())
-	.use(require('autoprefixer-core')());
+//Configure postcss with cssnext
+var cssnext = postcss()
+	.use(require("cssnext")());
 
 var suite = new Benchmark.Suite;
 
 var results = {
 	stylecow: '',
-	postcss: ''
+	cssnext: ''
 };
 
-suite.add('stylecow', function() {
-	var css = stylecow.parseFile(__dirname + '/assets/input.css');
+suite
+.add('stylecow', function() {
+	var css = stylecow.parseFile(__dirname + '/css/main.css');
 	stylecow.run(css);
 
 	results.stylecow = css.toString();
 })
-.add('postcss', function() {
-	var css = postcssConfig.process(fs.readFileSync(__dirname + '/assets/input.css', 'utf8'), {
-		from: __dirname + '/assets/input.css'
+.add('cssnext', function() {
+	var css = cssnext.process(fs.readFileSync(__dirname + '/css/main.css', 'utf8'), {
+		from: __dirname + '/css/main.css'
 	}).css;
 	
-	results.postcss = css.toString();
+	results.cssnext = css.toString();
 })
 .on('cycle', function(event) {
 	console.log(String(event.target));
 })
 .on('complete', function() {
 	console.log('Fastest is ' + this.filter('fastest').pluck('name'));
-	/*
-	console.log('');
-	console.log('================');
-	console.log('STYLECOW RESULT:');
-	console.log('');
-	console.log(results.stylecow);
-	console.log('');
-	console.log('================');
-	console.log('POSTCSS RESULT:');
-	console.log('');
-	console.log(results.postcss);
-	console.log('');
-	*/
+	fs.writeFileSync(__dirname + '/stylecow.css', results.stylecow);
+	fs.writeFileSync(__dirname + '/cssnext.css', results.cssnext);
 })
 .run();

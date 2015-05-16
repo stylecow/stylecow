@@ -35,8 +35,8 @@
                   "children": [
                     {
                       "class": "Keyword",
-                      "name": "flex",
-                      "vendor": "webkit"
+                      "name": "flexbox",
+                      "vendor": "ms"
                     }
                   ]
                 }
@@ -69,8 +69,8 @@
                   "children": [
                     {
                       "class": "Keyword",
-                      "name": "flexbox",
-                      "vendor": "ms"
+                      "name": "flex",
+                      "vendor": "webkit"
                     }
                   ]
                 }
@@ -95,8 +95,8 @@
             },
             {
               "class": "Declaration",
-              "name": "flex-wrap",
-              "vendor": "webkit",
+              "name": "-ms-flex-wrap",
+              "vendor": null,
               "children": [
                 {
                   "class": "Value",
@@ -129,8 +129,8 @@
             },
             {
               "class": "Declaration",
-              "name": "-ms-flex-wrap",
-              "vendor": null,
+              "name": "flex-wrap",
+              "vendor": "webkit",
               "children": [
                 {
                   "class": "Value",
@@ -933,149 +933,8 @@
                   "children": [
                     {
                       "class": "Function",
-                      "name": "gradient",
-                      "vendor": "webkit",
-                      "children": [
-                        {
-                          "class": "Value",
-                          "children": [
-                            {
-                              "class": "Keyword",
-                              "name": "linear",
-                              "vendor": null
-                            }
-                          ]
-                        },
-                        {
-                          "class": "Value",
-                          "children": [
-                            {
-                              "class": "Keyword",
-                              "name": "left",
-                              "vendor": null
-                            },
-                            {
-                              "class": "Keyword",
-                              "name": "top",
-                              "vendor": null
-                            }
-                          ]
-                        },
-                        {
-                          "class": "Value",
-                          "children": [
-                            {
-                              "class": "Keyword",
-                              "name": "left",
-                              "vendor": null
-                            },
-                            {
-                              "class": "Keyword",
-                              "name": "bottom",
-                              "vendor": null
-                            }
-                          ]
-                        },
-                        {
-                          "class": "Value",
-                          "children": [
-                            {
-                              "class": "Function",
-                              "name": "from",
-                              "vendor": null,
-                              "children": [
-                                {
-                                  "class": "Value",
-                                  "children": [
-                                    {
-                                      "class": "Function",
-                                      "name": "rgba",
-                                      "vendor": null,
-                                      "children": [
-                                        {
-                                          "class": "Value",
-                                          "children": [
-                                            {
-                                              "class": "Number",
-                                              "name": 255
-                                            }
-                                          ]
-                                        },
-                                        {
-                                          "class": "Value",
-                                          "children": [
-                                            {
-                                              "class": "Number",
-                                              "name": 0
-                                            }
-                                          ]
-                                        },
-                                        {
-                                          "class": "Value",
-                                          "children": [
-                                            {
-                                              "class": "Number",
-                                              "name": 0
-                                            }
-                                          ]
-                                        },
-                                        {
-                                          "class": "Value",
-                                          "children": [
-                                            {
-                                              "class": "Number",
-                                              "name": 0.5
-                                            }
-                                          ]
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          "class": "Value",
-                          "children": [
-                            {
-                              "class": "Function",
-                              "name": "to",
-                              "vendor": null,
-                              "children": [
-                                {
-                                  "class": "Value",
-                                  "children": [
-                                    {
-                                      "class": "Keyword",
-                                      "name": "black",
-                                      "vendor": null
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "class": "Declaration",
-              "name": "background",
-              "vendor": null,
-              "children": [
-                {
-                  "class": "Value",
-                  "children": [
-                    {
-                      "class": "Function",
                       "name": "linear-gradient",
-                      "vendor": "webkit",
+                      "vendor": "moz",
                       "children": [
                         {
                           "class": "Value",
@@ -1249,7 +1108,7 @@
                     {
                       "class": "Function",
                       "name": "linear-gradient",
-                      "vendor": "moz",
+                      "vendor": "webkit",
                       "children": [
                         {
                           "class": "Value",
@@ -1316,6 +1175,147 @@
                               "class": "Keyword",
                               "name": "black",
                               "vendor": null
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "class": "Declaration",
+              "name": "background",
+              "vendor": null,
+              "children": [
+                {
+                  "class": "Value",
+                  "children": [
+                    {
+                      "class": "Function",
+                      "name": "gradient",
+                      "vendor": "webkit",
+                      "children": [
+                        {
+                          "class": "Value",
+                          "children": [
+                            {
+                              "class": "Keyword",
+                              "name": "linear",
+                              "vendor": null
+                            }
+                          ]
+                        },
+                        {
+                          "class": "Value",
+                          "children": [
+                            {
+                              "class": "Keyword",
+                              "name": "left",
+                              "vendor": null
+                            },
+                            {
+                              "class": "Keyword",
+                              "name": "top",
+                              "vendor": null
+                            }
+                          ]
+                        },
+                        {
+                          "class": "Value",
+                          "children": [
+                            {
+                              "class": "Keyword",
+                              "name": "left",
+                              "vendor": null
+                            },
+                            {
+                              "class": "Keyword",
+                              "name": "bottom",
+                              "vendor": null
+                            }
+                          ]
+                        },
+                        {
+                          "class": "Value",
+                          "children": [
+                            {
+                              "class": "Function",
+                              "name": "from",
+                              "vendor": null,
+                              "children": [
+                                {
+                                  "class": "Value",
+                                  "children": [
+                                    {
+                                      "class": "Function",
+                                      "name": "rgba",
+                                      "vendor": null,
+                                      "children": [
+                                        {
+                                          "class": "Value",
+                                          "children": [
+                                            {
+                                              "class": "Number",
+                                              "name": 255
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "class": "Value",
+                                          "children": [
+                                            {
+                                              "class": "Number",
+                                              "name": 0
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "class": "Value",
+                                          "children": [
+                                            {
+                                              "class": "Number",
+                                              "name": 0
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "class": "Value",
+                                          "children": [
+                                            {
+                                              "class": "Number",
+                                              "name": 0.5
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "class": "Value",
+                          "children": [
+                            {
+                              "class": "Function",
+                              "name": "to",
+                              "vendor": null,
+                              "children": [
+                                {
+                                  "class": "Value",
+                                  "children": [
+                                    {
+                                      "class": "Keyword",
+                                      "name": "black",
+                                      "vendor": null
+                                    }
+                                  ]
+                                }
+                              ]
                             }
                           ]
                         }
@@ -1427,7 +1427,7 @@
                   "children": [
                     {
                       "class": "String",
-                      "name": "progid:DXImageTransform.Microsoft.gradient(startColorStr=#FF0000,endColorStr=#000000),progid:DXImageTransform.Microsoft.gradient(startColorStr=\"#80FF0000\", endColorStr=\"#80FF0000\")"
+                      "name": "progid:DXImageTransform.Microsoft.gradient(startColorStr=#80FF0000,endColorStr=#80FF0000),progid:DXImageTransform.Microsoft.gradient(startColorStr=\"#FF0000\", endColorStr=\"#000000\")"
                     }
                   ]
                 }
@@ -1480,7 +1480,44 @@
             {
               "class": "Declaration",
               "name": "transform",
-              "vendor": "ms",
+              "vendor": "moz",
+              "children": [
+                {
+                  "class": "Value",
+                  "children": [
+                    {
+                      "class": "Function",
+                      "name": "scale",
+                      "vendor": null,
+                      "children": [
+                        {
+                          "class": "Value",
+                          "children": [
+                            {
+                              "class": "Number",
+                              "name": 1.1
+                            }
+                          ]
+                        },
+                        {
+                          "class": "Value",
+                          "children": [
+                            {
+                              "class": "Number",
+                              "name": 2
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "class": "Declaration",
+              "name": "transform",
+              "vendor": "webkit",
               "children": [
                 {
                   "class": "Value",
@@ -1554,7 +1591,7 @@
             {
               "class": "Declaration",
               "name": "transform",
-              "vendor": "webkit",
+              "vendor": "ms",
               "children": [
                 {
                   "class": "Value",
@@ -1591,116 +1628,52 @@
             {
               "class": "Declaration",
               "name": "transform",
+              "vendor": null,
+              "children": [
+                {
+                  "class": "Value",
+                  "children": [
+                    {
+                      "class": "Function",
+                      "name": "scale",
+                      "vendor": null,
+                      "children": [
+                        {
+                          "class": "Value",
+                          "children": [
+                            {
+                              "class": "Number",
+                              "name": 1.1
+                            }
+                          ]
+                        },
+                        {
+                          "class": "Value",
+                          "children": [
+                            {
+                              "class": "Number",
+                              "name": 2
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "class": "Declaration",
+              "name": "transition",
               "vendor": "moz",
               "children": [
                 {
                   "class": "Value",
                   "children": [
                     {
-                      "class": "Function",
-                      "name": "scale",
-                      "vendor": null,
-                      "children": [
-                        {
-                          "class": "Value",
-                          "children": [
-                            {
-                              "class": "Number",
-                              "name": 1.1
-                            }
-                          ]
-                        },
-                        {
-                          "class": "Value",
-                          "children": [
-                            {
-                              "class": "Number",
-                              "name": 2
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "class": "Declaration",
-              "name": "transform",
-              "vendor": null,
-              "children": [
-                {
-                  "class": "Value",
-                  "children": [
-                    {
-                      "class": "Function",
-                      "name": "scale",
-                      "vendor": null,
-                      "children": [
-                        {
-                          "class": "Value",
-                          "children": [
-                            {
-                              "class": "Number",
-                              "name": 1.1
-                            }
-                          ]
-                        },
-                        {
-                          "class": "Value",
-                          "children": [
-                            {
-                              "class": "Number",
-                              "name": 2
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "class": "Declaration",
-              "name": "transition",
-              "vendor": null,
-              "children": [
-                {
-                  "class": "Value",
-                  "children": [
-                    {
                       "class": "Keyword",
                       "name": "transform",
-                      "vendor": "ms"
-                    },
-                    {
-                      "class": "Unit",
-                      "name": "s",
-                      "children": [
-                        {
-                          "class": "Number",
-                          "name": 2
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "class": "Declaration",
-              "name": "transition",
-              "vendor": "webkit",
-              "children": [
-                {
-                  "class": "Value",
-                  "children": [
-                    {
-                      "class": "Keyword",
-                      "name": "transform",
-                      "vendor": "webkit"
+                      "vendor": "moz"
                     },
                     {
                       "class": "Unit",
@@ -1746,7 +1719,7 @@
             {
               "class": "Declaration",
               "name": "transition",
-              "vendor": "moz",
+              "vendor": "webkit",
               "children": [
                 {
                   "class": "Value",
@@ -1754,7 +1727,34 @@
                     {
                       "class": "Keyword",
                       "name": "transform",
-                      "vendor": "moz"
+                      "vendor": "webkit"
+                    },
+                    {
+                      "class": "Unit",
+                      "name": "s",
+                      "children": [
+                        {
+                          "class": "Number",
+                          "name": 2
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "class": "Declaration",
+              "name": "transition",
+              "vendor": null,
+              "children": [
+                {
+                  "class": "Value",
+                  "children": [
+                    {
+                      "class": "Keyword",
+                      "name": "transform",
+                      "vendor": "ms"
                     },
                     {
                       "class": "Unit",

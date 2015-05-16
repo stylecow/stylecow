@@ -24,6 +24,9 @@
  * Creada por Dave Gandy (http://fortawesome.github.io/Font-Awesome/)
  *
  */
+body {
+	content: "2rems";
+}
 /* BÁSICO */
 /**
  * isaac-font.css

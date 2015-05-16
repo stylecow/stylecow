@@ -25,6 +25,9 @@
  *
  */
 
+body {
+	content: "2rems";
+}
 /* BÁSICO */
 @import "isaac-font.css";
 @import "variables.css";

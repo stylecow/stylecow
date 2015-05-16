@@ -25,6 +25,10 @@
  *
  */
 
+body {
+	content: "32pxs";
+	content: "2rems";
+}
 /* BÁSICO */
 /**
  * isaac-font.css

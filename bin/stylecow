@@ -280,6 +280,7 @@ function executeConvert (config, file) {
 
 function modifyConfig (config, callback) {
 	var inquirer = require('inquirer');
+	var browsersList = require('browserslist');
 	var files = config.files ? (config.files[0] || {}) : {};
 	var availablePlugins = fs.readdirSync(__dirname + '/../node_modules')
 		.filter(function (value) {
@@ -288,48 +289,103 @@ function modifyConfig (config, callback) {
 			return value.slice(16);
 		});
 
+	var browsers = {
+		ie: 'explorer',
+		firefox: 'firefox',
+		chrome: 'chrome',
+		safari: 'safari',
+		opera: 'opera',
+		ios_saf: 'ios',
+		android: 'android'
+	};
+
 	var questions = [
+		{
+			type: "input",
+			name: "file",
+			message: "Browsers you want to support",
+			default: '> 1%',
+			validate: function (e) {
+				try {
+					var b = browsersList(e);
+				} catch (error) {
+					return false;
+				}
+
+				b.forEach(function (val) {
+					val = val.split(' ', 2);
+
+					var name = browsers[val[0]];
+
+					if (!name) {
+						return;
+					}
+
+					var value = val[1].split('-')[0];
+
+					if (value) {
+						config.support[name] = parseFloat(value);
+					}
+				});
+
+				return true;
+			}
+		},
 		{
 			type: "input",
 			name: "explorer",
 			message: "Min version supported in Internet Explorer",
-			default: config.support.explorer
+			default: function () {
+				return config.support.explorer;
+			}
 		},
 		{
 			type: "input",
 			name: "firefox",
 			message: "Min version supported in Mozilla Firefox",
-			default: config.support.firefox
+			default: function () {
+				return config.support.firefox;
+			}
 		},
 		{
 			type: "input",
 			name: "chrome",
 			message: "Min version supported in Google Chrome",
-			default: config.support.chrome
+			default: function () {
+				return config.support.chrome;
+			}
 		},
 		{
 			type: "input",
 			name: "safari",
 			message: "Min version supported in Safari",
-			default: config.support.safari
+			default: function () {
+				return config.support.safari;
+			}
 		},
 		{
 			type: "input",
 			name: "opera",
 			message: "Min version supported in Opera",
-			default: config.support.opera
+			default: function () {
+				return config.support.opera;
+			}
 		},
 		{
 			type: "input",
 			name: "android",
 			message: "Min version supported in Android",
-			default: config.support.android
+			default: function () {
+				return config.support.android;
+			}
 		},
 		{
 			type: "input",
 			name: "ios",
 			message: "Min version supported in Safari for iOS",
-			default: config.support.ios
+			default: function () {
+				return config.support.ios;
+			}
 		},
 		{
 			type: "checkbox",
@@ -364,19 +420,25 @@ function modifyConfig (config, callback) {
 			choices: function (answers) {
 				var file = answers.output.replace('.css', '.map');
 
-				return [
+				var choices = [
 					{
-						name: 'Yes, save in ' + file,
-						value: file,
-						default: true
-					},{
-						name: 'Yes, embed the map in the css file',
+						name: 'Yes, embed in the css',
 						value: 'embed'
 					},{
 						name: 'No',
 						value: false
 					}
 				];
+
+				if (file) {
+					choices.unshift({
+						name: 'Yes, save in ' + file,
+						value: file,
+						default: true
+					});
+				}
+
+				return choices;
 			}
 		}
 	];

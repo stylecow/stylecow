@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.0
+## 3.0.0
 
 * The parser has been completely rewriten.
 * Performance improved x2
@@ -8,7 +8,7 @@
 * Better API
 * The plugin "linear-gradient" was merged with "prefixes"
 
-### 3.1
+### 3.1.0
 
 * Implemented source maps
 * Improved error handling. Now on error, a `stylecow.Error()` class is throwed
@@ -46,21 +46,21 @@ var other_css = stylecow.createFromFile('styles2.css');
 stylecow.merge(main_css, other_css);
 ```
 
-## 4.0
+## 4.0.0
 
 * Rewritten the parser to be more consitent
 * Changed some API methods to create and traverse through the elements
 * The standard plugins are included as dependencies, so they are installed with stylecow
 
-### 4.1
+### 4.1.0
 * The plugin "initial" is deprecated. Now it's included in "fixes"
 
-### 4.2
+### 4.2.0
 
 * Included the command line interface (and deprecate stylecow-cli package)
 * Separate the parser in an external package: [stylecow-parser](https://github.com/stylecow/stylecow-parser)
 
-## 5.0
+## 5.0.0
 
 * Removed `--input`, `--output`, `--code` and `--map` configuration
 * Simplified api. The command `stylecow execute` is now simply `stylecow`
@@ -83,28 +83,32 @@ stylecow.merge(main_css, other_css);
 }
 ```
 
-## 6.0
+## 6.0.0
 
 * New version of stylecow-parser (2.0) with a lot of fixes and speed improvements
 
-
-### 6.1
+### 6.1.0
 
 * New plugin "custom-media"
 
-### 6.2
+### 6.2.0
 
 * New plugin "custom-selector"
 
-### 6.3
+### 6.3.0
 
 * Added an update notifier
 
-### 6.4
+### 6.4.0
 
 * New plugin "calc"
 
-### 6.5
+### 6.5.0
 
 * New plugin "extend"
 * Performance improved
+
+### 6.6.0
+
+* Catch and display the errors in the console and browser (on live-reload)
+* Implemented [browserslist](https://github.com/ai/browserslist) to define the browser support using its API

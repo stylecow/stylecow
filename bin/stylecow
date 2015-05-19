@@ -217,24 +217,34 @@ function run (configFile, watch, liveReload) {
 
 //Converts the code and output the result
 function executeConvert (config, file) {
-	var css = stylecow.parseFile(file.input);
+	var css, error = false;
 
-	//Convert the code
-	stylecow.run(css);
+	try {
+		css = stylecow.parseFile(file.input);
 
-	var code = new stylecow.Coder(css, {
-		sourceMap: file.map,
-		file: file.output,
-		style: config.code
-	});
+		//Convert the code
+		stylecow.run(css);
+	} catch (e) {
+		error = e;
 
-	if (file.output) {
-		code.save();
-		console.log('success: Generated "' + file.output + '"');
-	} else {
-		console.log('');
-		console.log(code.code);
-		console.log('');
+		if (config.socket) {
+			config.socket.send(JSON.stringify({
+				subject: 'error',
+				code: cssError(e).toString()
+			}), {
+				mask: true
+			});
+		}
+
+		console.error(error.message);
+
+		if (error) {
+			if (!file.files) {
+				process.exit();
+			}
+		}
+
+		return;
 	}
 
 	//Send the code to socket
@@ -253,20 +263,42 @@ function executeConvert (config, file) {
 			}
 		});
 
-		code = new stylecow.Coder(css, {
-			//sourceMap: 'embed',
+		var code = new stylecow.Coder(css, {
+			sourceMap: 'embed',
 			style: 'minify'
 		});
 
 		config.socket.send(JSON.stringify({
 			subject: 'code',
-			code: code.code,
+			code: css.toString(),
 			baseUrl: file.baseUrl
 		}), {
 			mask: true
 		}, function () {
 			console.log('success: Code sent to socket');
 		});
+
+		//Generate and convert the code again to save
+		if (!error) {
+			css = stylecow.parseFile(file.input);
+
+			stylecow.run(css);
+		}
+	}
+
+	var code = new stylecow.Coder(css, {
+		sourceMap: file.map,
+		file: file.output,
+		style: config.code
+	});
+
+	if (file.output) {
+		code.save();
+		console.log('success: Generated "' + file.output + '"');
+	} else {
+		console.log('');
+		console.log(code.code);
+		console.log('');
 	}
 
 	//Get secondary files
@@ -375,7 +407,16 @@ function initConfig (callback) {
 		{
 			type: "input",
 			name: "output",
-			message: "Output css filename"
+			message: "Output css filename",
+			default: function (answers) {
+				if (answers.input) {
+					if (answers.code == 'minify') {
+						return answers.input.replace('.css', '.min.css');
+					}
+
+					return answers.input.replace('.css', '.dist.css');
+				}
+			}
 		},
 		{
 			type: "list",
@@ -421,7 +462,7 @@ function initConfig (callback) {
 		newConfig.support = {};
 
 		['explorer','firefox','chrome','safari','opera','android','ios'].forEach(function (browser) {
-			newConfig.support[browser] = (answers[browser] === 'false') ? false : parseFloat(answers[browser], 10);
+			newConfig.support[browser] = (!answers[browser] || (answers[browser] === 'false')) ? false : parseFloat(answers[browser], 10);
 		});
 
 		newConfig.plugins = answers.plugins;
@@ -444,7 +485,7 @@ function initConfig (callback) {
 						message: "Filename where to save the configuration",
 						validate: function (e) {
 							if (!e) {
-								return 'You must specify a filename to the config file (for example: myconfig.json)';
+								return 'You must specify a filename to save the configuration';
 							}
 
 							if (path.extname(e) !== '.json') {
@@ -453,7 +494,7 @@ function initConfig (callback) {
 
 							return true;
 						},
-						default: config.file
+						default: 'stylecow.json'
 					}
 				], function (answers) {
 					callback(newConfig, answers.file);
@@ -498,4 +539,19 @@ function writeConfig (value, file) {
 
 	console.log('success: Config file saved: `' + file + '`');
 	console.log('');
+}
+
+function cssError (error) {
+	var css = stylecow.parse('html, body { color: red !important; background: white !important; }'
+		+ 'body > * { display: none !important;} '
+		+ 'body::before { content: "message"; font-family: monospace; white-space: pre; display: block; padding: 20px; } ');
+
+	var content = css.get({
+		type: 'String',
+		name: 'message'
+	});
+
+	content.name = error.message.replace(/\n/g, '\\a ');
+
+	return css;
 }

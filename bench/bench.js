@@ -5,6 +5,7 @@ var fs = require('fs');
 
 //Configure stylecow
 stylecow
+	.minSupport('> 1%')
 	.loadPlugin('calc')
 	.loadPlugin('color')
 	.loadPlugin('custom-media')
@@ -29,8 +30,7 @@ var results = {
 	cssnext: ''
 };
 
-suite
-.add('stylecow', function() {
+suite.add('stylecow', function() {
 	var css = stylecow.parseFile(__dirname + '/css/main.css');
 	stylecow.run(css);
 

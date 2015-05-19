@@ -1,7 +1,7 @@
 (function () {
 	"use strict";
 
-	var ws, styles = {}, links = Array.prototype.slice.call(document.querySelectorAll('link[rel="stylesheet"]'));
+	var ws, styles = {}, errorStyle, links = Array.prototype.slice.call(document.querySelectorAll('link[rel="stylesheet"]'));
 
 	function getLink(url) {
 		while (url.indexOf('../') !== -1) {
@@ -76,6 +76,19 @@
 					style.link.parentNode.removeChild(style.link);
 					style.link = null;
 				}
+
+				if (errorStyle) {
+					errorStyle.innerHTML = '';
+				}
+			}
+
+			if (data.subject === 'error') {
+				if (!errorStyle) {
+					errorStyle = document.createElement('style');
+					document.head.appendChild(errorStyle);
+				}
+
+				errorStyle.innerHTML = data.code;
 			}
 		}
 	}

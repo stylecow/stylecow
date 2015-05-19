@@ -22,12 +22,7 @@ program
 	.command('init')
 	.description('Creates a new configuration file')
 	.action(function config (command) {
-		var config = {
-			support: stylecow.support,
-			file: 'stylecow.json'
-		};
-
-		modifyConfig(config, function (config, file) {
+		initConfig(function (config, file) {
 			writeConfig(config, file);
 		});
 	});
@@ -278,26 +273,14 @@ function executeConvert (config, file) {
 	file.files = getFiles(css);
 }
 
-function modifyConfig (config, callback) {
+function initConfig (callback) {
 	var inquirer = require('inquirer');
-	var browsersList = require('browserslist');
-	var files = config.files ? (config.files[0] || {}) : {};
 	var availablePlugins = fs.readdirSync(__dirname + '/../node_modules')
 		.filter(function (value) {
 			return value.slice(0, 16) === 'stylecow-plugin-';
 		}).map(function (value) {
 			return value.slice(16);
 		});
-
-	var browsers = {
-		ie: 'explorer',
-		firefox: 'firefox',
-		chrome: 'chrome',
-		safari: 'safari',
-		opera: 'opera',
-		ios_saf: 'ios',
-		android: 'android'
-	};
 
 	var questions = [
 		{
@@ -306,27 +289,11 @@ function modifyConfig (config, callback) {
 			message: "Browsers you want to support",
 			default: '> 1%',
 			validate: function (e) {
+					stylecow.minSupport(e);
 				try {
-					var b = browsersList(e);
 				} catch (error) {
 					return false;
 				}
-
-				b.forEach(function (val) {
-					val = val.split(' ', 2);
-
-					var name = browsers[val[0]];
-
-					if (!name) {
-						return;
-					}
-
-					var value = val[1].split('-')[0];
-
-					if (value) {
-						config.support[name] = parseFloat(value);
-					}
-				});
 
 				return true;
 			}
@@ -336,7 +303,7 @@ function modifyConfig (config, callback) {
 			name: "explorer",
 			message: "Min version supported in Internet Explorer",
 			default: function () {
-				return config.support.explorer;
+				return stylecow.support.explorer;
 			}
 		},
 		{
@@ -344,7 +311,7 @@ function modifyConfig (config, callback) {
 			name: "firefox",
 			message: "Min version supported in Mozilla Firefox",
 			default: function () {
-				return config.support.firefox;
+				return stylecow.support.firefox;
 			}
 		},
 		{
@@ -352,7 +319,7 @@ function modifyConfig (config, callback) {
 			name: "chrome",
 			message: "Min version supported in Google Chrome",
 			default: function () {
-				return config.support.chrome;
+				return stylecow.support.chrome;
 			}
 		},
 		{
@@ -360,7 +327,7 @@ function modifyConfig (config, callback) {
 			name: "safari",
 			message: "Min version supported in Safari",
 			default: function () {
-				return config.support.safari;
+				return stylecow.support.safari;
 			}
 		},
 		{
@@ -368,7 +335,7 @@ function modifyConfig (config, callback) {
 			name: "opera",
 			message: "Min version supported in Opera",
 			default: function () {
-				return config.support.opera;
+				return stylecow.support.opera;
 			}
 		},
 		{
@@ -376,7 +343,7 @@ function modifyConfig (config, callback) {
 			name: "android",
 			message: "Min version supported in Android",
 			default: function () {
-				return config.support.android;
+				return stylecow.support.android;
 			}
 		},
 		{
@@ -384,7 +351,7 @@ function modifyConfig (config, callback) {
 			name: "ios",
 			message: "Min version supported in Safari for iOS",
 			default: function () {
-				return config.support.ios;
+				return stylecow.support.ios;
 			}
 		},
 		{
@@ -392,26 +359,23 @@ function modifyConfig (config, callback) {
 			name: "plugins",
 			message: "Plugins to apply",
 			choices: availablePlugins,
-			default: config.plugins || availablePlugins
+			default: availablePlugins
 		},
 		{
 			type: "list",
 			name: "code",
 			message: "Code style used to generate the css",
-			choices: Object.keys(stylecow.Coder.styles),
-			default: config.code
+			choices: Object.keys(stylecow.Coder.styles)
 		},
 		{
 			type: "input",
 			name: "input",
-			message: "Input css filename",
-			default: files.input
+			message: "Input css filename"
 		},
 		{
 			type: "input",
 			name: "output",
-			message: "Output css filename",
-			default: files.output
+			message: "Output css filename"
 		},
 		{
 			type: "list",

@@ -1,0 +1,17 @@
+%flex, .ola, .ola %flex p {
+	display: flex;
+}
+%non-used {
+	display: flex;
+}
+
+ul.gri-1 {
+	@extend %flex;
+}
+
+div.grid-2 {
+	ul, ol {
+		@extend %flex;
+		@extend %non-defined;
+	}
+}

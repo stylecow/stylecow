@@ -29,6 +29,7 @@ body {
 	content: "2rems";
 }
 /* BÁSICO */
+@import "http://lorem.isaac-font.css";
 @import "isaac-font.css";
 @import "variables.css";
 @import "common.css";

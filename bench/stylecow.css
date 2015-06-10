@@ -455,8 +455,8 @@ nav ul {
 		display: -webkit-box;
 		display: -webkit-flex;
 		display: flex;
-		-ms-flex-wrap: wrap;
 		-webkit-box-lines: multiple;
+		-ms-flex-wrap: wrap;
 		-webkit-flex-wrap: wrap;
 		flex-wrap: wrap;
 	}
@@ -528,8 +528,8 @@ nav ul {
 		display: -webkit-box;
 		display: -webkit-flex;
 		display: flex;
-		-ms-flex-wrap: wrap;
 		-webkit-box-lines: multiple;
+		-ms-flex-wrap: wrap;
 		-webkit-flex-wrap: wrap;
 		flex-wrap: wrap;
 	}
@@ -937,9 +937,9 @@ nav ul {
 	-webkit-box-align: start;
 	-webkit-align-items: flex-start;
 	align-items: flex-start;
-	-ms-flex-flow: row wrap;
 	-webkit-box-orient: horizontal;
 	-webkit-box-lines: multiple;
+	-ms-flex-flow: row wrap;
 	-webkit-flex-flow: row wrap;
 	flex-flow: row wrap;
 	font-size: 14px;
@@ -997,9 +997,9 @@ nav ul {
 	display: -webkit-inline-box;
 	display: -webkit-inline-flex;
 	display: inline-flex;
-	-ms-flex-flow: row wrap;
 	-webkit-box-orient: horizontal;
 	-webkit-box-lines: multiple;
+	-ms-flex-flow: row wrap;
 	-webkit-flex-flow: row wrap;
 	flex-flow: row wrap;
 	-ms-flex-align: end;
@@ -1420,8 +1420,8 @@ nav a:hover {
 	display: -webkit-box;
 	display: -webkit-flex;
 	display: flex;
-	-ms-flex-direction: column;
 	-webkit-box-orient: vertical;
+	-ms-flex-direction: column;
 	-webkit-flex-direction: column;
 	flex-direction: column;
 	-ms-flex-pack: center;
@@ -1774,15 +1774,15 @@ nav a:hover {
 	padding: 0.5rem 0.5rem;
 }
 .member-list .member-avatar {
-	-ms-flex: 0 0;
 	-webkit-box-flex: 0;
+	-ms-flex: 0 0;
 	-webkit-flex: 0 0;
 	flex: 0 0;
 	margin-right: 1em;
 }
 .member-list .member-header {
-	-ms-flex: 1;
 	-webkit-box-flex: 1;
+	-ms-flex: 1;
 	-webkit-flex: 1;
 	flex: 1;
 }

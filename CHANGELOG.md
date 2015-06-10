@@ -112,3 +112,8 @@ stylecow.merge(main_css, other_css);
 
 * Catch and display the errors in the console and browser (on live-reload)
 * Implemented [browserslist](https://github.com/ai/browserslist) to define the browser support using its API
+
+### 6.6.1
+
+* Updated to stylecow-parser 2.6.x
+* Improved performance on execute plugins

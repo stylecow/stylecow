@@ -117,3 +117,10 @@ stylecow.merge(main_css, other_css);
 
 * Updated to stylecow-parser 2.6.x
 * Improved performance on execute plugins
+
+### 6.7.0
+
+* stylecow-parser dependency was renamed to stylecow-core. All related task functions was moved to the core, so this package contains only the command line interface and the core and plugins as dependencies.
+* Removed utils for plugins to make them more independent.
+* Improved performance on execute plugins
+* Improved error message when no config file has found.

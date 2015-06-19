@@ -3,8 +3,8 @@ ul.grid {
 	display: -webkit-box;
 	display: -webkit-flex;
 	display: flex;
-	-webkit-box-lines: multiple;
 	-ms-flex-wrap: wrap;
+	-webkit-box-lines: multiple;
 	-webkit-flex-wrap: wrap;
 	flex-wrap: wrap;
 }

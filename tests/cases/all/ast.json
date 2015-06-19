@@ -95,23 +95,6 @@
             },
             {
               "class": "Declaration",
-              "name": "box-lines",
-              "vendor": "webkit",
-              "children": [
-                {
-                  "class": "Value",
-                  "children": [
-                    {
-                      "class": "Keyword",
-                      "name": "multiple",
-                      "vendor": null
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "class": "Declaration",
               "name": "-ms-flex-wrap",
               "vendor": null,
               "children": [
@@ -121,6 +104,23 @@
                     {
                       "class": "Keyword",
                       "name": "wrap",
+                      "vendor": null
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "class": "Declaration",
+              "name": "box-lines",
+              "vendor": "webkit",
+              "children": [
+                {
+                  "class": "Value",
+                  "children": [
+                    {
+                      "class": "Keyword",
+                      "name": "multiple",
                       "vendor": null
                     }
                   ]

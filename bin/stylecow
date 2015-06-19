@@ -73,7 +73,7 @@ function run (configFile, watch, liveReload) {
 
 	if (config.plugins) {
 		config.plugins.forEach(function (plugin) {
-			stylecow.loadPlugin(plugin);
+			stylecow.loadNpmModule('stylecow-plugin-' + plugin);
 		});
 	}
 
@@ -308,14 +308,16 @@ function initConfig (callback) {
 			return value.slice(16);
 		});
 
+	var minSupport;
+
 	var questions = [
 		{
 			type: "input",
 			name: "file",
 			message: "Browsers you want to support",
 			default: '> 1%',
-			validate: function (e) {
-					stylecow.minSupport(e);
+			validate: function (query) {
+					minSupport = getSupportFromBrowserlist(query);
 				try {
 				} catch (error) {
 					return false;
@@ -329,7 +331,7 @@ function initConfig (callback) {
 			name: "explorer",
 			message: "Min version supported in Internet Explorer",
 			default: function () {
-				return stylecow.support.explorer;
+				return minSupport.explorer;
 			}
 		},
 		{
@@ -337,7 +339,7 @@ function initConfig (callback) {
 			name: "firefox",
 			message: "Min version supported in Mozilla Firefox",
 			default: function () {
-				return stylecow.support.firefox;
+				return minSupport.firefox;
 			}
 		},
 		{
@@ -345,7 +347,7 @@ function initConfig (callback) {
 			name: "chrome",
 			message: "Min version supported in Google Chrome",
 			default: function () {
-				return stylecow.support.chrome;
+				return minSupport.chrome;
 			}
 		},
 		{
@@ -353,7 +355,7 @@ function initConfig (callback) {
 			name: "safari",
 			message: "Min version supported in Safari",
 			default: function () {
-				return stylecow.support.safari;
+				return minSupport.safari;
 			}
 		},
 		{
@@ -361,7 +363,7 @@ function initConfig (callback) {
 			name: "opera",
 			message: "Min version supported in Opera",
 			default: function () {
-				return stylecow.support.opera;
+				return minSupport.opera;
 			}
 		},
 		{
@@ -369,7 +371,7 @@ function initConfig (callback) {
 			name: "android",
 			message: "Min version supported in Android",
 			default: function () {
-				return stylecow.support.android;
+				return minSupport.android;
 			}
 		},
 		{
@@ -377,7 +379,7 @@ function initConfig (callback) {
 			name: "ios",
 			message: "Min version supported in Safari for iOS",
 			default: function () {
-				return stylecow.support.ios;
+				return minSupport.ios;
 			}
 		},
 		{
@@ -548,4 +550,44 @@ function cssError (error) {
 	content.name = error.message.replace(/\n/g, '\\a ');
 
 	return css;
+}
+
+function getSupportFromBrowserlist (query) {
+	var browsersList = require('browserslist');
+	var browsers = {
+		ie: 'explorer',
+		firefox: 'firefox',
+		chrome: 'chrome',
+		safari: 'safari',
+		opera: 'opera',
+		ios_saf: 'ios',
+		android: 'android'
+	};
+	var support = {
+		explorer: false,
+		firefox: false,
+		chrome: false,
+		safari: false,
+		opera: false,
+		android: false,
+		ios: false
+	};
+
+	browsersList(query).forEach(function (val) {
+		val = val.split(' ', 2);
+
+		var name = browsers[val[0]];
+
+		if (!name) {
+			return;
+		}
+
+		var value = val[1].split('-')[0];
+
+		if (value) {
+			support[name] = parseFloat(value);
+		}
+	});
+
+	return support;
 }

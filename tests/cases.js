@@ -1,23 +1,23 @@
 var assert = require('assert');
-var stylecow = require('../lib');
+var stylecow = require('stylecow-core');
 
 stylecow
-	.loadPlugin('calc')
-	.loadPlugin('color')
-	.loadPlugin('custom-media')
-	.loadPlugin('custom-selector')
-	.loadPlugin('extend')
-	.loadPlugin('fixes')
-	.loadPlugin('flex')
-	.loadPlugin('import')
-	.loadPlugin('matches')
-	.loadPlugin('msfilter-background-alpha')
-	.loadPlugin('msfilter-linear-gradient')
-	.loadPlugin('msfilter-transform')
-	.loadPlugin('nested-rules')
-	.loadPlugin('prefixes')
-	.loadPlugin('rem')
-	.loadPlugin('variables')
+	.loadNpmModule('stylecow-plugin-calc')
+	.loadNpmModule('stylecow-plugin-color')
+	.loadNpmModule('stylecow-plugin-custom-media')
+	.loadNpmModule('stylecow-plugin-custom-selector')
+	.loadNpmModule('stylecow-plugin-extend')
+	.loadNpmModule('stylecow-plugin-fixes')
+	.loadNpmModule('stylecow-plugin-flex')
+	.loadNpmModule('stylecow-plugin-import')
+	.loadNpmModule('stylecow-plugin-matches')
+	.loadNpmModule('stylecow-plugin-msfilter-background-alpha')
+	.loadNpmModule('stylecow-plugin-msfilter-linear-gradient')
+	.loadNpmModule('stylecow-plugin-msfilter-transform')
+	.loadNpmModule('stylecow-plugin-nested-rules')
+	.loadNpmModule('stylecow-plugin-prefixes')
+	.loadNpmModule('stylecow-plugin-rem')
+	.loadNpmModule('stylecow-plugin-variables')
 	.minSupport({
 		"explorer": 0,
 		"firefox": 0,

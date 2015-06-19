@@ -1,23 +1,31 @@
 var Benchmark = require('benchmark');
-var stylecow = require('../lib');
+var stylecow = require('stylecow-core');
 var postcss = require('postcss');
 var fs = require('fs');
 
 //Configure stylecow
 stylecow
-	.minSupport('> 1%')
-	.loadPlugin('calc')
-	.loadPlugin('color')
-	.loadPlugin('custom-media')
-	.loadPlugin('custom-selector')
-	.loadPlugin('fixes')
-	.loadPlugin('flex')
-	.loadPlugin('import')
-	.loadPlugin('matches')
-	.loadPlugin('nested-rules')
-	.loadPlugin('prefixes')
-	.loadPlugin('rem')
-	.loadPlugin('variables');
+	.minSupport({
+		explorer: 8,
+		firefox: 37,
+		chrome: 42,
+		safari: 8,
+		opera: 15,
+		android: 4,
+		safari: 6
+	})
+	.loadNpmModule('stylecow-plugin-calc')
+	.loadNpmModule('stylecow-plugin-color')
+	.loadNpmModule('stylecow-plugin-custom-media')
+	.loadNpmModule('stylecow-plugin-custom-selector')
+	.loadNpmModule('stylecow-plugin-fixes')
+	.loadNpmModule('stylecow-plugin-flex')
+	.loadNpmModule('stylecow-plugin-import')
+	.loadNpmModule('stylecow-plugin-matches')
+	.loadNpmModule('stylecow-plugin-nested-rules')
+	.loadNpmModule('stylecow-plugin-prefixes')
+	.loadNpmModule('stylecow-plugin-rem')
+	.loadNpmModule('stylecow-plugin-variables');
 
 //Configure postcss with cssnext
 var cssnext = postcss()

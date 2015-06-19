@@ -3,10 +3,10 @@
 var program = require('commander');
 var fs = require('fs');
 var path = require('path');
-var stylecow = require('../lib/index');
+var stylecow = require('stylecow-core');
 var updateNotifier = require('update-notifier');
 var pkg = require('../package.json');
- 
+
 updateNotifier({pkg: pkg}).notify();
 
 program
@@ -41,10 +41,10 @@ if (!program.args.length) {
 
 function run (configFile, watch, liveReload) {
 	//Load config
-	configFile = path.resolve(process.cwd(), configFile || './stylecow.json');
+	configFile = configFile || './stylecow.json';
 
-	var config = readConfig(configFile),
-		basePath = path.dirname(configFile),
+	var config = readConfig(configFile || './stylecow.json'),
+		basePath = path.dirname(path.resolve(process.cwd(), configFile)),
 		socket;
 
 	if (!config.files) {
@@ -216,6 +216,11 @@ function run (configFile, watch, liveReload) {
 //Converts the code and output the result
 function executeConvert (config, file) {
 	var css, error = false;
+
+	if (!file.input || !fs.stats().isFile()) {
+		console.error('No valid file input: "' + file.input + '"');
+		process.exit();
+	}
 
 	try {
 		css = stylecow.parseFile(file.input);
@@ -474,27 +479,23 @@ function initConfig (callback) {
 			}
 		], function (answers) {
 			if (answers.ok) {
-				inquirer.prompt([
-					{
-						type: "input",
-						name: "file",
-						message: "Filename where to save the configuration",
-						validate: function (e) {
-							if (!e) {
-								return 'You must specify a filename to save the configuration';
-							}
-
-							if (path.extname(e) !== '.json') {
-								return 'The config file must end in ".json"';
-							}
-
-							return true;
-						},
-						default: 'stylecow.json'
-					}
-				], function (answers) {
-					callback(newConfig, answers.file);
-				});
+				var filename = 'stylecow.json';
+			
+				if (fs.existsSync(filename)) {
+					inquirer.prompt([
+						{
+							type: "confirm",
+							name: "ok",
+							message: "The file `stylecow.json` already exists. Do you want to replace it?"
+						}
+					], function (replace) {
+						if (replace.ok) {
+							callback(newConfig, filename);
+						}
+					});
+				} else {
+					callback(newConfig, filename);
+				}
 			}
 		});
 	});
@@ -519,13 +520,18 @@ function getFiles (css) {
 }
 
 function readConfig (file) {
-	if (fs.existsSync(file)) {
-		return require(file);
+	var fullpath = path.resolve(process.cwd(), file);
+
+	if (fs.existsSync(fullpath)) {
+		return require(fullpath);
 	}
 
-	console.log('');
-	console.log('  error: Config file `' + file + '` not found');
-	console.log('');
+	console.error('');
+	console.error('  error: Config file `' + file + '` not found');
+	console.error('');
+	console.error('  - run `stylecow init` to create one');
+	console.error('  - or use `stylecow -c <config file>` to locate it');
+	console.error('');
 
 	process.exit();
 }

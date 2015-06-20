@@ -5,7 +5,7 @@
     "css",
     "postproccessor"
   ],
-  "version": "6.7.0",
+  "version": "6.7.1",
   "author": "Oscar Otero <oom@oscarotero.com>",
   "homepage": "https://stylecow.github.io/",
   "bugs": "https://github.com/stylecow/stylecow/issues",
@@ -32,7 +32,7 @@
     "stylecow-plugin-msfilter-background-alpha": "^4.1.0",
     "stylecow-plugin-msfilter-linear-gradient": "^4.1.0",
     "stylecow-plugin-msfilter-transform": "^4.1.0",
-    "stylecow-plugin-nested-rules": "^4.2.0",
+    "stylecow-plugin-nested-rules": "^4.2.1",
     "stylecow-plugin-prefixes": "^4.2.0",
     "stylecow-plugin-rem": "^4.1.0",
     "stylecow-plugin-variables": "^4.2.0",

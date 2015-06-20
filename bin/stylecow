@@ -217,7 +217,7 @@ function run (configFile, watch, liveReload) {
 function executeConvert (config, file) {
 	var css, error = false;
 
-	if (!file.input || !fs.stats().isFile()) {
+	if (!file.input || !fs.statSync(file.input).isFile()) {
 		console.error('No valid file input: "' + file.input + '"');
 		process.exit();
 	}

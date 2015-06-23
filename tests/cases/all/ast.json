@@ -448,43 +448,33 @@
               "class": "MediaQuery",
               "children": [
                 {
-                  "class": "MediaQueries",
+                  "class": "Keyword",
+                  "name": "screen",
+                  "vendor": null
+                },
+                {
+                  "class": "Keyword",
+                  "name": "AND",
+                  "vendor": null
+                },
+                {
+                  "class": "ConditionalExpression",
                   "children": [
                     {
-                      "class": "MediaQuery",
+                      "class": "ConditionalFeature",
+                      "name": "max-width",
+                      "vendor": null,
                       "children": [
                         {
-                          "class": "Keyword",
-                          "name": "screen",
-                          "vendor": null
-                        },
-                        {
-                          "class": "Keyword",
-                          "name": "AND",
-                          "vendor": null
-                        },
-                        {
-                          "class": "ConditionalExpression",
+                          "class": "Value",
                           "children": [
                             {
-                              "class": "ConditionalFeature",
-                              "name": "max-width",
-                              "vendor": null,
+                              "class": "Unit",
+                              "name": "px",
                               "children": [
                                 {
-                                  "class": "Value",
-                                  "children": [
-                                    {
-                                      "class": "Unit",
-                                      "name": "px",
-                                      "children": [
-                                        {
-                                          "class": "Number",
-                                          "name": 480
-                                        }
-                                      ]
-                                    }
-                                  ]
+                                  "class": "Number",
+                                  "name": 480
                                 }
                               ]
                             }

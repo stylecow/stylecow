@@ -217,8 +217,26 @@ function run (configFile, watch, liveReload) {
 function executeConvert (config, file) {
 	var css, error = false;
 
-	if (!file.input || !fs.statSync(file.input).isFile()) {
-		console.error('No valid file input: "' + file.input + '"');
+	if (!file.input) {
+		console.error('');
+		console.error('  error: No input file defined');
+		console.error('');
+		process.exit();
+	}
+
+	var fullpath = path.resolve(stylecow.cwd(), file.input);
+
+	if (!fs.existsSync(fullpath)) {
+		console.error('');
+		console.error('  error: Input file `' + fullpath + '` not found');
+		console.error('');
+		process.exit();
+	}
+
+	if (!fs.statSync(fullpath).isFile()) {
+		console.error('');
+		console.error('  error: Input file `' + fullpath + '` is not a valid file');
+		console.error('');
 		process.exit();
 	}
 

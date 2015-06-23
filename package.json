@@ -22,7 +22,7 @@
     "stylecow-core": "^1.0.1",
     "stylecow-plugin-calc": "^1.2.0",
     "stylecow-plugin-color": "^4.2.0",
-    "stylecow-plugin-custom-media": "^1.1.0",
+    "stylecow-plugin-custom-media": "^1.1.1",
     "stylecow-plugin-custom-selector": "^1.1.0",
     "stylecow-plugin-extend": "^1.2.0",
     "stylecow-plugin-fixes": "^4.1.0",

@@ -36,6 +36,7 @@
     "stylecow-plugin-prefixes": "^4.2.0",
     "stylecow-plugin-rem": "^4.1.0",
     "stylecow-plugin-variables": "^4.2.0",
+    "stylecow-plugin-webkit-gradient": "^1.0.0",
     "update-notifier": "*",
     "ws": "*"
   },

@@ -124,3 +124,10 @@ stylecow.merge(main_css, other_css);
 * Removed utils for plugins to make them more independent.
 * Improved performance on execute plugins
 * Improved error message when no config file has found.
+
+### 6.8.0
+
+* Updated plugin "prefixes" to version 5.0, that use caniuse database
+* New plugin "webkit-gradient" to do not mix old webkit syntax fallback with vendor prefixes on standard syntax (done by "prefixes")
+* Updated plugin "flex" to version 5.0, that removes the vendor prefixes to standard syntax (this is done by "prefixes")
+* Updated stylecow-core dependency, that fixes some issues on task execution

@@ -5,7 +5,7 @@
     "css",
     "postproccessor"
   ],
-  "version": "6.7.2",
+  "version": "6.8.0",
   "author": "Oscar Otero <oom@oscarotero.com>",
   "homepage": "https://stylecow.github.io/",
   "bugs": "https://github.com/stylecow/stylecow/issues",
@@ -19,7 +19,7 @@
     "chokidar": "*",
     "commander": "*",
     "inquirer": "*",
-    "stylecow-core": "^1.0.1",
+    "stylecow-core": "^1.0.2",
     "stylecow-plugin-calc": "^1.2.0",
     "stylecow-plugin-color": "^4.2.0",
     "stylecow-plugin-custom-media": "^1.1.1",

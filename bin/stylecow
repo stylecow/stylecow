@@ -73,13 +73,13 @@ function run (configFile, watch, liveReload) {
 
 	if (config.plugins) {
 		config.plugins.forEach(function (plugin) {
-			stylecow.loadNpmModule('stylecow-plugin-' + plugin);
+			stylecow.use(require('stylecow-plugin-' + plugin));
 		});
 	}
 
 	if (config.modules) {
 		config.modules.forEach(function (module) {
-			stylecow.loadNpmModule(module);
+			stylecow.use(require(module));
 		});
 	}
 

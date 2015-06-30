@@ -10,6 +10,7 @@
 
 body {
 	max-width: calc(var(--size) * 3);
+	filter: grayscale(1);
 
 	p {
 		background-color: #5555;

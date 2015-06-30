@@ -14,18 +14,19 @@ stylecow
 		android: 4,
 		safari: 6
 	})
-	.loadNpmModule('stylecow-plugin-calc')
-	.loadNpmModule('stylecow-plugin-color')
-	.loadNpmModule('stylecow-plugin-custom-media')
-	.loadNpmModule('stylecow-plugin-custom-selector')
-	.loadNpmModule('stylecow-plugin-fixes')
-	.loadNpmModule('stylecow-plugin-flex')
-	.loadNpmModule('stylecow-plugin-import')
-	.loadNpmModule('stylecow-plugin-matches')
-	.loadNpmModule('stylecow-plugin-nested-rules')
-	.loadNpmModule('stylecow-plugin-prefixes')
-	.loadNpmModule('stylecow-plugin-rem')
-	.loadNpmModule('stylecow-plugin-variables');
+	.use(require('stylecow-plugin-calc'))
+	.use(require('stylecow-plugin-color'))
+	.use(require('stylecow-plugin-custom-media'))
+	.use(require('stylecow-plugin-custom-selector'))
+	.use(require('stylecow-plugin-fixes'))
+	.use(require('stylecow-plugin-flex'))
+	.use(require('stylecow-plugin-import'))
+	.use(require('stylecow-plugin-matches'))
+	.use(require('stylecow-plugin-nested-rules'))
+	.use(require('stylecow-plugin-prefixes'))
+	.use(require('stylecow-plugin-rem'))
+	.use(require('stylecow-plugin-variables'))
+	.use(require('stylecow-plugin-webkit-gradient'));
 
 //Configure postcss with cssnext
 var cssnext = postcss()

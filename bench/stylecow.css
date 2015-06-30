@@ -750,6 +750,7 @@ nav ul {
 	fill: #363636;
 }
 .page-logo:hover svg path {
+	-webkit-filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6));
 	filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6));
 }
 /* Menú principal */

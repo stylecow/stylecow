@@ -33,7 +33,7 @@
     "stylecow-plugin-msfilter-linear-gradient": "^4.1.0",
     "stylecow-plugin-msfilter-transform": "^4.1.0",
     "stylecow-plugin-nested-rules": "^4.2.2",
-    "stylecow-plugin-prefixes": "^4.2.0",
+    "stylecow-plugin-prefixes": "^5.0.0",
     "stylecow-plugin-rem": "^4.1.0",
     "stylecow-plugin-variables": "^4.2.0",
     "stylecow-plugin-webkit-gradient": "^1.0.0",

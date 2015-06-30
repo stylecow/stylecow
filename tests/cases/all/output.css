@@ -10,6 +10,8 @@ ul.grid {
 }
 body {
 	max-width: 75px;
+	-webkit-filter: grayscale(1);
+	filter: grayscale(1);
 }
 body p {
 	background-color: rgba(85, 85, 85, 0.33);
@@ -31,22 +33,22 @@ article h1, article h2, article h3, article h4, article h5, article h6 {
 article.is-active span, article.is-active strong, article.is-selected span, article.is-selected strong, article:focus span, article:focus strong {
 	border: solid 25px rgb(255, 210, 128);
 	background: -moz-linear-gradient(top, rgba(255, 0, 0, 0.5), black);
-	background: -o-linear-gradient(top, rgba(255, 0, 0, 0.5), black);
 	background: -webkit-linear-gradient(top, rgba(255, 0, 0, 0.5), black);
+	background: -o-linear-gradient(top, rgba(255, 0, 0, 0.5), black);
 	background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 0, 0, 0.5)), to(black));
 	background: linear-gradient(to bottom, rgba(255, 0, 0, 0.5), black);
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr=#80FF0000,endColorStr=#80FF0000),progid:DXImageTransform.Microsoft.gradient(startColorStr=\"#FF0000\", endColorStr=\"#000000\")";
 }
 ul.grid {
 	margin: 0;
+	-ms-transform: scale(1.1, 2);
 	-moz-transform: scale(1.1, 2);
 	-webkit-transform: scale(1.1, 2);
 	-o-transform: scale(1.1, 2);
-	-ms-transform: scale(1.1, 2);
 	transform: scale(1.1, 2);
 	-moz-transition: -moz-transform 2s;
-	-o-transition: -o-transform 2s;
 	-webkit-transition: -webkit-transform 2s;
+	-o-transition: -o-transform 2s;
 	transition: -ms-transform 2s;
 	transition: transform 2s;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(sizingMethod=auto expand,M11=1.1,M12=0,M21=0,M22=1.1)";

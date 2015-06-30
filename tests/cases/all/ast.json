@@ -206,6 +206,62 @@
                   ]
                 }
               ]
+            },
+            {
+              "class": "Declaration",
+              "name": "filter",
+              "vendor": "webkit",
+              "children": [
+                {
+                  "class": "Value",
+                  "children": [
+                    {
+                      "class": "Function",
+                      "name": "grayscale",
+                      "vendor": null,
+                      "children": [
+                        {
+                          "class": "Value",
+                          "children": [
+                            {
+                              "class": "Number",
+                              "name": 1
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "class": "Declaration",
+              "name": "filter",
+              "vendor": null,
+              "children": [
+                {
+                  "class": "Value",
+                  "children": [
+                    {
+                      "class": "Function",
+                      "name": "grayscale",
+                      "vendor": null,
+                      "children": [
+                        {
+                          "class": "Value",
+                          "children": [
+                            {
+                              "class": "Number",
+                              "name": 1
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -1011,7 +1067,7 @@
                     {
                       "class": "Function",
                       "name": "linear-gradient",
-                      "vendor": "o",
+                      "vendor": "webkit",
                       "children": [
                         {
                           "class": "Value",
@@ -1098,7 +1154,7 @@
                     {
                       "class": "Function",
                       "name": "linear-gradient",
-                      "vendor": "webkit",
+                      "vendor": "o",
                       "children": [
                         {
                           "class": "Value",
@@ -1470,6 +1526,43 @@
             {
               "class": "Declaration",
               "name": "transform",
+              "vendor": "ms",
+              "children": [
+                {
+                  "class": "Value",
+                  "children": [
+                    {
+                      "class": "Function",
+                      "name": "scale",
+                      "vendor": null,
+                      "children": [
+                        {
+                          "class": "Value",
+                          "children": [
+                            {
+                              "class": "Number",
+                              "name": 1.1
+                            }
+                          ]
+                        },
+                        {
+                          "class": "Value",
+                          "children": [
+                            {
+                              "class": "Number",
+                              "name": 2
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "class": "Declaration",
+              "name": "transform",
               "vendor": "moz",
               "children": [
                 {
@@ -1545,43 +1638,6 @@
               "class": "Declaration",
               "name": "transform",
               "vendor": "o",
-              "children": [
-                {
-                  "class": "Value",
-                  "children": [
-                    {
-                      "class": "Function",
-                      "name": "scale",
-                      "vendor": null,
-                      "children": [
-                        {
-                          "class": "Value",
-                          "children": [
-                            {
-                              "class": "Number",
-                              "name": 1.1
-                            }
-                          ]
-                        },
-                        {
-                          "class": "Value",
-                          "children": [
-                            {
-                              "class": "Number",
-                              "name": 2
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "class": "Declaration",
-              "name": "transform",
-              "vendor": "ms",
               "children": [
                 {
                   "class": "Value",
@@ -1682,7 +1738,7 @@
             {
               "class": "Declaration",
               "name": "transition",
-              "vendor": "o",
+              "vendor": "webkit",
               "children": [
                 {
                   "class": "Value",
@@ -1690,7 +1746,7 @@
                     {
                       "class": "Keyword",
                       "name": "transform",
-                      "vendor": "o"
+                      "vendor": "webkit"
                     },
                     {
                       "class": "Unit",
@@ -1709,7 +1765,7 @@
             {
               "class": "Declaration",
               "name": "transition",
-              "vendor": "webkit",
+              "vendor": "o",
               "children": [
                 {
                   "class": "Value",
@@ -1717,7 +1773,7 @@
                     {
                       "class": "Keyword",
                       "name": "transform",
-                      "vendor": "webkit"
+                      "vendor": "o"
                     },
                     {
                       "class": "Unit",

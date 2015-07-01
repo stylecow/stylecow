@@ -40,14 +40,14 @@ var results = {
 };
 
 suite.add('stylecow', function() {
-	var css = stylecow.parseFile(__dirname + '/css/main.css');
+	var css = stylecow.parseFile(__dirname + '/css/index.css');
 	stylecow.run(css);
 
 	results.stylecow = css.toString();
 })
 .add('cssnext', function() {
-	var css = cssnext.process(fs.readFileSync(__dirname + '/css/main.css', 'utf8'), {
-		from: __dirname + '/css/main.css'
+	var css = cssnext.process(fs.readFileSync(__dirname + '/css/index.css', 'utf8'), {
+		from: __dirname + '/css/index.css'
 	}).css;
 	
 	results.cssnext = css.toString();

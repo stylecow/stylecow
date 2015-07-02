@@ -131,3 +131,11 @@ stylecow.merge(main_css, other_css);
 * New plugin "webkit-gradient" to do not mix old webkit syntax fallback with vendor prefixes on standard syntax (done by "prefixes")
 * Updated plugin "flex" to version 5.0, that removes the vendor prefixes to standard syntax (this is done by "prefixes")
 * Updated stylecow-core dependency, that fixes some issues on task execution
+
+### 6.9.0
+
+* Added the option `config-json` to provide the configuration directly in the cli, instead a json file. For example:
+
+  ```
+  stylecow --config-json '{"files":[{"input":"styles.css","output":"styles.min.css","map":false}],"support":{"explorer":10,"firefox":30,"chrome":35,"safari":6,"opera":22,"android":4,"ios":6},"plugins":["color","custom-media","custom-selector","extend","fixes","flex","import","matches","nested-rules","prefixes","rem","variables"],"code":"normal"}'
+  ```

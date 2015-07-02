@@ -40,9 +40,14 @@ if (!program.args.length) {
         config = JSON.parse(program.configJson);
         basePath = process.cwd();
     } else {
-        var configFile = configFile || './stylecow.json';
+        var configFile = program.config || process.cwd();
+
+        if (fs.statSync(configFile).isDirectory()) {
+            configFile = path.resolve(configFile, 'stylecow.json');
+        }
+
         config = readConfig(configFile);
-        basePath = path.dirname(path.resolve(process.cwd(), configFile));
+        basePath = path.dirname(configFile);
     }
 
     run(basePath, config, program.watch, program.liveReload);
@@ -315,7 +320,7 @@ function executeConvert (config, file) {
 
     if (file.output) {
         code.save();
-        console.log('success: Generated "' + file.output + '"');
+        console.log('success: Generated "' + path.relative(process.cwd(), path.resolve(stylecow.cwd(), file.output)) + '"');
     } else {
         console.log('');
         console.log(code.code);

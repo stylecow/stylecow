@@ -46,15 +46,12 @@
                             file.baseUrl = link.href;
                         }
 
-                        var style = document.createElement('style');
-                        document.head.appendChild(style);
-
                         styles[file.baseUrl] = {
-                            style: style,
-                            link: link
+                            init: false,
+                            node: link
                         };
                     
-                        console.log('Stylecow live reload is syncing: ' + file.baseUrl);
+                        console.log('Stylecow -> connection: ' + file.baseUrl);
                     }
                 });
 
@@ -70,16 +67,22 @@
             if (data.subject === 'code') {
                 var style = styles[data.baseUrl];
 
-                style.style.innerHTML = data.code;
-
-                if (style.link) {
-                    style.link.parentNode.removeChild(style.link);
-                    style.link = null;
+                if (!style.init) {
+                    var newnode = document.createElement('style');
+                    style.node.parentNode.replaceChild(newnode, style.node);
+                    style.node = newnode;
+                    style.init = true;
                 }
+
+                style.node.innerHTML = data.code;
 
                 if (errorStyle) {
                     errorStyle.innerHTML = '';
                 }
+
+                console.log('Stylecow -> reload: ' + data.baseUrl);
+
+                return;
             }
 
             if (data.subject === 'error') {
@@ -92,6 +95,40 @@
             }
         }
     }
+
+    console.log('                                                                       '
+            + '\n SS                                                                  SS'
+            + '\n SSS                                                                SSS'
+            + '\n SSSS                                                              SSSS'
+            + '\n  SSSS                                                            SSSS '
+            + '\n  SSSSS                                                          SSSSS '
+            + '\n   SSSSSS                                                       SSSSS  '
+            + '\n    SSSSSS                                                    SSSSSS   '
+            + '\n     SSSSSSS                                                SSSSSSS    '
+            + '\n      SSSSSSSS                 SSSSSSSSSS                SSSSSSSSS     '
+            + '\n       SSSSSSSSSSS      SSSSSSSSSSSSSSSSSSSSSSSS      SSSSSSSSSSS      '
+            + '\n        SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS       '
+            + '\n         SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS         '
+            + '\n           SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS          '
+            + '\n             SSSSSSSSSSSSSSSSSSSS        SSSSSSSSSSSSSSSSS             '
+            + '\n                 SSSSSSSSSSSSSSSS          SSSSSSSSSSS                 '
+            + '\n                       SSSSSSSSSSS                                     '
+            + '\n                       SSSSSSSSSSSSSSSSS                               '
+            + '\n                        SSSSSSSSSSSSSSSSSSSS                           '
+            + '\n                         SSSSSSSSSSSSSSSSSSSSS                         '
+            + '\n                           SSSSSSSSSSSSSSSSSSSSS                       '
+            + '\n                               SSSSSSSSSSSSSSSSSS                      '
+            + '\n                                    SSSSSSSSSSSSS                      '
+            + '\n                                       SSSSSSSSSS                      '
+            + '\n                         SSSS          SSSSSSSSSS                      '
+            + '\n                        SSSSSSS     SSSSSSSSSSSS                       '
+            + '\n                       SSSSSSSSSSSSSSSSSSSSSSSSS                       '
+            + '\n                     SSSSSSSSSSSSSSSSSSSSSSSSSS                        '
+            + '\n                       SSSSSSSSSSSSSSSSSSSSSSS                         '
+            + '\n                          SSSSSSSSSSSSSSSSSS                           '
+            + '\n                               SSSSSSSS                                '
+            + '\n                                                                       '
+            + '\n                 STYLECOW - Modern css for all browsers                ');
 
     setInterval(socket, 1000);
 })();

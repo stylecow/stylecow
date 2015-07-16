@@ -28,6 +28,17 @@ program
         });
     });
 
+// help
+program.on('--help', function () {
+  console.log('  Examples:');
+  console.log('');
+  console.log('    $ stylecow');
+  console.log('    $ stylecow -w');
+  console.log('    $ stylecow -r');
+  console.log('    $ stylecow -c css/stylecow.json');
+  console.log('');
+});
+
 
 // run
 program.parse(process.argv);
@@ -623,4 +634,41 @@ function getSupportFromBrowserlist (query) {
     });
 
     return support;
+}
+
+function printLogo () {
+    console.log('                                                                       ');
+    console.log(' SS                                                                  SS');
+    console.log(' SSS                                                                SSS');
+    console.log(' SSSS                                                              SSSS');
+    console.log('  SSSS                                                            SSSS ');
+    console.log('  SSSSS                                                          SSSSS ');
+    console.log('   SSSSSS                                                       SSSSS  ');
+    console.log('    SSSSSS                                                    SSSSSS   ');
+    console.log('     SSSSSSS                                                SSSSSSS    ');
+    console.log('      SSSSSSSS                 SSSSSSSSSS                SSSSSSSSS     ');
+    console.log('       SSSSSSSSSSS      SSSSSSSSSSSSSSSSSSSSSSSS      SSSSSSSSSSS      ');
+    console.log('        SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS       ');
+    console.log('         SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS         ');
+    console.log('           SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS          ');
+    console.log('             SSSSSSSSSSSSSSSSSSSS        SSSSSSSSSSSSSSSSS             ');
+    console.log('                 SSSSSSSSSSSSSSSS          SSSSSSSSSSS                 ');
+    console.log('                       SSSSSSSSSSS                                     ');
+    console.log('                       SSSSSSSSSSSSSSSSS                               ');
+    console.log('                        SSSSSSSSSSSSSSSSSSSS                           ');
+    console.log('                         SSSSSSSSSSSSSSSSSSSSS                         ');
+    console.log('                           SSSSSSSSSSSSSSSSSSSSS                       ');
+    console.log('                               SSSSSSSSSSSSSSSSSS                      ');
+    console.log('                                    SSSSSSSSSSSSS                      ');
+    console.log('                                       SSSSSSSSSS                      ');
+    console.log('                         SSSS          SSSSSSSSSS                      ');
+    console.log('                        SSSSSSS     SSSSSSSSSSSS                       ');
+    console.log('                       SSSSSSSSSSSSSSSSSSSSSSSSS                       ');
+    console.log('                     SSSSSSSSSSSSSSSSSSSSSSSSSS                        ');
+    console.log('                       SSSSSSSSSSSSSSSSSSSSSSS                         ');
+    console.log('                          SSSSSSSSSSSSSSSSSS                           ');
+    console.log('                               SSSSSSSS                                ');
+    console.log('                                                                       ');
+    console.log('                 STYLECOW - Modern css for all browsers                ');
+    console.log('                               v.' + pkg.version + '                   ');
 }

@@ -16,9 +16,9 @@
   "license": "MIT",
   "dependencies": {
     "browserslist": "^0.5.0",
-    "chokidar": "*",
+    "chokidar": "^1.0.4",
     "commander": "*",
-    "inquirer": "*",
+    "inquirer": "^0.9.0",
     "stylecow-core": "^1.0.2",
     "stylecow-plugin-calc": "^1.2.0",
     "stylecow-plugin-color": "^4.2.0",

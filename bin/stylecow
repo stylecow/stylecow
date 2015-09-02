@@ -379,6 +379,14 @@ function initConfig (callback) {
         },
         {
             type: "input",
+            name: "edge",
+            message: "Min version supported in Microsoft Edge",
+            default: function () {
+                return minSupport.edge;
+            }
+        },
+        {
+            type: "input",
             name: "firefox",
             message: "Min version supported in Mozilla Firefox",
             default: function () {
@@ -599,6 +607,7 @@ function cssError (error) {
 function getSupportFromBrowserlist (query) {
     var browsersList = require('browserslist');
     var browsers = {
+        edge: 'edge',
         ie: 'explorer',
         firefox: 'firefox',
         chrome: 'chrome',
@@ -608,6 +617,7 @@ function getSupportFromBrowserlist (query) {
         android: 'android'
     };
     var support = {
+        edge: false,
         explorer: false,
         firefox: false,
         chrome: false,

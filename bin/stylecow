@@ -5,6 +5,7 @@ var fs = require('fs');
 var path = require('path');
 var stylecow = require('stylecow-core');
 var updateNotifier = require('update-notifier');
+var inquirer = require('inquirer');
 var pkg = require('../package.json');
 
 updateNotifier({pkg: pkg}).notify();
@@ -13,8 +14,8 @@ program
     .version(pkg.version)
     .usage('[options]')
     .option('-c, --config <file>', 'use a specific config file instead ./stylecow.json')
-    .option('-j, --config-json <code>', 'use an inline json as config')
-    .option('-w, --watch', 'watches the changes in the input css files')
+    .option('-j, --config-json <code>', 'use an inline JSON as config')
+    .option('-w, --watch', 'watches the changes in the input CSS files')
     .option('-r, --live-reload', 'Live reload the browser on change the css');
 
 
@@ -49,6 +50,7 @@ if (!program.args.length) {
     //Load config and basePath
     if (program.configJson) {
         config = JSON.parse(program.configJson);
+        console.log('Config loaded from inline JSON');
         basePath = process.cwd();
     } else {
         var configFile = program.config || process.cwd();
@@ -58,10 +60,16 @@ if (!program.args.length) {
         }
 
         config = readConfig(configFile);
-        basePath = path.dirname(configFile);
+
+        if (config) {
+            console.log('Config loaded from "' + configFile+ '"');
+            basePath = path.dirname(configFile);
+        }
     }
 
-    run(basePath, config, program.watch, program.liveReload);
+    if (config) {
+        run(basePath, config, program.watch, program.liveReload);
+    }
 }
 
 /* =================================================== */
@@ -343,7 +351,6 @@ function executeConvert (config, file) {
 }
 
 function initConfig (callback) {
-    var inquirer = require('inquirer');
     var availablePlugins = fs.readdirSync(__dirname + '/../node_modules')
         .filter(function (value) {
             return value.slice(0, 16) === 'stylecow-plugin-';
@@ -508,7 +515,7 @@ function initConfig (callback) {
 
         newConfig.support = {};
 
-        ['explorer','firefox','chrome','safari','opera','android','ios'].forEach(function (browser) {
+        ['explorer','edge','firefox','chrome','safari','opera','android','ios'].forEach(function (browser) {
             newConfig.support[browser] = (!answers[browser] || (answers[browser] === 'false')) ? false : parseFloat(answers[browser], 10);
         });
 
@@ -566,20 +573,35 @@ function getFiles (css) {
 }
 
 function readConfig (file) {
-    var fullpath = path.resolve(process.cwd(), file);
+    file = path.resolve(process.cwd(), file);
 
-    if (fs.existsSync(fullpath)) {
-        return require(fullpath);
+    if (fs.existsSync(file)) {
+        return require(file);
     }
 
     console.error('');
-    console.error('  error: Config file `' + file + '` not found');
-    console.error('');
-    console.error('  - run `stylecow init` to create one');
-    console.error('  - or use `stylecow -c <config file>` to locate it');
+    console.error('  error: Config file `' + path.relative(process.cwd(), file) + '` not found');
     console.error('');
 
-    process.exit();
+    inquirer.prompt([
+        {
+            type: "confirm",
+            name: "ok",
+            message: "Do you want to create it now?"
+        }
+    ], function (create) {
+        console.error('');
+
+        if (create.ok) {
+            initConfig(function (config, file) {
+                writeConfig(config, file);
+            });
+        } else {
+            console.error('  - run `stylecow init` to create one');
+            console.error('  - or use `stylecow -c <config file>` to locate it');
+            console.error('');
+        }
+    });
 }
 
 function writeConfig (value, file) {

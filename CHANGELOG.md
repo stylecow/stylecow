@@ -139,3 +139,9 @@ stylecow.merge(main_css, other_css);
   ```
   stylecow --config-json '{"files":[{"input":"styles.css","output":"styles.min.css","map":false}],"support":{"explorer":10,"firefox":30,"chrome":35,"safari":6,"opera":22,"android":4,"ios":6},"plugins":["color","custom-media","custom-selector","extend","fixes","flex","import","matches","nested-rules","prefixes","rem","variables"],"code":"normal"}'
   ```
+
+### 6.10.0
+
+* Updated dependencies
+* Added support for Microsoft Edge
+* Some UX improvements

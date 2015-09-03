@@ -29,6 +29,14 @@ program
         });
     });
 
+// logo command
+program
+    .command('logo')
+    .description('Very useful command to display the stylecow logo')
+    .action(function config(command) {
+        printLogo();
+    });
+
 // help
 program.on('--help', function () {
   console.log('  Examples:');
@@ -669,38 +677,39 @@ function getSupportFromBrowserlist (query) {
 }
 
 function printLogo () {
-    console.log('                                                                       ');
-    console.log(' SS                                                                  SS');
-    console.log(' SSS                                                                SSS');
-    console.log(' SSSS                                                              SSSS');
-    console.log('  SSSS                                                            SSSS ');
-    console.log('  SSSSS                                                          SSSSS ');
-    console.log('   SSSSSS                                                       SSSSS  ');
-    console.log('    SSSSSS                                                    SSSSSS   ');
-    console.log('     SSSSSSS                                                SSSSSSS    ');
-    console.log('      SSSSSSSS                 SSSSSSSSSS                SSSSSSSSS     ');
-    console.log('       SSSSSSSSSSS      SSSSSSSSSSSSSSSSSSSSSSSS      SSSSSSSSSSS      ');
-    console.log('        SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS       ');
-    console.log('         SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS         ');
-    console.log('           SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS          ');
-    console.log('             SSSSSSSSSSSSSSSSSSSS        SSSSSSSSSSSSSSSSS             ');
-    console.log('                 SSSSSSSSSSSSSSSS          SSSSSSSSSSS                 ');
-    console.log('                       SSSSSSSSSSS                                     ');
-    console.log('                       SSSSSSSSSSSSSSSSS                               ');
-    console.log('                        SSSSSSSSSSSSSSSSSSSS                           ');
-    console.log('                         SSSSSSSSSSSSSSSSSSSSS                         ');
-    console.log('                           SSSSSSSSSSSSSSSSSSSSS                       ');
-    console.log('                               SSSSSSSSSSSSSSSSSS                      ');
-    console.log('                                    SSSSSSSSSSSSS                      ');
-    console.log('                                       SSSSSSSSSS                      ');
-    console.log('                         SSSS          SSSSSSSSSS                      ');
-    console.log('                        SSSSSSS     SSSSSSSSSSSS                       ');
-    console.log('                       SSSSSSSSSSSSSSSSSSSSSSSSS                       ');
-    console.log('                     SSSSSSSSSSSSSSSSSSSSSSSSSS                        ');
-    console.log('                       SSSSSSSSSSSSSSSSSSSSSSS                         ');
-    console.log('                          SSSSSSSSSSSSSSSSSS                           ');
-    console.log('                               SSSSSSSS                                ');
-    console.log('                                                                       ');
-    console.log('                 STYLECOW - Modern css for all browsers                ');
-    console.log('                               v.' + pkg.version + '                   ');
+    console.log(`
+SS                                                                  SS
+SSS                                                                SSS
+SSSS                                                              SSSS
+ SSSS                                                            SSSS 
+ SSSSS                                                          SSSSS 
+  SSSSSS                                                       SSSSS  
+   SSSSSS                                                    SSSSSS   
+    SSSSSSS                                                SSSSSSS    
+     SSSSSSSS                 SSSSSSSSSS                SSSSSSSSS     
+      SSSSSSSSSSS      SSSSSSSSSSSSSSSSSSSSSSSS      SSSSSSSSSSS      
+       SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS       
+        SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS         
+          SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS          
+            SSSSSSSSSSSSSSSSSSSS        SSSSSSSSSSSSSSSSS             
+                SSSSSSSSSSSSSSSS          SSSSSSSSSSS                 
+                      SSSSSSSSSSS                                     
+                      SSSSSSSSSSSSSSSSS                               
+                       SSSSSSSSSSSSSSSSSSSS                           
+                        SSSSSSSSSSSSSSSSSSSSS                         
+                          SSSSSSSSSSSSSSSSSSSSS                       
+                              SSSSSSSSSSSSSSSSSS                      
+                                   SSSSSSSSSSSSS                      
+                                      SSSSSSSSSS                      
+                        SSSS          SSSSSSSSSS                      
+                       SSSSSSS     SSSSSSSSSSSS                       
+                      SSSSSSSSSSSSSSSSSSSSSSSSS                       
+                    SSSSSSSSSSSSSSSSSSSSSSSSSS                        
+                      SSSSSSSSSSSSSSSSSSSSSSS                         
+                         SSSSSSSSSSSSSSSSSS                           
+                              SSSSSSSS                                
+                                                                      
+                STYLECOW - Modern css for all browsers                
+                              v.${pkg.version}                   
+    `);
 }

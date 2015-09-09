@@ -585,7 +585,7 @@ function readConfig (file) {
     }
 
     console.error('');
-    console.error(chalk.red.bold('  error: Config file `' + path.relative(process.cwd(), file) + '` not found'));
+    console.error(chalk.red('  error: Config file `' + path.relative(process.cwd(), file) + '` not found'));
     console.error('');
 
     inquirer.prompt([

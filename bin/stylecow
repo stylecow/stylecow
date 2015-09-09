@@ -2,15 +2,16 @@
 
 "use strict";
 
-var program = require('commander');
-var fs = require('fs');
-var path = require('path');
-var url = require('url');
-var stylecow = require('stylecow-core');
-var updateNotifier = require('update-notifier');
-var inquirer = require('inquirer');
-var pkg = require('../package.json');
-var cwd = process.cwd();
+var program         = require('commander'),
+    fs              = require('fs'),
+    path            = require('path'),
+    url             = require('url'),
+    stylecow        = require('stylecow-core'),
+    updateNotifier  = require('update-notifier'),
+    inquirer        = require('inquirer'),
+    chalk           = require('chalk'),
+    pkg             = require('../package.json'),
+    cwd             = process.cwd();
 
 updateNotifier({pkg: pkg}).notify();
 
@@ -257,7 +258,7 @@ function executeTasks (tasks, config, file) {
 
     if (!file.input) {
         console.error('');
-        console.error('  error: No input file defined');
+        console.error(chalk.red('  error:', chalk.dim(' No input file defined')));
         console.error('');
         process.exit();
     }
@@ -266,14 +267,14 @@ function executeTasks (tasks, config, file) {
 
     if (!fs.existsSync(fullpath)) {
         console.error('');
-        console.error('  error: Input file `' + fullpath + '` not found');
+        console.error(chalk.red('  error: Input file `' + fullpath + '` not found'));
         console.error('');
         process.exit();
     }
 
     if (!fs.statSync(fullpath).isFile()) {
         console.error('');
-        console.error('  error: Input file `' + fullpath + '` is not a valid file');
+        console.error(chalk.red('  error: Input file `' + fullpath + '` is not a valid file'));
         console.error('');
         process.exit();
     }
@@ -293,7 +294,7 @@ function executeTasks (tasks, config, file) {
             }));
         }
 
-        console.error(error.message);
+        console.error(chalk.red(error.message));
 
         if (error) {
             if (!file.files) {
@@ -584,7 +585,7 @@ function readConfig (file) {
     }
 
     console.error('');
-    console.error('  error: Config file `' + path.relative(process.cwd(), file) + '` not found');
+    console.error(chalk.red.bold('  error: Config file `' + path.relative(process.cwd(), file) + '` not found'));
     console.error('');
 
     inquirer.prompt([
@@ -673,7 +674,7 @@ function getSupportFromBrowserlist (query) {
 }
 
 function printLogo () {
-    console.log(`
+    console.log(chalk.blue(`
 SS                                                                  SS
 SSS                                                                SSS
 SSSS                                                              SSSS
@@ -704,8 +705,8 @@ SSSS                                                              SSSS
                       SSSSSSSSSSSSSSSSSSSSSSS                         
                          SSSSSSSSSSSSSSSSSS                           
                               SSSSSSSS                                
-                                                                      
+`, chalk.yellow(`                                                                      
                 STYLECOW - Modern css for all browsers                
                               v.${pkg.version}                   
-    `);
+    `)));
 }

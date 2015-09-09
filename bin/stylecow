@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 
+"use strict";
+
 var program = require('commander');
 var fs = require('fs');
 var path = require('path');
+var url = require('url');
 var stylecow = require('stylecow-core');
 var updateNotifier = require('update-notifier');
 var inquirer = require('inquirer');
 var pkg = require('../package.json');
+var cwd = process.cwd();
 
 updateNotifier({pkg: pkg}).notify();
 
@@ -53,15 +57,15 @@ program.on('--help', function () {
 program.parse(process.argv);
 
 if (!program.args.length) {
-    var config, basePath;
+    let config, basePath;
 
     //Load config and basePath
     if (program.configJson) {
         config = JSON.parse(program.configJson);
         console.log('Config loaded from inline JSON');
-        basePath = process.cwd();
+        basePath = cwd;
     } else {
-        var configFile = program.config || process.cwd();
+        let configFile = program.config || cwd;
 
         if (fs.statSync(configFile).isDirectory()) {
             configFile = path.resolve(configFile, 'stylecow.json');
@@ -76,13 +80,30 @@ if (!program.args.length) {
     }
 
     if (config) {
-        run(basePath, config, program.watch, program.liveReload);
+        cwd = basePath;
+
+        //Configure stylecow tasks
+        let tasks = new stylecow.Tasks();
+
+        if (config.support) {
+            tasks.minSupport(config.support);
+        }
+
+        if (config.plugins) {
+            config.plugins.forEach(plugin => tasks.use(require('stylecow-plugin-' + plugin)));
+        }
+
+        if (config.modules) {
+            config.plugins.forEach(module => tasks.use(require(module)));
+        }
+
+        run(tasks, config, program.watch, program.liveReload);
     }
 }
 
 /* =================================================== */
 
-function run (basePath, config, watch, liveReload) {
+function run (tasks, config, watch, liveReload) {
     if (!config.files) {
         console.log('');
         console.log('  error: No files defined');
@@ -99,25 +120,6 @@ function run (basePath, config, watch, liveReload) {
     }
 
     config.watchingFiles = {};
-
-    //Configure stylecow
-    stylecow.cwd(basePath);
-
-    if (config.support) {
-        stylecow.minSupport(config.support);
-    }
-
-    if (config.plugins) {
-        config.plugins.forEach(function (plugin) {
-            stylecow.use(require('stylecow-plugin-' + plugin));
-        });
-    }
-
-    if (config.modules) {
-        config.modules.forEach(function (module) {
-            stylecow.use(require(module));
-        });
-    }
 
     //Init websocket for live reload
     if (config.liveReload) {
@@ -192,7 +194,7 @@ function run (basePath, config, watch, liveReload) {
             console.log('change detected: ' + filepath);
 
             files.forEach(function (file) {
-                executeConvert(config, file);
+                executeTasks(tasks, config, file);
 
                 //Add new files to watching index
                 file.files.forEach(function (f) {
@@ -233,7 +235,7 @@ function run (basePath, config, watch, liveReload) {
             file.map = false;
         }
 
-        executeConvert(config, file);
+        executeTasks(tasks, config, file);
 
         //Watch changes
         if (config.watch) {
@@ -250,7 +252,7 @@ function run (basePath, config, watch, liveReload) {
 }
 
 //Converts the code and output the result
-function executeConvert (config, file) {
+function executeTasks (tasks, config, file) {
     var css, error = false;
 
     if (!file.input) {
@@ -260,7 +262,7 @@ function executeConvert (config, file) {
         process.exit();
     }
 
-    var fullpath = path.resolve(stylecow.cwd(), file.input);
+    var fullpath = path.resolve(cwd, file.input);
 
     if (!fs.existsSync(fullpath)) {
         console.error('');
@@ -280,7 +282,7 @@ function executeConvert (config, file) {
         css = stylecow.parseFile(file.input);
 
         //Convert the code
-        stylecow.run(css);
+        tasks.run(css);
     } catch (e) {
         error = e;
 
@@ -304,8 +306,7 @@ function executeConvert (config, file) {
 
     //Send the code to socket
     if (config.socket && file.baseUrl) {
-        var url = require('url');
-        var basepath = path.dirname(file.baseUrl);
+        let basepath = path.dirname(file.baseUrl);
 
         css.getAll({
             type: 'Function',
@@ -318,14 +319,11 @@ function executeConvert (config, file) {
             }
         });
 
-        var code = new stylecow.Coder(css, {
-            sourceMap: 'embed',
-            style: 'minify'
-        });
+        let coder = (new stylecow.Coder('minify')).sourceMap('embed');
 
         config.socket.send(JSON.stringify({
             subject: 'code',
-            code: css.toString(),
+            code: coder.run(css).css,
             baseUrl: file.baseUrl
         }), {}, function () {
             console.log('success: Code sent to socket');
@@ -335,22 +333,20 @@ function executeConvert (config, file) {
         if (!error) {
             css = stylecow.parseFile(file.input);
 
-            stylecow.run(css);
+            tasks.run(css);
         }
     }
 
-    var code = new stylecow.Coder(css, {
-        sourceMap: file.map,
-        file: file.output,
-        style: config.code
-    });
+    let coder = new stylecow.Coder(config.code);
+    let code = coder.run(css, file.output, file.map);
 
     if (file.output) {
+
         code.save();
-        console.log('success: Generated "' + path.relative(process.cwd(), path.resolve(stylecow.cwd(), file.output)) + '"');
+        console.log('success: Generated "' + path.relative(process.cwd(), path.resolve(cwd, file.output)) + '"');
     } else {
         console.log('');
-        console.log(code.code);
+        console.log(code.css);
         console.log('');
     }
 
@@ -459,7 +455,7 @@ function initConfig (callback) {
             type: "list",
             name: "code",
             message: "Code style used to generate the css",
-            choices: Object.keys(stylecow.Coder.styles)
+            choices: ['normal', 'minify']
         },
         {
             type: "input",

@@ -145,3 +145,10 @@ stylecow.merge(main_css, other_css);
 * Updated dependencies
 * Added support for Microsoft Edge
 * Some UX improvements
+
+### 7.0.0
+
+* Removed support for node 0.12 and iojs. This library is for node >= 4.0
+* Updated stylecow-core to 2.0.0 (from 1.1.1)
+* Updated all plugins to new major version
+* Added colors to cli

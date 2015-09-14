@@ -1,12 +1,111 @@
 # Changelog
 
-## 3.0.0
+### 7.0.0
 
-* The parser has been completely rewriten.
-* Performance improved x2
-* Support for any type of at-rule
-* Better API
-* The plugin "linear-gradient" was merged with "prefixes"
+* Removed support for node 0.12 and iojs. This library is for node >= 4.0
+* Updated stylecow-core to 2.0.0 (from 1.1.1)
+* Updated all plugins to new major version
+* Added colors to cli
+
+### 6.10.0
+
+* Updated dependencies
+* Added support for Microsoft Edge
+* Some UX improvements
+
+### 6.9.0
+
+* Added the option `config-json` to provide the configuration directly in the cli, instead a json file. For example:
+
+  ```
+  stylecow --config-json '{"files":[{"input":"styles.css","output":"styles.min.css","map":false}],"support":{"explorer":10,"firefox":30,"chrome":35,"safari":6,"opera":22,"android":4,"ios":6},"plugins":["color","custom-media","custom-selector","extend","fixes","flex","import","matches","nested-rules","prefixes","rem","variables"],"code":"normal"}'
+  ```
+
+### 6.8.0
+
+* Updated plugin "prefixes" to version 5.0, that use caniuse database
+* New plugin "webkit-gradient" to do not mix old webkit syntax fallback with vendor prefixes on standard syntax (done by "prefixes")
+* Updated plugin "flex" to version 5.0, that removes the vendor prefixes to standard syntax (this is done by "prefixes")
+* Updated stylecow-core dependency, that fixes some issues on task execution
+
+### 6.7.0
+
+* stylecow-parser dependency was renamed to stylecow-core. All related task functions was moved to the core, so this package contains only the command line interface and the core and plugins as dependencies.
+* Removed utils for plugins to make them more independent.
+* Improved performance on execute plugins
+* Improved error message when no config file has found.
+
+### 6.6.1
+
+* Updated to stylecow-parser 2.6.x
+* Improved performance on execute plugins
+
+### 6.6.0
+
+* Catch and display the errors in the console and browser (on live-reload)
+* Implemented [browserslist](https://github.com/ai/browserslist) to define the browser support using its API
+
+### 6.5.0
+
+* New plugin "extend"
+* Performance improved
+
+### 6.4.0
+
+* New plugin "calc"
+
+### 6.3.0
+
+* Added an update notifier
+
+### 6.2.0
+
+* New plugin "custom-selector"
+
+### 6.1.0
+
+* New plugin "custom-media"
+
+### 6.0.0
+
+* New version of stylecow-parser (2.0) with a lot of fixes and speed improvements
+
+### 5.0.0
+
+* Removed `--input`, `--output`, `--code` and `--map` configuration
+* Simplified api. The command `stylecow execute` is now simply `stylecow`
+* On create new configuration file with `stylecow init`, all plugins are selected by default
+* Added support for convert various files. From now, the stylecow.json structure has the following format:
+
+```json
+{
+	"files": [
+		{
+			"input": "styles.css",
+			"output": "styles.min.css",
+			"map": "styles.min.map",
+		},{
+			"input": "styles2.css",
+			"output": "styles2.min.css",
+			"map": "styles2.min.map",
+		}
+	]
+}
+```
+
+### 4.2.0
+
+* Included the command line interface (and deprecate stylecow-cli package)
+* Separate the parser in an external package: [stylecow-parser](https://github.com/stylecow/stylecow-parser)
+
+### 4.1.0
+* The plugin "initial" is deprecated. Now it's included in "fixes"
+
+### 4.0.0
+
+* Rewritten the parser to be more consitent
+* Changed some API methods to create and traverse through the elements
+* The standard plugins are included as dependencies, so they are installed with stylecow
 
 ### 3.1.0
 
@@ -46,109 +145,10 @@ var other_css = stylecow.createFromFile('styles2.css');
 stylecow.merge(main_css, other_css);
 ```
 
-## 4.0.0
+### 3.0.0
 
-* Rewritten the parser to be more consitent
-* Changed some API methods to create and traverse through the elements
-* The standard plugins are included as dependencies, so they are installed with stylecow
-
-### 4.1.0
-* The plugin "initial" is deprecated. Now it's included in "fixes"
-
-### 4.2.0
-
-* Included the command line interface (and deprecate stylecow-cli package)
-* Separate the parser in an external package: [stylecow-parser](https://github.com/stylecow/stylecow-parser)
-
-## 5.0.0
-
-* Removed `--input`, `--output`, `--code` and `--map` configuration
-* Simplified api. The command `stylecow execute` is now simply `stylecow`
-* On create new configuration file with `stylecow init`, all plugins are selected by default
-* Added support for convert various files. From now, the stylecow.json structure has the following format:
-
-```json
-{
-	"files": [
-		{
-			"input": "styles.css",
-			"output": "styles.min.css",
-			"map": "styles.min.map",
-		},{
-			"input": "styles2.css",
-			"output": "styles2.min.css",
-			"map": "styles2.min.map",
-		}
-	]
-}
-```
-
-## 6.0.0
-
-* New version of stylecow-parser (2.0) with a lot of fixes and speed improvements
-
-### 6.1.0
-
-* New plugin "custom-media"
-
-### 6.2.0
-
-* New plugin "custom-selector"
-
-### 6.3.0
-
-* Added an update notifier
-
-### 6.4.0
-
-* New plugin "calc"
-
-### 6.5.0
-
-* New plugin "extend"
-* Performance improved
-
-### 6.6.0
-
-* Catch and display the errors in the console and browser (on live-reload)
-* Implemented [browserslist](https://github.com/ai/browserslist) to define the browser support using its API
-
-### 6.6.1
-
-* Updated to stylecow-parser 2.6.x
-* Improved performance on execute plugins
-
-### 6.7.0
-
-* stylecow-parser dependency was renamed to stylecow-core. All related task functions was moved to the core, so this package contains only the command line interface and the core and plugins as dependencies.
-* Removed utils for plugins to make them more independent.
-* Improved performance on execute plugins
-* Improved error message when no config file has found.
-
-### 6.8.0
-
-* Updated plugin "prefixes" to version 5.0, that use caniuse database
-* New plugin "webkit-gradient" to do not mix old webkit syntax fallback with vendor prefixes on standard syntax (done by "prefixes")
-* Updated plugin "flex" to version 5.0, that removes the vendor prefixes to standard syntax (this is done by "prefixes")
-* Updated stylecow-core dependency, that fixes some issues on task execution
-
-### 6.9.0
-
-* Added the option `config-json` to provide the configuration directly in the cli, instead a json file. For example:
-
-  ```
-  stylecow --config-json '{"files":[{"input":"styles.css","output":"styles.min.css","map":false}],"support":{"explorer":10,"firefox":30,"chrome":35,"safari":6,"opera":22,"android":4,"ios":6},"plugins":["color","custom-media","custom-selector","extend","fixes","flex","import","matches","nested-rules","prefixes","rem","variables"],"code":"normal"}'
-  ```
-
-### 6.10.0
-
-* Updated dependencies
-* Added support for Microsoft Edge
-* Some UX improvements
-
-### 7.0.0
-
-* Removed support for node 0.12 and iojs. This library is for node >= 4.0
-* Updated stylecow-core to 2.0.0 (from 1.1.1)
-* Updated all plugins to new major version
-* Added colors to cli
+* The parser has been completely rewriten.
+* Performance improved x2
+* Support for any type of at-rule
+* Better API
+* The plugin "linear-gradient" was merged with "prefixes"

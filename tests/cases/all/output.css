@@ -1,7 +1,7 @@
 ul.grid {
+	display: -webkit-flex;
 	display: -ms-flexbox;
 	display: -webkit-box;
-	display: -webkit-flex;
 	display: flex;
 	-ms-flex-wrap: wrap;
 	-webkit-box-lines: multiple;

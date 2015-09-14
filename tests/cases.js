@@ -1,7 +1,8 @@
 var assert = require('assert');
 var stylecow = require('stylecow-core');
 
-stylecow
+var test = new stylecow.Test(__dirname + '/cases');
+var tasks = (new stylecow.Tasks())
 	.use(require('stylecow-plugin-calc'))
 	.use(require('stylecow-plugin-color'))
 	.use(require('stylecow-plugin-custom-media'))
@@ -27,19 +28,21 @@ stylecow
 		"opera": 0,
 		"android": 0,
 		"ios": 0
-	})
-	.testCases(__dirname + '/cases', function (test) {
-		stylecow.run(test.css);
-
-		describe('cases/' + test.name, function() {
-			it('should match output.css', function() {
-				//test.write('output.css', test.css.toString());
-				assert.equal(test.css.toString(), test.read('output.css'));
-			});
-
-			it('should match ast.json', function() {
-				//test.writeJson('ast.json', test.css.toAst());
-				assert.deepEqual(test.css.toAst(), test.readJson('ast.json'));
-			});
-		});
 	});
+
+
+test.run(function (test) {
+	tasks.run(test.css);
+
+	describe('cases/' + test.name, function() {
+		it('should match output.css', function() {
+            //test.writeString()
+            test.assertString();
+        });
+
+        it('should match ast.json', function() {
+            //test.writeAst()
+            test.assertAst();
+        });
+	});
+});

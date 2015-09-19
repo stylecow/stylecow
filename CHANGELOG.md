@@ -2,10 +2,16 @@
 
 ### 7.0.0
 
-* Removed support for node 0.12 and iojs. This library is for node >= 4.0
-* Updated stylecow-core to 2.0.0 (from 1.1.1)
+* Removed support for node 0.x and iojs. This library is for node >= 4.0
+* Updated stylecow-core to 2.0.1 (from 1.1.1)
 * Updated all plugins to new major version
-* Added colors to cli
+* Improved cli with colors and other ux changes
+* New commands `stylecow run` to execute stylecow in a node module instead a config json file. The module must have the following scheme:
+  ```js
+  module.exports = function (stylecow) {
+      //here your code
+  }
+  ```
 
 ### 6.10.0
 

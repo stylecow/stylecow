@@ -35,6 +35,17 @@ program
         });
     });
 
+// run
+program
+    .command('run')
+    .description('Run a js module')
+    .option('-m, --module <path>', 'Set other module instead the default "stylecow"')
+    .action(function config(command) {
+        let moduleName = path.resolve(cwd, command.module || 'stylecow');
+
+        require(moduleName)(stylecow);
+    });
+
 // logo command
 program
     .command('logo')

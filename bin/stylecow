@@ -679,41 +679,31 @@ function getSupportFromBrowserlist (query) {
 }
 
 function printLogo () {
-    console.log(chalk.blue(`
-SS                                                                  SS
-SSS                                                                SSS
-SSSS                                                              SSSS
- SSSS                                                            SSSS 
- SSSSS                                                          SSSSS 
-  SSSSSS                                                       SSSSS  
-   SSSSSS                                                    SSSSSS   
-    SSSSSSS                                                SSSSSSS    
-     SSSSSSSS                 SSSSSSSSSS                SSSSSSSSS     
-      SSSSSSSSSSS      SSSSSSSSSSSSSSSSSSSSSSSS      SSSSSSSSSSS      
-       SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS       
-        SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS         
-          SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS          
-            SSSSSSSSSSSSSSSSSSSS        SSSSSSSSSSSSSSSSS             
-                SSSSSSSSSSSSSSSS          SSSSSSSSSSS                 
-                      SSSSSSSSSSS                                     
-                      SSSSSSSSSSSSSSSSS                               
-                       SSSSSSSSSSSSSSSSSSSS                           
-                        SSSSSSSSSSSSSSSSSSSSS                         
-                          SSSSSSSSSSSSSSSSSSSSS                       
-                              SSSSSSSSSSSSSSSSSS                      
-                                   SSSSSSSSSSSSS                      
-                                      SSSSSSSSSS                      
-                        SSSS          SSSSSSSSSS                      
-                       SSSSSSS     SSSSSSSSSSSS                       
-                      SSSSSSSSSSSSSSSSSSSSSSSSS                       
-                    SSSSSSSSSSSSSSSSSSSSSSSSSS                        
-                      SSSSSSSSSSSSSSSSSSSSSSS                         
-                         SSSSSSSSSSSSSSSSSS                           
-                              SSSSSSSS                                
-`, chalk.yellow(`                                                                      
-                STYLECOW - Modern css for all browsers                
-                              v.${pkg.version}                   
-    `)));
+    console.log(chalk.gray(`
+██                                                          ██
+███                                                        ███
+ ████                                                    ████
+  ████                                                  ████
+   █████                                             ██████
+    ███████                █████████               ███████
+     ███████████      ███████████████████     ███████████
+       █████████████████████████████████████████████████
+         █████████████████████████████████████████████
+             ████████████████         █████████████
+                  ████████████████         █████
+                    ███████████████████
+                      ████████████████████
+                         ██████████████████
+                              ██████████████
+                     ████         ██████████
+                    █████████   ███████████
+                   ███████████████████████
+                     ███████████████████
+                           █████████
+`), `
+          STYLECOW - Modern css for all browsers
+                         v.${pkg.version}
+`);
 }
 
 function printInfo (message, details) {

@@ -10,6 +10,7 @@ var program         = require('commander'),
     updateNotifier  = require('update-notifier'),
     inquirer        = require('inquirer'),
     chalk           = require('chalk'),
+    figures         = require('figures'),
     pkg             = require('../package.json'),
     cwd             = process.cwd();
 
@@ -53,7 +54,6 @@ program.on('--help', function () {
   console.log('');
 });
 
-
 // run
 program.parse(process.argv);
 
@@ -63,7 +63,7 @@ if (!program.args.length) {
     //Load config and basePath
     if (program.configJson) {
         config = JSON.parse(program.configJson);
-        console.log('Config loaded from inline JSON');
+        printInfo('Config loaded from inline JSON');
         basePath = cwd;
     } else {
         let configFile = program.config || cwd;
@@ -75,7 +75,7 @@ if (!program.args.length) {
         config = readConfig(configFile);
 
         if (config) {
-            console.log('Config loaded from "' + configFile+ '"');
+            printInfo('Config loaded from: ', chalk.gray(configFile));
             basePath = path.dirname(configFile);
         }
     }
@@ -106,9 +106,7 @@ if (!program.args.length) {
 
 function run (tasks, config, watch, liveReload) {
     if (!config.files) {
-        console.log('');
-        console.log('  error: No files defined');
-        console.log('');
+        printError('No css input files');
         return;
     }
 
@@ -136,13 +134,12 @@ function run (tasks, config, watch, liveReload) {
 
                 if (data.subject === 'connection') {
                     console.log('');
-                    console.log('connected to browser');
-                    console.log(data.agent);
+                    printInfo('Connected to browser ', chalk.gray(data.agent));
 
                     config.files.forEach(function (file) {
                         data.files.forEach(function (f) {
                             if (f.baseUrl && file.output === f.output) {
-                                console.log('syncing: ' + f.baseUrl);
+                                printStep('Syncing: ', chalk.gray(f.baseUrl));
                                 file.baseUrl = f.baseUrl;
                             }
                         });
@@ -166,12 +163,12 @@ function run (tasks, config, watch, liveReload) {
             res.end(script);
         }).listen(8081, '127.0.0.1');
 
-        console.log('WebSocket server running at ws://127.0.0.1:8080');
-        console.log('Web server running at http://127.0.0.1:8081');
+        printStep('WebSocket server running ', chalk.gray('ws://127.0.0.1:8080'));
+        printStep('Web server running ', chalk.gray('http://127.0.0.1:8081'));
 
-        console.log('Put this code in the html page:');
         console.log('');
-        console.log('<script type="text/javascript" src="//127.0.0.1:8081"></script>');
+        console.log('To live reload, add the following code to your html:');
+        console.log(chalk.black.bgWhite('<script type="text/javascript" src="//127.0.0.1:8081"></script>'));
         console.log('');
     }
 
@@ -181,9 +178,6 @@ function run (tasks, config, watch, liveReload) {
             persistent: true
         });
 
-        console.log('Waiting for changes...');
-        console.log('');
-
         config.watch.on('change', function (filepath) {
             var files = config.watchingFiles[filepath];
 
@@ -192,7 +186,7 @@ function run (tasks, config, watch, liveReload) {
             }
 
             console.log('');
-            console.log('change detected: ' + filepath);
+            printInfo('Change detected: ', chalk.gray(filepath));
 
             files.forEach(function (file) {
                 executeTasks(tasks, config, file);
@@ -206,7 +200,7 @@ function run (tasks, config, watch, liveReload) {
                     } else {
                         config.watchingFiles[f] = [file];
                         config.watch.add(f);
-                        console.log('watch: ' + f);
+                        printStep('Watching: ', chalk.gray(f));
                     }
                 });
 
@@ -221,7 +215,7 @@ function run (tasks, config, watch, liveReload) {
                             if (!config.watchingFiles[f].length) {
                                 delete config.watchingFiles[f];
                                 config.watch.unwatch(f);
-                                console.log('unwatch: ' + f);
+                                printStep('Unwatch: ', chalk.gray(f));
                             }
                         }
                     }
@@ -250,6 +244,10 @@ function run (tasks, config, watch, liveReload) {
             });
         }
     });
+
+    if (config.watch) {
+        printStep('Waiting for changes...');
+    }
 }
 
 //Converts the code and output the result
@@ -258,7 +256,7 @@ function executeTasks (tasks, config, file) {
 
     if (!file.input) {
         console.error('');
-        console.error(chalk.red('  error:', chalk.dim(' No input file defined')));
+        printError('No input file defined');
         console.error('');
         process.exit();
     }
@@ -267,14 +265,14 @@ function executeTasks (tasks, config, file) {
 
     if (!fs.existsSync(fullpath)) {
         console.error('');
-        console.error(chalk.red('  error: Input file `' + fullpath + '` not found'));
+        printError('Input file not found: ', chalk.gray(fullpath));
         console.error('');
         process.exit();
     }
 
     if (!fs.statSync(fullpath).isFile()) {
         console.error('');
-        console.error(chalk.red('  error: Input file `' + fullpath + '` is not a valid file'));
+        printError('The input file is not valid: ', chalk.gray(fullpath));
         console.error('');
         process.exit();
     }
@@ -284,6 +282,7 @@ function executeTasks (tasks, config, file) {
 
         //Convert the code
         tasks.run(css);
+
     } catch (e) {
         error = e;
 
@@ -294,7 +293,7 @@ function executeTasks (tasks, config, file) {
             }));
         }
 
-        console.error(chalk.red(error.message));
+        printError('Css error: ', chalk.gray(error.message.replace(/\n/g, '\n  ')));
 
         if (error) {
             if (!file.files) {
@@ -327,7 +326,7 @@ function executeTasks (tasks, config, file) {
             code: coder.run(css).css,
             baseUrl: file.baseUrl
         }), {}, function () {
-            console.log('success: Code sent to socket');
+            printSuccess('Css updated in the browser');
         });
 
         //Generate and convert the code again to save
@@ -338,13 +337,18 @@ function executeTasks (tasks, config, file) {
         }
     }
 
-    let coder = new stylecow.Coder(config.code);
-    let code = coder.run(css, file.output, file.map);
+    let code = (new stylecow.Coder(config.code)).run(css, file.output, file.map);
 
     if (file.output) {
+        let output = path.resolve(cwd, file.output);
+        fs.writeFileSync(output, code.css);
 
-        code.save();
-        console.log('success: Generated "' + path.relative(process.cwd(), path.resolve(cwd, file.output)) + '"');
+        if (code.map) {
+            let map = path.resolve(cwd, file.map);
+            fs.writeFileSync(map, code.map);
+        }
+
+        printSuccess('Saved file: ', chalk.gray(path.relative(process.cwd(), output)));
     } else {
         console.log('');
         console.log(code.css);
@@ -527,7 +531,7 @@ function initConfig (callback) {
         newConfig.plugins = answers.plugins;
         newConfig.code = answers.code;
 
-        console.log(JSON.stringify(newConfig, null, '\t'));
+        console.log(chalk.gray(JSON.stringify(newConfig, null, '\t')));
 
         inquirer.prompt([
             {
@@ -585,7 +589,7 @@ function readConfig (file) {
     }
 
     console.error('');
-    console.error(chalk.red('  error: Config file `' + path.relative(process.cwd(), file) + '` not found'));
+    printError('Config file not found: ', path.relative(process.cwd(), file));
     console.error('');
 
     inquirer.prompt([
@@ -602,9 +606,10 @@ function readConfig (file) {
                 writeConfig(config, file);
             });
         } else {
-            console.error('  - run `stylecow init` to create one');
-            console.error('  - or use `stylecow -c <config file>` to locate it');
-            console.error('');
+            printInfo(chalk.bold('Choose one of the following options:'));
+            console.log(chalk.gray('  run ') + '`stylecow init' + chalk.gray(' to create a config file in the current directory'));
+            console.log(chalk.gray('  or run ') + '`stylecow -c <config file>`' + chalk.gray(' if it\'s not in this directory'));
+            console.log('');
         }
     });
 }
@@ -612,7 +617,7 @@ function readConfig (file) {
 function writeConfig (value, file) {
     fs.writeFileSync(file, JSON.stringify(value, null, '\t'));
 
-    console.log('success: Config file saved: `' + file + '`');
+    printSuccess('Config file saved: ', chalk.gray(file));
     console.log('');
 }
 
@@ -709,4 +714,20 @@ SSSS                                                              SSSS
                 STYLECOW - Modern css for all browsers                
                               v.${pkg.version}                   
     `)));
+}
+
+function printInfo (message, details) {
+    console.info(figures.info + ' ' + message + (details || ''));
+}
+
+function printStep (message, details) {
+    console.log(chalk.cyan(figures.pointer + ' ' + message) + (details || ''));
+}
+
+function printSuccess (message, details) {
+    console.log(chalk.green(figures.tick + ' ' + message) + (details || ''));
+}
+
+function printError (message, details) {
+    console.error(chalk.red(figures.cross + ' ' + message) + (details || ''));
 }

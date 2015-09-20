@@ -11,6 +11,7 @@ var program         = require('commander'),
     inquirer        = require('inquirer'),
     chalk           = require('chalk'),
     figures         = require('figures'),
+    mkdirp          = require('mkdirp'),
     pkg             = require('../package.json'),
     cwd             = process.cwd();
 
@@ -31,7 +32,7 @@ program
     .description('Creates a new configuration file')
     .action(function config(command) {
         initConfig(function (config, file) {
-            writeConfig(config, file);
+            writeConfig(file, config);
         });
     });
 
@@ -352,14 +353,15 @@ function executeTasks (tasks, config, file) {
 
     if (file.output) {
         let output = path.resolve(cwd, file.output);
-        fs.writeFileSync(output, code.css);
+        writeFile(output, code.css)
+        printSuccess('Saved file: ', chalk.gray(path.relative(process.cwd(), output)));
 
         if (code.map) {
             let map = path.resolve(cwd, file.map);
-            fs.writeFileSync(map, code.map);
+            writeFile(map, code.map);
+            printSuccess('Saved file: ', chalk.gray(path.relative(process.cwd(), map)));
         }
 
-        printSuccess('Saved file: ', chalk.gray(path.relative(process.cwd(), output)));
     } else {
         console.log('');
         console.log(code.css);
@@ -614,7 +616,7 @@ function readConfig (file) {
 
         if (create.ok) {
             initConfig(function (config, file) {
-                writeConfig(config, file);
+                writeConfig(file, config);
             });
         } else {
             printInfo(chalk.bold('Choose one of the following options:'));
@@ -625,11 +627,21 @@ function readConfig (file) {
     });
 }
 
-function writeConfig (value, file) {
-    fs.writeFileSync(file, JSON.stringify(value, null, '\t'));
+function writeConfig (file, config) {
+    writeFile(file, JSON.stringify(config, null, '\t'));
 
     printSuccess('Config file saved: ', chalk.gray(file));
     console.log('');
+}
+
+function writeFile (file, content) {
+    var dir = path.dirname(file);
+
+    if (!fs.existsSync(dir)) {
+        mkdirp.sync(dir);
+    }
+
+    fs.writeFileSync(file, content);
 }
 
 function cssError (error) {

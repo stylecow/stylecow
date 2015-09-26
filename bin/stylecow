@@ -7,6 +7,7 @@ var program         = require('commander'),
     path            = require('path'),
     url             = require('url'),
     stylecow        = require('stylecow-core'),
+    plugins         = require('stylecow-plugins'),
     updateNotifier  = require('update-notifier'),
     inquirer        = require('inquirer'),
     chalk           = require('chalk'),
@@ -102,9 +103,7 @@ if (!program.args.length) {
             tasks.minSupport(config.support);
         }
 
-        if (config.plugins) {
-            config.plugins.forEach(plugin => tasks.use(require('stylecow-plugin-' + plugin)));
-        }
+        tasks.use(plugins(config.plugins));
 
         if (config.modules) {
             config.plugins.forEach(module => tasks.use(require(module)));
@@ -373,13 +372,6 @@ function executeTasks (tasks, config, file) {
 }
 
 function initConfig (callback) {
-    var availablePlugins = fs.readdirSync(__dirname + '/../node_modules')
-        .filter(function (value) {
-            return value.slice(0, 16) === 'stylecow-plugin-';
-        }).map(function (value) {
-            return value.slice(16);
-        });
-
     var minSupport;
 
     var questions = [
@@ -466,8 +458,8 @@ function initConfig (callback) {
             type: "checkbox",
             name: "plugins",
             message: "Plugins to apply",
-            choices: availablePlugins,
-            default: availablePlugins
+            choices: plugins.getAll(),
+            default: plugins.getAll()
         },
         {
             type: "list",

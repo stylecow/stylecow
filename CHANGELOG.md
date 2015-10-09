@@ -7,6 +7,7 @@
 * Updated all plugins to new major version
 * Improved cli with colors and other ux changes
 * New commands `stylecow run` to execute stylecow in a node module instead a config json file. The module must have the following scheme:
+
   ```js
   module.exports = function (stylecow) {
       //here your code

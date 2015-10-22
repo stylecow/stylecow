@@ -25,7 +25,7 @@ article {
 		color: gray(50%, var(--alpha));
 	}
 
-	--heading {
+	:--heading {
 		font-weight: normal;
 	}
 

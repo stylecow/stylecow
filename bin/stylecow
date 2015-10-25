@@ -289,7 +289,7 @@ function executeTasks (tasks, config, file) {
     }
 
     try {
-        css = stylecow.parseFile(file.input);
+        css = stylecow.parseFile(fullpath);
 
         //Convert the code
         tasks.run(css);
@@ -342,7 +342,7 @@ function executeTasks (tasks, config, file) {
 
         //Generate and convert the code again to save
         if (!error) {
-            css = stylecow.parseFile(file.input);
+            css = stylecow.parseFile(path.resolve(cwd, file.input));
 
             tasks.run(css);
         }

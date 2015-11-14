@@ -4,6 +4,7 @@
 
 * Updated stylecow-core to 2.2.x
 * Added glob support. For example:
+
   ```json
   {
     "files": [{
@@ -12,9 +13,11 @@
     }]
   }
   ```
+
   The available replacement cards are `[name]`, `[dir]`, `[ext]` and `[base]`, and the values returned are the same than [path.parse()](https://nodejs.org/api/path.html#path_path_parse_pathstring).
 * The `map` config value is global instead specific for each file. For example:
   Before:
+
   ```json
   {
     "files": [
@@ -25,8 +28,11 @@
       }
     ]
   }
+
   ```
+
   Now:
+
   ```json
   {
     "files": [
@@ -38,6 +44,7 @@
     "map": "file"
   }
   ```
+
   The available options are `file` (to generate a file with .map extension), `embed`, `none` and `auto` (by default). The map value for each file was keept for backward compatibility.
 
 ### 7.0.0

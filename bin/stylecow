@@ -263,7 +263,10 @@ function run (tasks, config, watch, liveReload) {
 
 //Converts the code and output the result
 function executeTasks (tasks, config, file) {
-    var css, error = false;
+    let css,
+        coder,
+        error = false,
+        fullpath = path.resolve(cwd, file.input);
 
     if (!file.input) {
         console.error('');
@@ -271,8 +274,6 @@ function executeTasks (tasks, config, file) {
         console.error('');
         process.exit();
     }
-
-    var fullpath = path.resolve(cwd, file.input);
 
     if (!fs.existsSync(fullpath)) {
         console.error('');
@@ -330,7 +331,7 @@ function executeTasks (tasks, config, file) {
             }
         });
 
-        let coder = (new stylecow.Coder('minify')).sourceMap('embed');
+        coder = (new stylecow.Coder('minify')).sourceMap('embed');
 
         config.socket.send(JSON.stringify({
             subject: 'code',
@@ -348,7 +349,13 @@ function executeTasks (tasks, config, file) {
         }
     }
 
-    let code = (new stylecow.Coder(config.code)).run(css, file.output, file.map);
+    coder = new stylecow.Coder(config.code);
+
+    if (config.map) {
+        coder.sourceMap(config.map);
+    }
+
+    let code = coder.run(css, file.output, null, file.map);
 
     if (file.output) {
         let output = path.resolve(cwd, file.output);
@@ -495,21 +502,20 @@ function initConfig (callback) {
 
                 var choices = [
                     {
+                        name: 'Automatically choose the best option',
+                        value: 'auto',
+                        default: true
+                    },{
+                        name: 'Yes, save in a external .map file' +  (file ? ' (' + file + ')' : ''),
+                        value: 'file'
+                    },{
                         name: 'Yes, embed in the css',
                         value: 'embed'
                     },{
                         name: 'No',
-                        value: false
+                        value: 'none'
                     }
                 ];
-
-                if (file) {
-                    choices.unshift({
-                        name: 'Yes, save in ' + file,
-                        value: file,
-                        default: true
-                    });
-                }
 
                 return choices;
             }
@@ -521,8 +527,7 @@ function initConfig (callback) {
             files: [
                 {
                     input: answers.input,
-                    output: answers.output,
-                    map: answers.map
+                    output: answers.output
                 }
             ]
         };
@@ -535,6 +540,7 @@ function initConfig (callback) {
 
         newConfig.plugins = answers.plugins;
         newConfig.code = answers.code;
+        newConfig.map = answers.map;
 
         console.log(chalk.gray(JSON.stringify(newConfig, null, '\t')));
 

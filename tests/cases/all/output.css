@@ -1,10 +1,10 @@
 ul.grid {
+	-webkit-box-lines: multiple;
+	display: -webkit-box;
 	display: -webkit-flex;
 	display: -ms-flexbox;
-	display: -webkit-box;
 	display: flex;
 	-ms-flex-wrap: wrap;
-	-webkit-box-lines: multiple;
 	-webkit-flex-wrap: wrap;
 	flex-wrap: wrap;
 }

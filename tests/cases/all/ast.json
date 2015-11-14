@@ -27,6 +27,40 @@
           "children": [
             {
               "type": "Declaration",
+              "name": "box-lines",
+              "vendor": "webkit",
+              "children": [
+                {
+                  "type": "Value",
+                  "children": [
+                    {
+                      "type": "Keyword",
+                      "name": "multiple",
+                      "vendor": null
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Declaration",
+              "name": "display",
+              "vendor": null,
+              "children": [
+                {
+                  "type": "Value",
+                  "children": [
+                    {
+                      "type": "Keyword",
+                      "name": "box",
+                      "vendor": "webkit"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Declaration",
               "name": "display",
               "vendor": null,
               "children": [
@@ -69,23 +103,6 @@
                   "children": [
                     {
                       "type": "Keyword",
-                      "name": "box",
-                      "vendor": "webkit"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "Declaration",
-              "name": "display",
-              "vendor": null,
-              "children": [
-                {
-                  "type": "Value",
-                  "children": [
-                    {
-                      "type": "Keyword",
                       "name": "flex",
                       "vendor": null
                     }
@@ -104,23 +121,6 @@
                     {
                       "type": "Keyword",
                       "name": "wrap",
-                      "vendor": null
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "Declaration",
-              "name": "box-lines",
-              "vendor": "webkit",
-              "children": [
-                {
-                  "type": "Value",
-                  "children": [
-                    {
-                      "type": "Keyword",
-                      "name": "multiple",
                       "vendor": null
                     }
                   ]

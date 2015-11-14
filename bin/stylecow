@@ -13,6 +13,7 @@ var program         = require('commander'),
     chalk           = require('chalk'),
     figures         = require('figures'),
     mkdirp          = require('mkdirp'),
+    glob            = require('glob'),
     pkg             = require('../package.json'),
     cwd             = process.cwd();
 
@@ -121,6 +122,7 @@ function run (tasks, config, watch, liveReload) {
         return;
     }
 
+    config.files = resolveFiles(config.files);
     config.liveReload = liveReload;
 
     if (config.liveReload) {
@@ -362,8 +364,8 @@ function executeTasks (tasks, config, file) {
         writeFile(output, code.css)
         printSuccess('Saved file: ', chalk.gray(path.relative(process.cwd(), output)));
 
-        if (code.map) {
-            let map = path.resolve(cwd, file.map);
+        if (code.mapFile) {
+            let map = path.resolve(cwd, code.mapFile);
             writeFile(map, code.map);
             printSuccess('Saved file: ', chalk.gray(path.relative(process.cwd(), map)));
         }
@@ -572,6 +574,33 @@ function initConfig (callback) {
             }
         });
     });
+}
+
+function resolveFiles(files) {
+    let resolved = [];
+
+    files.forEach(function (file) {
+        if (!glob.hasMagic(file.input)) {
+            return resolved.push(file);
+        }
+
+        glob
+            .sync(file.input, {cwd: cwd})
+            .forEach(function (input) {
+                let info = path.parse(input);
+
+                resolved.push({
+                    input: input,
+                    output: file.output
+                        .replace('[dir]', info.dir)
+                        .replace('[base]', info.base)
+                        .replace('[ext]', info.ext)
+                        .replace('[name]', info.name)
+                });
+            });
+    });
+
+    return resolved;
 }
 
 function getFiles (css) {

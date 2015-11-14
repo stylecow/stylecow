@@ -1,5 +1,45 @@
 # Changelog
 
+### 7.1.0
+
+* Updated stylecow-core to 2.2.x
+* Added glob support. For example:
+  ```json
+  {
+    "files": [{
+      "input": "styles/*.css",
+      "output": "dist/[name].min.css"
+    }]
+  }
+  ```
+  The available replacement cards are `[name]`, `[dir]`, `[ext]` and `[base]`, and the values returned are the same than [path.parse()](https://nodejs.org/api/path.html#path_path_parse_pathstring).
+* The `map` config value is global instead specific for each file. For example:
+  Before:
+  ```json
+  {
+    "files": [
+      {
+        "input": "styles/style.css",
+        "output": "dist/style.min.css",
+        "map": "dist/style.min.map"
+      }
+    ]
+  }
+  ```
+  Now:
+  ```json
+  {
+    "files": [
+      {
+        "input": "styles/style.css",
+        "output": "dist/style.min.css"
+      }
+    ],
+    "map": "file"
+  }
+  ```
+  The available options are `file` (to generate a file with .map extension), `embed`, `none` and `auto` (by default). The map value for each file was keept for backward compatibility.
+
 ### 7.0.0
 
 * Removed support for node 0.x and iojs. This library is for node >= 4.0
@@ -10,7 +50,7 @@
 
   ```js
   module.exports = function (stylecow) {
-      //here your code
+    //here your code
   }
   ```
 
@@ -86,17 +126,17 @@
 
 ```json
 {
-	"files": [
-		{
-			"input": "styles.css",
-			"output": "styles.min.css",
-			"map": "styles.min.map",
-		},{
-			"input": "styles2.css",
-			"output": "styles2.min.css",
-			"map": "styles2.min.map",
-		}
-	]
+  "files": [
+    {
+      "input": "styles.css",
+      "output": "styles.min.css",
+      "map": "styles.min.map",
+    },{
+      "input": "styles2.css",
+      "output": "styles2.min.css",
+      "map": "styles2.min.map",
+    }
+  ]
 }
 ```
 
@@ -128,7 +168,7 @@ var css = stylecow.createFromFile('my-styles.css');
 
 //Configure the code
 var code = new stylecow.Code(css, {
-	output: 'styles.min.css', //output filename
+    output: 'styles.min.css', //output filename
     style: 'minify', //minify the code
     sourceMap: 'styles.min.map',  //The source map file
     previousSourceMap: 'styles.map' //Set this value if there is the file has a source map created by other preprocessor, such less/sass and it's not defined in the code.

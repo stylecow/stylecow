@@ -107,7 +107,7 @@ if (!program.args.length) {
         tasks.use(plugins(config.plugins));
 
         if (config.modules) {
-            config.plugins.forEach(module => tasks.use(require(module)));
+            config.modules.forEach(module => tasks.use(require(module)));
         }
 
         run(tasks, config, program.watch, program.liveReload);

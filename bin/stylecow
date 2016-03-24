@@ -300,22 +300,26 @@ function executeTasks (tasks, config, file) {
     } catch (e) {
         error = e;
 
+        printError('Css error: ', chalk.gray(error.message.replace(/\n/g, '\n  ')));
+
         if (config.socket) {
             config.socket.send(JSON.stringify({
                 subject: 'error',
                 code: stylecow.cssError(e).toString()
             }));
+
+            return;
         }
 
-        printError('Css error: ', chalk.gray(error.message.replace(/\n/g, '\n  ')));
-
-        if (error) {
+        if (config.watch) {
+            css = stylecow.cssError(e);
+        } else {
             if (!file.files) {
                 process.exit();
             }
-        }
 
-        return;
+            return;
+        }
     }
 
     //Send the code to socket
@@ -377,7 +381,9 @@ function executeTasks (tasks, config, file) {
     }
 
     //Get secondary files
-    file.files = getFiles(css);
+    if (!error) {
+        file.files = getFiles(css);
+    }
 }
 
 function initConfig (callback) {

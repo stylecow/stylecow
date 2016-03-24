@@ -1,5 +1,11 @@
 # Changelog
 
+### 7.2.0
+
+* Improved error reporting on watch
+* Updated stylecow-core to 2.3.x
+* Updated other dependencies
+
 ### 7.1.0
 
 * Updated stylecow-core to 2.2.x

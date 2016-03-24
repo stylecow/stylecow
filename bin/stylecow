@@ -303,7 +303,7 @@ function executeTasks (tasks, config, file) {
         if (config.socket) {
             config.socket.send(JSON.stringify({
                 subject: 'error',
-                code: cssError(e).toString()
+                code: stylecow.cssError(e).toString()
             }));
         }
 
@@ -669,21 +669,6 @@ function writeFile (file, content) {
     }
 
     fs.writeFileSync(file, content);
-}
-
-function cssError (error) {
-    var css = stylecow.parse('html, body { color: red !important; background: white !important; }'
-        + 'body > * { display: none !important;} '
-        + 'body::before { content: "message"; font-family: monospace; white-space: pre; display: block; padding: 20px; } ');
-
-    var content = css.get({
-        type: 'String',
-        name: 'message'
-    });
-
-    content.name = error.message.replace(/\n/g, '\\a ');
-
-    return css;
 }
 
 function getSupportFromBrowserlist (query) {

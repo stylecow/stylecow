@@ -530,7 +530,7 @@ function initConfig (callback) {
         }
     ];
 
-    inquirer.prompt(questions, function (answers) {
+    inquirer.prompt(questions).then(function (answers) {
         var newConfig = {
             files: [
                 {
@@ -558,7 +558,7 @@ function initConfig (callback) {
                 name: "ok",
                 message: "Looks fine?"
             }
-        ], function (answers) {
+        ]).then(function (answers) {
             if (answers.ok) {
                 var filename = 'stylecow.json';
             
@@ -569,7 +569,7 @@ function initConfig (callback) {
                             name: "ok",
                             message: "The file `stylecow.json` already exists. Do you want to replace it?"
                         }
-                    ], function (replace) {
+                    ]).then(function (replace) {
                         if (replace.ok) {
                             callback(newConfig, filename);
                         }
@@ -644,7 +644,7 @@ function readConfig (file) {
             name: "ok",
             message: "Do you want to create it now?"
         }
-    ], function (create) {
+    ]).then(function (create) {
         console.error('');
 
         if (create.ok) {

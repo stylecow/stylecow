@@ -1,5 +1,10 @@
 # Changelog
 
+### 7.3.0
+
+* Updated dependencies
+* Added npm-loader plugin
+
 ### 7.2.0
 
 * Improved error reporting on watch

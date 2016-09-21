@@ -32,11 +32,11 @@
     "mkdirp": "^0.5.1",
     "stylecow-core": "2.3.x",
     "stylecow-plugins": "^1.5.0",
-    "update-notifier": "^0.7.0",
+    "update-notifier": "^1.0.2",
     "ws": "^1.1.0"
   },
   "devDependencies": {
-    "mocha": "^2.4.5"
+    "mocha": "^3.0.2"
   },
   "scripts": {
     "test": "mocha tests/cases.js"

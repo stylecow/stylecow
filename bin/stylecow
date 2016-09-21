@@ -550,7 +550,7 @@ function initConfig (callback) {
         newConfig.code = answers.code;
         newConfig.map = answers.map;
 
-        console.log(chalk.gray(JSON.stringify(newConfig, null, '\t')));
+        console.log(chalk.gray(JSON.stringify(newConfig, null, '  ')));
 
         inquirer.prompt([
             {
@@ -661,7 +661,7 @@ function readConfig (file) {
 }
 
 function writeConfig (file, config) {
-    writeFile(file, JSON.stringify(config, null, '\t'));
+    writeFile(file, JSON.stringify(config, null, '  '));
 
     printSuccess('Config file saved: ', chalk.gray(file));
     console.log('');

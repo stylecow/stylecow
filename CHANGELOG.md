@@ -1,5 +1,9 @@
 # Changelog
 
+### 7.3.1
+
+* Fixed live reloading with absolute urls
+
 ### 7.3.0
 
 * Updated dependencies

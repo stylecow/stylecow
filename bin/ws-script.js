@@ -15,7 +15,9 @@
                     href = href.split('?', 2).shift();
                 }
 
-                return (href.substr(-(url.length)) === url);
+                href = href.split('//', 2).pop().match(/\/(.*)/).pop();
+
+                return (href.substr(-(url.length)) === url) || (url.substr(-(href.length)) === href);
             }).pop();
 
         if (link) {

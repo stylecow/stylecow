@@ -355,7 +355,15 @@ function executeTasks (tasks, config, file) {
         }
     }
 
-    coder = new stylecow.Coder(config.code);
+    if (typeof config.code === 'object') {
+        coder = new stylecow.Coder('custom');
+        const custom = Object.assign({}, coder.styles[config.code.style || 'normal'], config.code);
+        delete custom.style;
+        coder.addStyle('custom', custom);
+
+    } else {
+        coder = new stylecow.Coder(config.code);
+    }
 
     if (config.map) {
         coder.sourceMap(config.map);

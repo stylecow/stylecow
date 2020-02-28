@@ -1,5 +1,9 @@
 # Changelog
 
+### 7.4.0
+
+* Allow to customize the code style #10
+
 ### 7.3.2
 
 * Fixed live reloading with absolute urls
